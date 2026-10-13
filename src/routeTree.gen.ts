@@ -11,7 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as KalkylatorRouteImport } from './routes/kalkylator'
+import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as OmOssRouteImport } from './routes/om-oss'
+import { Route as BloggIndexRouteImport } from './routes/blogg.index'
+import { Route as BloggSlugRouteImport } from './routes/blogg.$slug'
 import { Route as ProdukterIndexRouteImport } from './routes/produkter.index'
 import { Route as ProdukterSlugRouteImport } from './routes/produkter.$slug'
 
@@ -25,9 +29,29 @@ const FaqRoute = FaqRouteImport.update({
   path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KalkylatorRoute = KalkylatorRouteImport.update({
+  id: '/kalkylator',
+  path: '/kalkylator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KontaktRoute = KontaktRouteImport.update({
+  id: '/kontakt',
+  path: '/kontakt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OmOssRoute = OmOssRouteImport.update({
   id: '/om-oss',
   path: '/om-oss',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BloggIndexRoute = BloggIndexRouteImport.update({
+  id: '/blogg/',
+  path: '/blogg/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BloggSlugRoute = BloggSlugRouteImport.update({
+  id: '/blogg/$slug',
+  path: '/blogg/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProdukterIndexRoute = ProdukterIndexRouteImport.update({
@@ -44,38 +68,82 @@ const ProdukterSlugRoute = ProdukterSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/faq': typeof FaqRoute
+  '/kalkylator': typeof KalkylatorRoute
+  '/kontakt': typeof KontaktRoute
   '/om-oss': typeof OmOssRoute
+  '/blogg/$slug': typeof BloggSlugRoute
   '/produkter/$slug': typeof ProdukterSlugRoute
+  '/blogg/': typeof BloggIndexRoute
   '/produkter/': typeof ProdukterIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/faq': typeof FaqRoute
+  '/kalkylator': typeof KalkylatorRoute
+  '/kontakt': typeof KontaktRoute
   '/om-oss': typeof OmOssRoute
+  '/blogg/$slug': typeof BloggSlugRoute
   '/produkter/$slug': typeof ProdukterSlugRoute
+  '/blogg': typeof BloggIndexRoute
   '/produkter': typeof ProdukterIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/faq': typeof FaqRoute
+  '/kalkylator': typeof KalkylatorRoute
+  '/kontakt': typeof KontaktRoute
   '/om-oss': typeof OmOssRoute
+  '/blogg/$slug': typeof BloggSlugRoute
   '/produkter/$slug': typeof ProdukterSlugRoute
+  '/blogg/': typeof BloggIndexRoute
   '/produkter/': typeof ProdukterIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/faq' | '/om-oss' | '/produkter/$slug' | '/produkter/'
+  fullPaths:
+    | '/'
+    | '/faq'
+    | '/kalkylator'
+    | '/kontakt'
+    | '/om-oss'
+    | '/blogg/$slug'
+    | '/produkter/$slug'
+    | '/blogg/'
+    | '/produkter/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/faq' | '/om-oss' | '/produkter/$slug' | '/produkter'
-  id: '__root__' | '/' | '/faq' | '/om-oss' | '/produkter/$slug' | '/produkter/'
+  to:
+    | '/'
+    | '/faq'
+    | '/kalkylator'
+    | '/kontakt'
+    | '/om-oss'
+    | '/blogg/$slug'
+    | '/produkter/$slug'
+    | '/blogg'
+    | '/produkter'
+  id:
+    | '__root__'
+    | '/'
+    | '/faq'
+    | '/kalkylator'
+    | '/kontakt'
+    | '/om-oss'
+    | '/blogg/$slug'
+    | '/produkter/$slug'
+    | '/blogg/'
+    | '/produkter/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FaqRoute: typeof FaqRoute
+  KalkylatorRoute: typeof KalkylatorRoute
+  KontaktRoute: typeof KontaktRoute
   OmOssRoute: typeof OmOssRoute
+  BloggSlugRoute: typeof BloggSlugRoute
   ProdukterSlugRoute: typeof ProdukterSlugRoute
+  BloggIndexRoute: typeof BloggIndexRoute
   ProdukterIndexRoute: typeof ProdukterIndexRoute
 }
 
@@ -95,11 +163,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kalkylator': {
+      id: '/kalkylator'
+      path: '/kalkylator'
+      fullPath: '/kalkylator'
+      preLoaderRoute: typeof KalkylatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kontakt': {
+      id: '/kontakt'
+      path: '/kontakt'
+      fullPath: '/kontakt'
+      preLoaderRoute: typeof KontaktRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/om-oss': {
       id: '/om-oss'
       path: '/om-oss'
       fullPath: '/om-oss'
       preLoaderRoute: typeof OmOssRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blogg/': {
+      id: '/blogg/'
+      path: '/blogg'
+      fullPath: '/blogg/'
+      preLoaderRoute: typeof BloggIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blogg/$slug': {
+      id: '/blogg/$slug'
+      path: '/blogg/$slug'
+      fullPath: '/blogg/$slug'
+      preLoaderRoute: typeof BloggSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/produkter/': {
@@ -122,8 +218,12 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FaqRoute: FaqRoute,
+  KalkylatorRoute: KalkylatorRoute,
+  KontaktRoute: KontaktRoute,
   OmOssRoute: OmOssRoute,
+  BloggSlugRoute: BloggSlugRoute,
   ProdukterSlugRoute: ProdukterSlugRoute,
+  BloggIndexRoute: BloggIndexRoute,
   ProdukterIndexRoute: ProdukterIndexRoute,
 }
 export const routeTree = rootRouteImport
