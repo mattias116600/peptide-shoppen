@@ -112,10 +112,10 @@
 @media(max-width:700px){
  .announcement{gap:16px;font-size:9px;min-height:28px}.announcement>span:nth-last-child(-n+2){display:none}
  .header-inner{height:68px;padding-inline:18px;gap:8px}.brand{font-size:20px;gap:8px}.brand-mark{width:30px;height:32px;font-size:19px}.header-tools{gap:0}.header-tools button{height:42px;width:38px}
- .content-width{padding-inline:22px}.home-hero{height:650px;min-height:0}.hero-image{height:100%;object-position:65% bottom}
+ .content-width{padding-inline:22px}.home-hero{height:min(650px,calc(100svh - 145px));min-height:580px}
  .hero-inner{align-items:flex-start}.hero-copy{width:100%;padding-block:32px 0}.hero-copy h1{font-size:38px;margin-top:12px;line-height:1.13}.hero-copy .eyebrow{margin-top:20px}.hero-copy>p{font-size:13px;margin-top:16px;max-width:340px;line-height:1.8}
  .hero-actions{margin-top:22px;gap:8px}.hero-actions>a{padding-inline:14px;font-size:10px;height:44px}.hero-popular{margin-top:18px;font-size:11px;gap:10px}.hero-bottom-label{display:none}
- .hero-image{object-fit:cover;object-position:69% bottom;height:360px;bottom:0}.hero-copy{position:relative}.country-label{font-size:10px}
+ .hero-image{object-fit:cover;object-position:right bottom;height:300px;bottom:0}.hero-copy{position:relative}.country-label{font-size:10px}
  .trust-inner{gap:22px 14px;padding-block:24px}.trust-item{grid-template-columns:20px minmax(0,1fr);gap:8px;align-items:start}.trust-item strong{font-size:11px;line-height:1.5}.trust-item p{font-size:10px;line-height:1.6}.trust-item>svg{width:20px;height:20px}
  .home-products{padding-block:44px 50px}.section-heading{grid-template-columns:1fr;gap:12px;margin-bottom:24px}.section-heading h2{font-size:30px}.section-heading p{font-size:13px}.section-heading>a{width:fit-content;font-size:12px}
  .product-grid{gap:30px 14px}.product-info{padding-top:14px}.product-title{grid-template-columns:1fr;gap:5px}.product-title h3{font-size:14px}.product-info>p{font-size:11px;min-height:60px}.product-bottom{grid-template-columns:1fr;gap:12px;margin-top:12px}.product-bottom>span{font-size:15px}.product-bottom button{width:100%;height:42px;font-size:12px}
