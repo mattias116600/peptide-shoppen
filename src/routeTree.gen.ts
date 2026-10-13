@@ -10,33 +10,73 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as OmOssRouteImport } from './routes/om-oss'
+import { Route as ProdukterIndexRouteImport } from './routes/produkter.index'
+import { Route as ProdukterSlugRouteImport } from './routes/produkter.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OmOssRoute = OmOssRouteImport.update({
+  id: '/om-oss',
+  path: '/om-oss',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdukterIndexRoute = ProdukterIndexRouteImport.update({
+  id: '/produkter/',
+  path: '/produkter/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdukterSlugRoute = ProdukterSlugRouteImport.update({
+  id: '/produkter/$slug',
+  path: '/produkter/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/faq': typeof FaqRoute
+  '/om-oss': typeof OmOssRoute
+  '/produkter/$slug': typeof ProdukterSlugRoute
+  '/produkter/': typeof ProdukterIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/faq': typeof FaqRoute
+  '/om-oss': typeof OmOssRoute
+  '/produkter/$slug': typeof ProdukterSlugRoute
+  '/produkter': typeof ProdukterIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/faq': typeof FaqRoute
+  '/om-oss': typeof OmOssRoute
+  '/produkter/$slug': typeof ProdukterSlugRoute
+  '/produkter/': typeof ProdukterIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/faq' | '/om-oss' | '/produkter/$slug' | '/produkter/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/faq' | '/om-oss' | '/produkter/$slug' | '/produkter'
+  id: '__root__' | '/' | '/faq' | '/om-oss' | '/produkter/$slug' | '/produkter/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FaqRoute: typeof FaqRoute
+  OmOssRoute: typeof OmOssRoute
+  ProdukterSlugRoute: typeof ProdukterSlugRoute
+  ProdukterIndexRoute: typeof ProdukterIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +88,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/om-oss': {
+      id: '/om-oss'
+      path: '/om-oss'
+      fullPath: '/om-oss'
+      preLoaderRoute: typeof OmOssRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produkter/': {
+      id: '/produkter/'
+      path: '/produkter'
+      fullPath: '/produkter/'
+      preLoaderRoute: typeof ProdukterIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produkter/$slug': {
+      id: '/produkter/$slug'
+      path: '/produkter/$slug'
+      fullPath: '/produkter/$slug'
+      preLoaderRoute: typeof ProdukterSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FaqRoute: FaqRoute,
+  OmOssRoute: OmOssRoute,
+  ProdukterSlugRoute: ProdukterSlugRoute,
+  ProdukterIndexRoute: ProdukterIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
