@@ -126,8 +126,8 @@ function Contact() {
             <div className="eyebrow"><span className="eyebrow-line" /> FÖRE DU SKRIVER</div>
             <h2>Tre kontrollpunkter</h2>
             <p>
-              Vi vill att svaret ska komma så snabbt som möjligt. Genomgång av dessa
-              tre punkter löper det mesta av det ut.
+              Vi vill att svaret ska komma så snabbt som möjligt. Genom att gå
+              igenom dessa tre punkter får du svar på det mesta.
             </p>
           </div>
           <ol className="about-principles-list">
