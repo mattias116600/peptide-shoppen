@@ -56,19 +56,57 @@ function CheckoutPage() {
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', address: '', zip: '', city: '' });
   const [touched, setTouched] = useState(false);
+  const [order, setOrder] = useState<PlacedOrder | null>(null);
   const total = cartTotal(items);
   const formValid = form.name.trim() && /\S+@\S+\.\S+/.test(form.email) && form.address.trim() && form.zip.trim() && form.city.trim();
 
-  if (done) {
+  if (done && order) {
+    const placed = new Date().toLocaleDateString('sv-SE', { day: 'numeric', month: 'long', year: 'numeric' });
     return (
       <main className="content-width kassa-page">
-        <div className="kassa-done">
-          <CheckCircle2 size={56} />
-          <h1>Tack för din beställning!</h1>
-          <p>Din beställning är mottagen. En bekräftelse skickas till {form.email}.</p>
-          <p className="kassa-done-shipping"><Truck size={15} /> {shippingInfo.summary}</p>
-          <Button asChild size="lg"><Link to="/produkter">Fortsätt handla <ArrowRight /></Link></Button>
+        <section className="confirm-hero" aria-label="Beställning mottagen">
+          <span className="confirm-badge"><CheckCircle2 size={30} /></span>
+          <div>
+            <span className="eyebrow"><span className="eyebrow-line" /> Beställning mottagen</span>
+            <h1>Tack för din beställning!</h1>
+            <p>Bekräftelse skickas till <strong>{order.email}</strong>. Nedan ser du vad som händer nu.</p>
+          </div>
+        </section>
+        <div className="confirm-main">
+          <div className="confirm-card">
+            <h2><Truck size={15} /> Leverans</h2>
+            <p className="confirm-carrier">Skickas med <strong>PostNord</strong> i neutral förpackning — leverans <strong>1–3 arbetsdagar</strong>.</p>
+            <p className="confirm-address">{order.name}<br />{order.address}<br />{order.zip} {order.city}</p>
+          </div>
+          <div className="confirm-card">
+            <h2><ListChecks size={15} /> Vad händer nu?</h2>
+            <ol className="confirm-steps">
+              <li><span>1</span>Orderbekräftelse skickas till {order.email}.</li>
+              <li><span>2</span>Din beställning packas i neutral förpackning.</li>
+              <li><span>3</span>Skickas med PostNord — leverans 1–3 arbetsdagar.</li>
+            </ol>
+          </div>
+          <div className="research-banner">
+            <FlaskConical size={15} />
+            <p>Alla produkter säljs endast för laboratorieforskning.</p>
+          </div>
+          <div className="kassa-actions confirm-actions">
+            <Button asChild variant="outline"><Link to="/"><Home /> Till startsidan</Link></Button>
+            <Button asChild><Link to="/produkter">Fortsätt handla <ArrowRight /></Link></Button>
+          </div>
         </div>
+        <aside className="kassa-summary confirm-summary" aria-label="Ordersammanfattning">
+          <div className="confirm-meta">
+            <span><Package size={13} /> Ordernummer {order.ref}</span>
+            <span><Mail size={13} /> Beställd {placed}</span>
+          </div>
+          <h2>Din beställning</h2>
+          {order.lines.map(l => (
+            <div key={l.name + l.amount}><span>{l.name} {l.amount} × {l.qty}</span><span>{formatPrice(l.price * l.qty)}</span></div>
+          ))}
+          <div className="kassa-summary-total"><span>Totalt</span><strong>{formatPrice(order.total)}</strong></div>
+          <p className="kassa-shipping"><Truck size={14} /> {shippingInfo.summary}</p>
+        </aside>
       </main>
     );
   }
@@ -172,7 +210,23 @@ function CheckoutPage() {
           </div>
           <div className="kassa-actions">
             <Button variant="outline" onClick={() => setStep(1)}><ArrowLeft /> Tillbaka</Button>
-            <Button onClick={() => { clear(); setDone(true); }}>Slutför beställning — {formatPrice(total)} <Check /></Button>
+            <Button onClick={() => {
+              setOrder({
+                ref: `PSW-${Math.floor(10000 + Math.random() * 90000)}`,
+                email: form.email,
+                name: form.name,
+                address: form.address,
+                zip: form.zip,
+                city: form.city,
+                total,
+                lines: items.map(i => {
+                  const p = products.find(pp => pp.slug === i.slug);
+                  return p ? { name: p.name, amount: p.amount, qty: i.quantity, price: p.price } : null;
+                }).filter((l): l is NonNullable<typeof l> => l !== null),
+              });
+              clear();
+              setDone(true);
+            }}>Slutför beställning — {formatPrice(total)} <Check /></Button>
           </div>
         </section>
       )}
