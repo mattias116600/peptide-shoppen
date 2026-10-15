@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /kassa
 
-Sitemap: https://peptide-shoppen.lovable.app/sitemap.xml
+Sitemap: https://peptidesweden.com/sitemap.xml
