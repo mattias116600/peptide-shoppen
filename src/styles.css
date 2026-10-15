@@ -25,7 +25,7 @@
 /* Swedish blue & yellow modern layer */
 .announcement{background:var(--primary);font-weight:600}.announcement-diamond{color:var(--sun)}
 .site-header{position:sticky;top:0;background:color-mix(in oklab,var(--background) 82%,transparent);backdrop-filter:blur(14px)}
-.brand{font-weight:700;letter-spacing:-.03em}.brand>span:last-child>span{color:var(--primary)}.brand-mark{background:var(--primary);color:var(--sun);border:none;border-radius:10px;font-weight:700;font-size:18px}
+.brand{font-weight:700;letter-spacing:-.03em}.brand>span:last-child>span{color:var(--primary)}.brand-mark{background:var(--primary);border:none;border-radius:10px;overflow:hidden;padding:0}
 .desktop-nav{font-size:13px;font-weight:600}.desktop-nav a{padding:8px 12px;border-radius:999px}.desktop-nav a:hover,.desktop-nav a[data-status=active]{background:var(--secondary);color:var(--primary)}
 .cart-count{background:var(--sun);color:var(--sun-foreground);font-weight:700}
 .home-hero{height:640px}.hero-copy h1 em,.quality-inner h2 em{font-style:normal;color:var(--primary);background:linear-gradient(transparent 62%,var(--sun) 62%)}
