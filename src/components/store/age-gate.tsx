@@ -17,7 +17,7 @@ export function AgeGate() {
       {status !== 'checking' && (
         <div className="age-gate-card">
           <div className="brand"><span className="mini-flag" aria-hidden="true" /> peptide<span className="text-primary">sweden</span></div>
-          <ShieldCheck size={36} />
+          <div className="age-gate-icon"><ShieldCheck size={30} /></div>
           {status === 'open' ? <>
             <h2 id="age-gate-title">Ålderskontroll</h2>
             <p>Du måste vara minst 18 år för att besöka Peptidesweden. Alla produkter är endast avsedda för laboratorieforskning.</p>
