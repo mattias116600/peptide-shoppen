@@ -76,7 +76,6 @@ function Detail() {
           <div className="pdp-info-cards">
             <div><FileText size={18} /><div><strong>Analysrapport</strong>{variant.coaUrl ? <p>Batch {variant.batch} — <a href={variant.coaUrl} target="_blank" rel="noopener noreferrer" className="coa-link">Visa analysrapport (CoA)</a></p> : <p>Batchspecifika rapporter publiceras när de finns tillgängliga.</p>}</div></div>
             <div><Truck size={18} /><div><strong>Leverans</strong><p>{shippingInfo.summary}</p></div></div>
-            <div><CreditCard size={18} /><div><strong>Betalning</strong><p>Betalningsalternativ är inte aktiverade ännu.</p></div></div>
           </div>
 
           <Accordion type="single" collapsible defaultValue="information">
