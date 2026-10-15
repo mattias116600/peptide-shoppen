@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { FlaskConical, FileCheck2, Truck, Microscope, ArrowRight } from 'lucide-react';
+import vialImg from '@/assets/peptide-vial.jpg';
 import { shippingInfo } from '@/lib/products';
 
 export const Route = createFileRoute('/om-oss')({
@@ -77,7 +78,7 @@ function About() {
             </div>
           </div>
           <div className="about-hero-media">
-            <img src="/src/assets/peptide-vial.jpg" alt="Forskningspeptider från Peptidesweden" loading="eager" />
+            <img src={vialImg} alt="Forskningspeptider från Peptidesweden" loading="eager" />
             <span className="about-hero-tag">Laboratorieforskning</span>
           </div>
         </div>
