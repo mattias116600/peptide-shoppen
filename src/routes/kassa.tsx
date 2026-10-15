@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, CreditCard, Minus, Plus, ShoppingBag, Truck, User } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, CreditCard, FlaskConical, Home, ListChecks, Mail, Minus, Package, Plus, ShoppingBag, Truck, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/components/store/store-provider';
 import { products, formatPrice, cartTotal, shippingInfo } from '@/lib/products';
@@ -19,6 +19,17 @@ export const Route = createFileRoute('/kassa')({
   }),
   component: CheckoutPage,
 });
+
+type PlacedOrder = {
+  ref: string;
+  email: string;
+  name: string;
+  address: string;
+  zip: string;
+  city: string;
+  total: number;
+  lines: { name: string; amount: string; qty: number; price: number }[];
+};
 
 const steps = [
   { label: 'Varukorg', icon: ShoppingBag },
