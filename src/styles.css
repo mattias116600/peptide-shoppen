@@ -81,3 +81,10 @@ body{font-size:15px}
 .page-top{padding-top:36px}
 }
 .mini-flag{width:16px;height:11px;border-radius:2px;background:linear-gradient(90deg,transparent 31%,var(--sun) 31% 44%,transparent 44%),linear-gradient(transparent 40%,var(--sun) 40% 60%,transparent 60%),var(--primary)}
+
+.strength-options { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.25rem 0 0.75rem; }
+.strength-chip { border: 1px solid var(--border); background: var(--background); color: var(--foreground); border-radius: 999px; padding: 0.3rem 0.75rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all .15s; min-height: 2rem; }
+.strength-chip:hover { border-color: var(--primary); }
+.strength-chip[data-active="true"] { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+.detail-strength { margin: 1rem 0; }
+.detail-strength > span { display: block; font-size: 0.8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: .4rem; }
