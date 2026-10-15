@@ -5,12 +5,12 @@ export const products: Product[] = [
   {slug:'retatrutide-20',group:'retatrutide',name:'Retatrutide',amount:'20 mg',price:1499,category:'Peptider',description:'Peptid för studier inom metabol forskning.',batch:'201565',coaUrl:'https://polypeptide.io/tests/201565-Retatrutide_20mg'},
   {slug:'retatrutide-30',group:'retatrutide',name:'Retatrutide',amount:'30 mg',price:2099,category:'Peptider',description:'Peptid för studier inom metabol forskning.',batch:'201265',coaUrl:'https://polypeptide.io/tests/201265-Retatrutide_30mg'},
   {slug:'retatrutide-60',group:'retatrutide',name:'Retatrutide',amount:'60 mg',price:3799,category:'Peptider',description:'Peptid för studier inom metabol forskning.',batch:'201435',coaUrl:'https://polypeptide.io/tests/201435-Retatrutide_60mg'},
-  {slug:'ghk-cu-50',group:'ghk-cu',name:'GHK-Cu',amount:'50 mg',price:399,category:'Peptider',description:'Koppartripeptid för forskning inom hudbiologi.',badge:'UTVALD'},
-  {slug:'ghk-cu-100',group:'ghk-cu',name:'GHK-Cu',amount:'100 mg',price:699,category:'Peptider',description:'Koppartripeptid för forskning inom hudbiologi.'},
-  {slug:'mots-c-40',group:'mots-c',name:'MOTS-C',amount:'40 mg',price:649,category:'Peptider',description:'Mitokondriell peptid för metabol forskning.',batch:'208445',coaUrl:'https://polypeptide.io/tests/208445-MOTS-C_40mg'},
-  {slug:'bpc-157-10',group:'bpc-157',name:'BPC-157',amount:'10 mg',price:399,category:'Peptider',description:'Pentadekapeptid för laboratoriestudier.'},
-  {slug:'bpc-157-20',group:'bpc-157',name:'BPC-157',amount:'20 mg',price:649,category:'Peptider',description:'Pentadekapeptid för laboratoriestudier.'},
-  {slug:'bpc-157-tb-500-20',group:'bpc-157-tb-500',name:'BPC-157 + TB-500',amount:'20 mg',price:799,category:'Blends',description:'En kombination av två forskningspeptider.',badge:'BLEND'},
+  {slug:'ghk-cu-50',group:'ghk-cu',name:'GHK-Cu',amount:'50 mg',price:399,category:'Peptider',description:'Koppartripeptid för forskning inom hudbiologi.',badge:'UTVALD',batch:'202455',coaUrl:'https://polypeptide.io/tests/202455-GHK-Cu_50mg'},
+  {slug:'ghk-cu-100',group:'ghk-cu',name:'GHK-Cu',amount:'100 mg',price:699,category:'Peptider',description:'Koppartripeptid för forskning inom hudbiologi.',batch:'212399',coaUrl:'https://polypeptide.io/tests/212399-GHK-Cu_100mg'},
+  {slug:'mots-c-40',group:'mots-c',name:'MOTS-C',amount:'40 mg',price:649,category:'Peptider',description:'Mitokondriell peptid för metabol forskning.',batch:'226949',coaUrl:'https://polypeptide.io/tests/226949-MOTS-C_40mg'},
+  {slug:'bpc-157-10',group:'bpc-157',name:'BPC-157',amount:'10 mg',price:399,category:'Peptider',description:'Pentadekapeptid för laboratoriestudier.',batch:'626895',coaUrl:'https://polypeptide.io/tests/626895-BPC-157_10mg'},
+  {slug:'bpc-157-20',group:'bpc-157',name:'BPC-157',amount:'20 mg',price:649,category:'Peptider',description:'Pentadekapeptid för laboratoriestudier.',batch:'626665',coaUrl:'https://polypeptide.io/tests/626665-BPC-157_20mg'},
+  {slug:'bpc-157-tb-500-20',group:'bpc-157-tb-500',name:'BPC-157 + TB-500',amount:'20 mg',price:799,category:'Blends',description:'En kombination av två forskningspeptider.',badge:'BLEND',batch:'949595',coaUrl:'https://polypeptide.io/tests/949595-BPC-157+TB-500_20mg'},
 ];
 export type ProductGroup = { slug: string; name: string; category: string; description: string; badge?: string | undefined; variants: [Product, ...Product[]] };
 export const productGroups: ProductGroup[] = products.reduce<ProductGroup[]>((groups, p) => {
