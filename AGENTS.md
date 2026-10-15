@@ -18,3 +18,5 @@
 - Keep one consolidated storefront stylesheet instead of accumulating redesign override layers, so all pages share a predictable visual system.
 
 - Keep storefront-wide facts such as delivery terms and the support contact in the shared browser-safe product module, and render them through one component, so every surface shows the same value.
+
+- Self-hosted VPS builds use `npm run build:vps` (NITRO_PRESET=node-server, output .output/); deploy files live in deploy/. Why: editor builds stay on the default target while the VPS runs plain Node behind Nginx.
