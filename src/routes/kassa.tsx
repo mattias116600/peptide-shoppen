@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, CreditCard, FlaskConical, Home, ListChecks, Mail, Minus, Package, Plus, ShoppingBag, Truck, User } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, CreditCard, FlaskConical, Home, ListChecks, Mail, Minus, Package, Phone, Plus, ShoppingBag, Truck, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/components/store/store-provider';
-import { products, formatPrice, cartTotal, shippingInfo } from '@/lib/products';
+import { products, formatPrice, cartTotal, shippingInfo, isValidPhone } from '@/lib/products';
 import { TelegramSupportRow } from '@/components/store/support-telegram';
 import vial from '@/assets/peptide-vial.jpg';
 
@@ -24,6 +24,7 @@ export const Route = createFileRoute('/kassa')({
 type PlacedOrder = {
   ref: string;
   email: string;
+  phone: string;
   name: string;
   address: string;
   zip: string;
@@ -37,6 +38,15 @@ const steps = [
   { label: 'Uppgifter', icon: User },
   { label: 'Betalning', icon: CreditCard },
 ];
+
+const autoComplete: Record<string, string> = {
+  name: 'name',
+  email: 'email',
+  phone: 'tel',
+  address: 'street-address',
+  zip: 'postal-code',
+  city: 'address-level2',
+};
 
 function StepBar({ current }: { current: number }) {
   return (
@@ -55,11 +65,12 @@ function CheckoutPage() {
   const { items, change, clear } = useStore();
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(false);
-  const [form, setForm] = useState({ name: '', email: '', address: '', zip: '', city: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', zip: '', city: '' });
   const [touched, setTouched] = useState(false);
   const [order, setOrder] = useState<PlacedOrder | null>(null);
   const total = cartTotal(items);
-  const formValid = form.name.trim() && /\S+@\S+\.\S+/.test(form.email) && form.address.trim() && form.zip.trim() && form.city.trim();
+  const phoneValid = isValidPhone(form.phone);
+  const formValid = !!form.name.trim() && /\S+@\S+\.\S+/.test(form.email) && phoneValid && !!form.address.trim() && !!form.zip.trim() && !!form.city.trim();
 
   if (done && order) {
     const placed = new Date().toLocaleDateString('sv-SE', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -77,7 +88,7 @@ function CheckoutPage() {
           <div className="confirm-card">
             <h2><Truck size={15} /> Leverans</h2>
             <p className="confirm-carrier">Skickas med <strong>PostNord</strong> i neutral förpackning — leverans <strong>1–3 arbetsdagar</strong>.</p>
-            <p className="confirm-address">{order.name}<br />{order.address}<br />{order.zip} {order.city}</p>
+            <p className="confirm-address">{order.name}<br />{order.address}<br />{order.zip} {order.city}<br /><Phone size={12} /> {order.phone}</p>
           </div>
           <div className="confirm-card">
             <h2><ListChecks size={15} /> Vad händer nu?</h2>
@@ -126,14 +137,17 @@ function CheckoutPage() {
     );
   }
 
-  const field = (key: keyof typeof form, label: string, type = 'text', placeholder = '') => (
+  const field = (key: keyof typeof form, label: string, type = 'text', placeholder = '', invalid?: boolean) => (
     <label className="kassa-field">
       <span>{label}</span>
       <input
         type={type}
+        inputMode={type === 'tel' ? 'tel' : type === 'email' ? 'email' : undefined}
+        autoComplete={autoComplete[key]}
+        maxLength={type === 'tel' ? 25 : undefined}
         value={form[key]}
         placeholder={placeholder}
-        aria-invalid={touched && !form[key].trim() ? true : undefined}
+        aria-invalid={touched && (invalid ?? !form[key].trim()) ? true : undefined}
         onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
       />
     </label>
@@ -181,13 +195,20 @@ function CheckoutPage() {
         <section aria-label="Steg 2: Uppgifter">
           <div className="kassa-form">
             {field('name', 'Namn', 'text', 'För- och efternamn')}
-            {field('email', 'E-post', 'email', 'namn@exempel.se')}
+            <div className="kassa-form-row">
+              {field('email', 'E-post', 'email', 'namn@exempel.se')}
+              {field('phone', 'Telefon', 'tel', '070 123 45 67', !phoneValid)}
+            </div>
             {field('address', 'Adress', 'text', 'Gatuadress')}
             <div className="kassa-form-row">
               {field('zip', 'Postnummer', 'text', '123 45')}
               {field('city', 'Ort', 'text', 'Stockholm')}
             </div>
+            <p className="kassa-hint"><Phone size={12} /> Telefonnumret används om PostNord behöver nå dig inför leveransen.</p>
             {touched && !formValid && <p className="kassa-error" role="alert">Fyll i alla fält med giltiga uppgifter för att gå vidare.</p>}
+            {touched && !phoneValid && form.phone.trim() !== '' && (
+              <p className="kassa-error" role="alert">Ange ett giltigt telefonnummer, till exempel 070 123 45 67 eller +46 70 123 45 67.</p>
+            )}
           </div>
           <div className="kassa-actions">
             <Button variant="outline" onClick={() => setStep(0)}><ArrowLeft /> Tillbaka</Button>
@@ -201,7 +222,7 @@ function CheckoutPage() {
           <div className="kassa-review">
             <div className="kassa-review-box">
               <h2>Leverans</h2>
-              <p>{form.name}<br />{form.address}<br />{form.zip} {form.city}</p>
+              <p>{form.name}<br />{form.address}<br />{form.zip} {form.city}<br /><Phone size={13} /> {form.phone}</p>
               <p className="kassa-shipping"><Truck size={14} /> {shippingInfo.summary}</p>
             </div>
             <div className="kassa-review-box">
@@ -216,6 +237,7 @@ function CheckoutPage() {
               setOrder({
                 ref: `PSW-${Math.floor(10000 + Math.random() * 90000)}`,
                 email: form.email,
+                phone: form.phone,
                 name: form.name,
                 address: form.address,
                 zip: form.zip,
