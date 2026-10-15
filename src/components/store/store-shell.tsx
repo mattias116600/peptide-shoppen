@@ -8,7 +8,8 @@ import { useStore } from './store-provider';
 import { products, productGroups, formatPrice, cartTotal, shippingInfo, supportInfo } from '@/lib/products';
 import { TelegramSupportRow } from './support-telegram';
 import vial from '@/assets/peptide-vial.webp.asset.json';
-function SwedenFlag(){return <svg viewBox="0 0 16 10" role="img" aria-label="Sveriges flagga" style={{width:'100%',height:'100%',display:'block'}}><rect width="16" height="10" fill="#0065a4"/><rect width="2" height="10" x="5" fill="#fecc02"/><rect width="16" height="2" y="4" fill="#fecc02"/></svg>;}
+import { SwedenFlag } from './sweden-flag';
+
 export function StoreHeader() {
  const {items,change,cartOpen,setCartOpen} = useStore();
  const [searchOpen,setSearchOpen]=useState(false);const [query,setQuery]=useState('');const [menu,setMenu]=useState(false);
