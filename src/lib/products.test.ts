@@ -43,4 +43,3 @@ describe('Leveransvillkor', () => {
     expect(shippingInfo.summary).toBe('Skickas med PostNord. Leverans 1–3 arbetsdagar.');
   });
 });
-});
