@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { StoreProvider } from "@/components/store/store-provider";
 import { StoreHeader, StoreFooter } from "@/components/store/store-shell";
+import { AgeGate } from "@/components/store/age-gate";
 
 function NotFoundComponent() {
   return (
@@ -125,6 +126,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <StoreProvider>
+        <AgeGate />
         <StoreHeader />
         <Outlet />
         <StoreFooter />
