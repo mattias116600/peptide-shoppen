@@ -3,8 +3,11 @@ import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { ArrowRight, Plus, Minus, FlaskConical, ShieldAlert, Truck, FileText, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
-import { findGroup, formatPrice } from '@/lib/products';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { findGroup, formatPrice, productGroups } from '@/lib/products';
+import { articles } from '@/lib/articles';
 import { useStore } from '@/components/store/store-provider';
+import { ProductCard } from '@/components/store/product-card';
 import vial from '@/assets/peptide-vial.jpg';
 
 export const Route = createFileRoute('/produkter/$slug')({
@@ -81,6 +84,62 @@ function Detail() {
             <AccordionItem value="documentation"><AccordionTrigger>Analys & dokumentation</AccordionTrigger><AccordionContent>{variant.coaUrl ? <>Analysrapport för batch {variant.batch}: <a href={variant.coaUrl} target="_blank" rel="noopener noreferrer" className="coa-link">{variant.coaUrl}</a>. Rapporten tillhandahålls av en extern part.</> : 'Batchspecifika analysrapporter är ännu inte tillgängliga. Renhet eller tredjepartstestning påstås inte utan verifierad dokumentation.'}</AccordionContent></AccordionItem>
           </Accordion>
         </div>
+      </div>
+
+      <section className="pdp-section">
+        <Tabs defaultValue="om">
+          <TabsList className="pdp-tabs">
+            <TabsTrigger value="om">Beskrivning</TabsTrigger>
+            <TabsTrigger value="spec">Specifikationer</TabsTrigger>
+            <TabsTrigger value="forvaring">Förvaring</TabsTrigger>
+            <TabsTrigger value="kvalitet">Kvalitet</TabsTrigger>
+          </TabsList>
+          <TabsContent value="om" className="pdp-tab-body"><h2>Om {product.name}</h2><p>{product.description}</p><p>Produkten säljs uteslutande för laboratorie- och forskningsändamål. Inga medicinska påståenden görs.</p></TabsContent>
+          <TabsContent value="spec" className="pdp-tab-body"><h2>Specifikationer</h2><table className="pdp-spec"><tbody>
+            <tr><th>Produkt</th><td>{product.name}</td></tr>
+            <tr><th>Styrka</th><td>{variant.amount}</td></tr>
+            <tr><th>Tillgängliga styrkor</th><td>{product.variants.map(v => v.amount).join(', ')}</td></tr>
+            <tr><th>Kategori</th><td>{product.category}</td></tr>
+            <tr><th>Form</th><td>Lyofiliserat pulver</td></tr>
+            <tr><th>Batch</th><td>{variant.batch ?? 'Publiceras senare'}</td></tr>
+          </tbody></table></TabsContent>
+          <TabsContent value="forvaring" className="pdp-tab-body"><h2>Förvaring</h2><p>Förvaras torrt, mörkt och kallt enligt laboratoriets rutiner. Undvik upprepad frysning och upptining.</p></TabsContent>
+          <TabsContent value="kvalitet" className="pdp-tab-body"><h2>Kvalitet & dokumentation</h2><p>{variant.coaUrl ? <>Analysrapport för batch {variant.batch}: <a href={variant.coaUrl} target="_blank" rel="noopener noreferrer" className="coa-link">Visa CoA</a>.</> : 'Batchspecifik analysrapport publiceras när den finns tillgänglig.'}</p></TabsContent>
+        </Tabs>
+      </section>
+
+      <section className="pdp-section">
+        <div className="eyebrow">VARFÖR PEPTIDESWEDEN</div>
+        <h2 className="pdp-h2">Därför väljer forskare oss</h2>
+        <div className="pdp-why">
+          {[['Tydlig dokumentation','Analysrapporter länkas per batch när de finns.'],['Svensk kundtjänst','Frågor besvaras på svenska.'],['Diskret förpackning','Neutral förpackning vid leverans.'],['Endast forskning','Vi säljer enbart för laboratoriebruk.']].map(([t,d]) => <div key={t}><strong>{t}</strong><p>{d}</p></div>)}
+        </div>
+      </section>
+
+      <section className="pdp-section">
+        <h2 className="pdp-h2">Vanliga frågor</h2>
+        <Accordion type="single" collapsible>
+          <AccordionItem value="a"><AccordionTrigger>Är produkten avsedd för människor?</AccordionTrigger><AccordionContent>Nej. Produkten är endast för laboratorieforskning.</AccordionContent></AccordionItem>
+          <AccordionItem value="b"><AccordionTrigger>Var hittar jag analysrapporten?</AccordionTrigger><AccordionContent>Under fliken Kvalitet ovan, när en rapport finns för vald styrka.</AccordionContent></AccordionItem>
+          <AccordionItem value="c"><AccordionTrigger>Hur räknar jag koncentration?</AccordionTrigger><AccordionContent>Använd vår <Link to="/kalkylator" className="coa-link">kalkylator</Link> för mg/ml.</AccordionContent></AccordionItem>
+        </Accordion>
+      </section>
+
+      <section className="pdp-section">
+        <h2 className="pdp-h2">Relaterade artiklar</h2>
+        <div className="pdp-related">
+          {articles.map(a => <Link key={a.slug} to="/blogg/$slug" params={{ slug: a.slug }}><span>{a.category}</span><strong>{a.title}</strong></Link>)}
+        </div>
+      </section>
+
+      <section className="pdp-section">
+        <h2 className="pdp-h2">Andra forskare tittade även på</h2>
+        <div className="product-grid">{productGroups.filter(g => g.slug !== product.slug).slice(0, 4).map(g => <ProductCard key={g.slug} product={g} />)}</div>
+      </section>
+
+      <div className="pdp-sticky">
+        <div><strong>{product.name} {variant.amount}</strong><span>{formatPrice(total)}</span></div>
+        <Button onClick={() => { change(variant.slug, quantity); setCartOpen(true); }}>Lägg i varukorg</Button>
       </div>
     </main>
   );
