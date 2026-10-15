@@ -110,7 +110,7 @@ function Contact() {
           <div className="contact-direct">
             <span className="about-value-icon"><Mail /></span>
             <div>
-              <strong>Direkt e-post kontakt</strong>
+              <strong>Direkt e-postkontakt</strong>
               <p>
                 En verifierad e-postadress för kundfrågor läggs upp här inom kort.
                 Tills dess är snabbvägarna ovan det snabbaste sättet att få svar.
