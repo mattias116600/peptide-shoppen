@@ -43,7 +43,7 @@ const values = [
 const principles = [
   {
     title: 'Tydlig produktinformation',
-    body: 'Varje peptid beskrivs med alternativa namn, sekvens, formel och molmassia — så att du kan jämföra mot egen referenslitteratur.',
+    body: 'Varje peptid beskrivs med alternativa namn, sekvens, formel och molmassa — så att du kan jämföra mot egen referenslitteratur.',
   },
   {
     title: 'Spårbara analyser',
