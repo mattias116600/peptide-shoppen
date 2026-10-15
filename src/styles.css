@@ -89,6 +89,8 @@
 .article-page .article-section>p{font-size:16px;line-height:1.8}
 .article-page ul{padding-left:0;list-style:none;display:grid;gap:.4rem}.article-page li .article-link{margin-top:0;font-size:14px}
 @media(max-width:900px){.blog-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}}
+@media(min-width:641px) and (max-width:900px){.age-gate{padding:32px}.age-gate-card{max-width:520px;padding:48px 44px;gap:22px;border-radius:14px}.age-gate-card .brand{font-size:26px}.age-gate-icon{width:68px;height:68px}.age-gate-card h2{font-size:32px}.age-gate-card p{font-size:15px;max-width:400px}.age-gate-actions button{height:52px;font-size:15px;border-radius:10px}}
+@media(min-width:901px){.age-gate-card{max-width:500px;padding:52px 48px;gap:22px;border-radius:14px}.age-gate-card h2{font-size:32px}.age-gate-card p{font-size:15px;max-width:400px}.age-gate-actions button{height:52px;font-size:15px}}
 @media(max-width:640px){
  .blog-grid{grid-template-columns:1fr;gap:16px;padding-bottom:56px}
  .blog-card h2{font-size:19px;margin-block:8px}.blog-card>:not(.blog-image){padding-inline:16px}.blog-card>p{font-size:14px}
