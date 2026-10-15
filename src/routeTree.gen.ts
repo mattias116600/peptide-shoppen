@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as KalkylatorRouteImport } from './routes/kalkylator'
+import { Route as KassaRouteImport } from './routes/kassa'
 import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as OmOssRouteImport } from './routes/om-oss'
 import { Route as BloggIndexRouteImport } from './routes/blogg.index'
@@ -32,6 +33,11 @@ const FaqRoute = FaqRouteImport.update({
 const KalkylatorRoute = KalkylatorRouteImport.update({
   id: '/kalkylator',
   path: '/kalkylator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KassaRoute = KassaRouteImport.update({
+  id: '/kassa',
+  path: '/kassa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KontaktRoute = KontaktRouteImport.update({
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/faq': typeof FaqRoute
   '/kalkylator': typeof KalkylatorRoute
+  '/kassa': typeof KassaRoute
   '/kontakt': typeof KontaktRoute
   '/om-oss': typeof OmOssRoute
   '/blogg/$slug': typeof BloggSlugRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/faq': typeof FaqRoute
   '/kalkylator': typeof KalkylatorRoute
+  '/kassa': typeof KassaRoute
   '/kontakt': typeof KontaktRoute
   '/om-oss': typeof OmOssRoute
   '/blogg/$slug': typeof BloggSlugRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/faq': typeof FaqRoute
   '/kalkylator': typeof KalkylatorRoute
+  '/kassa': typeof KassaRoute
   '/kontakt': typeof KontaktRoute
   '/om-oss': typeof OmOssRoute
   '/blogg/$slug': typeof BloggSlugRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/faq'
     | '/kalkylator'
+    | '/kassa'
     | '/kontakt'
     | '/om-oss'
     | '/blogg/$slug'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/'
     | '/faq'
     | '/kalkylator'
+    | '/kassa'
     | '/kontakt'
     | '/om-oss'
     | '/blogg/$slug'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/'
     | '/faq'
     | '/kalkylator'
+    | '/kassa'
     | '/kontakt'
     | '/om-oss'
     | '/blogg/$slug'
@@ -139,6 +151,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FaqRoute: typeof FaqRoute
   KalkylatorRoute: typeof KalkylatorRoute
+  KassaRoute: typeof KassaRoute
   KontaktRoute: typeof KontaktRoute
   OmOssRoute: typeof OmOssRoute
   BloggSlugRoute: typeof BloggSlugRoute
@@ -168,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/kalkylator'
       fullPath: '/kalkylator'
       preLoaderRoute: typeof KalkylatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kassa': {
+      id: '/kassa'
+      path: '/kassa'
+      fullPath: '/kassa'
+      preLoaderRoute: typeof KassaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kontakt': {
@@ -219,6 +239,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FaqRoute: FaqRoute,
   KalkylatorRoute: KalkylatorRoute,
+  KassaRoute: KassaRoute,
   KontaktRoute: KontaktRoute,
   OmOssRoute: OmOssRoute,
   BloggSlugRoute: BloggSlugRoute,
