@@ -180,7 +180,7 @@
 .mobile-nav-tg .mobile-nav-label{font-size:15px;font-weight:600}
 .mobile-nav-tg-copy{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
 .mobile-nav-tg .mobile-nav-label{font-family:var(--font-sans);font-size:15px;font-weight:600;white-space:nowrap}
-.mobile-nav-sub{font-size:11px;color:var(--sun)}
+.mobile-nav-sub{font-size:11px;color:var(--sun);white-space:nowrap}
 .mobile-nav-tg .mobile-nav-tg-icon svg{color:var(--ink)}
 .mobile-nav-tg svg{width:17px;height:17px;flex-shrink:0}
 .tg-row{display:flex;align-items:center;gap:13px;margin-top:12px;padding:13px 15px;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--sun);border-radius:5px;text-align:left;transition:border-color .15s,box-shadow .15s}
@@ -192,7 +192,7 @@
 .tg-row-text small{font-size:11px;color:var(--muted-foreground)}
 .tg-row-arrow{width:16px;height:16px;flex-shrink:0;margin-left:auto;color:var(--primary)}
 .tg-card{display:flex;align-items:center;gap:26px;margin-top:34px;padding:32px 30px;background:var(--primary);color:var(--primary-foreground);border-radius:var(--radius)}
-.tg-card-icon{display:grid;place-items:center;width:52px;height:52px;flex-shrink:0;border-radius:999px;background:color-mix(in oklab,var(--sun) 22%,transparent);color:var(--sun)}
+.tg-card-icon{display:grid;place-items:center;width:52px;height:52px;flex-shrink:0;border-radius:999px;background:var(--sun);color:var(--ink)}
 .tg-card-icon svg{width:24px;height:24px}
 .tg-card-copy{min-width:0}
 .tg-card .eyebrow{color:var(--sun);margin-bottom:10px}
