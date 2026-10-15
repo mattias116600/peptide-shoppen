@@ -12,7 +12,7 @@ export const products: Product[] = [
   {slug:'bpc-157-20',group:'bpc-157',name:'BPC-157',amount:'20 mg',price:649,category:'Peptider',description:'Pentadekapeptid för laboratoriestudier.'},
   {slug:'bpc-157-tb-500-20',group:'bpc-157-tb-500',name:'BPC-157 + TB-500',amount:'20 mg',price:799,category:'Blends',description:'En kombination av två forskningspeptider.',badge:'BLEND'},
 ];
-export type ProductGroup = { slug: string; name: string; category: string; description: string; badge?: string; variants: Product[] };
+export type ProductGroup = { slug: string; name: string; category: string; description: string; badge?: string | undefined; variants: Product[] };
 export const productGroups: ProductGroup[] = products.reduce<ProductGroup[]>((groups, p) => {
   const g = groups.find(x => x.slug === p.group);
   if (g) { g.variants.push(p); if (p.badge && !g.badge) g.badge = p.badge; }
