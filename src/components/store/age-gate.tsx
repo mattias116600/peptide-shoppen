@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { SwedenFlag } from './sweden-flag';
 
 const KEY = 'peptidesweden-age-verified';
 
