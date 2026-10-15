@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useStore } from '@/components/store/store-provider';
 import { products, formatPrice, cartTotal, shippingInfo, isValidPhone } from '@/lib/products';
 import { TelegramSupportRow } from '@/components/store/support-telegram';
-import vial from '@/assets/peptide-vial.jpg';
+import vial from '@/assets/peptide-vial.webp.asset.json';
 
 export const Route = createFileRoute('/kassa')({
   head: () => ({
@@ -169,7 +169,7 @@ function CheckoutPage() {
               if (!p) return null;
               return (
                 <div className="cart-item" key={p.slug}>
-                  <img src={vial} alt={p.name} width={80} height={80} />
+                  <img src={vial.url} alt={p.name} width={80} height={80} />
                   <div>
                     <h3>{p.name}</h3>
                     <p>{p.amount}</p>

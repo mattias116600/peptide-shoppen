@@ -4,7 +4,7 @@ import { Plus, ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { type ProductGroup, formatPrice } from '@/lib/products';
 import { useStore } from './store-provider';
-import vial from '@/assets/peptide-vial.jpg';
+import vial from '@/assets/peptide-vial.webp.asset.json';
 
 export function ProductCard({ product }: { product: ProductGroup }) {
   const { change, setCartOpen } = useStore();
@@ -14,7 +14,7 @@ export function ProductCard({ product }: { product: ProductGroup }) {
   return (
     <article className="product-card">
       <Link {...link} className="product-photo" aria-label={`Visa ${product.name}`}>
-        <img src={vial} width={1024} height={1024} alt={`${product.name} forskningspeptid`} loading="lazy" />
+        <img src={vial.url} width={1024} height={1024} alt={`${product.name} forskningspeptid`} loading="lazy" />
         {product.badge && <span className="product-badge">{product.badge}</span>}
         <span className="photo-arrow"><ArrowUpRight size={18} /></span>
         <span className="amount-tag">{variant.amount}</span>
