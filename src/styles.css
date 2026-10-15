@@ -97,7 +97,7 @@ body{font-size:15px}
 .size-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .size-tile{display:flex;flex-direction:column;gap:3px;text-align:left;padding:14px;border:1.5px solid var(--border);border-radius:16px;background:var(--card);color:var(--foreground);cursor:pointer;transition:all .15s}
 .size-tile:hover{border-color:var(--primary)}.size-tile strong{font-size:16px}.size-tile span{font-size:13px;font-weight:600}.size-tile small{font-size:11px;color:var(--muted-foreground)}
-.size-tile[data-active="true"]{border-color:var(--primary);background:color-mix(in oklch,var(--primary) 8%,var(--card));box-shadow:0 0 0 3px color-mix(in oklch,var(--primary) 18%,transparent)}
+.size-tile[data-active="true"]{border-color:var(--primary);background:var(--secondary);box-shadow:0 0 0 3px color-mix(in oklch,var(--primary) 18%,transparent)}
 .pdp-buy{margin-top:24px;padding:20px;border:1px solid var(--border);border-radius:20px;background:var(--card)}
 .pdp-total{display:flex;justify-content:space-between;align-items:baseline}.pdp-total span{font-size:12px;color:var(--muted-foreground);text-transform:uppercase;letter-spacing:.08em}.pdp-total strong{font-size:26px;color:var(--primary)}
 .pdp-buy .detail-notice{margin-block:14px 0}
