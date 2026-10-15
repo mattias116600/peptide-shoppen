@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { findGroup, formatPrice, productGroups, peptideInfo, shippingInfo } from '@/lib/products';
 import { articles } from '@/lib/articles';
 import { useStore } from '@/components/store/store-provider';
+import { TelegramSupportCard, TelegramSupportRow } from '@/components/store/support-telegram';
 import { ProductCard } from '@/components/store/product-card';
 import vial from '@/assets/peptide-vial.jpg';
 
@@ -71,6 +72,7 @@ function Detail() {
               <Button onClick={() => { change(variant.slug, quantity); setCartOpen(true); }}>Lägg i varukorg — {formatPrice(total)} <ArrowRight /></Button>
             </div>
             <p className="detail-delivery"><Truck size={14} /> {shippingInfo.summary}</p>
+            <TelegramSupportRow note="Frågor om produkten? Skriv till oss på Telegram" />
           </div>
 
           <div className="pdp-info-cards">
@@ -124,6 +126,10 @@ function Detail() {
           <AccordionItem value="b"><AccordionTrigger>Var hittar jag analysrapporten?</AccordionTrigger><AccordionContent>Under fliken Kvalitet ovan, när en rapport finns för vald styrka.</AccordionContent></AccordionItem>
           <AccordionItem value="c"><AccordionTrigger>Hur räknar jag koncentration?</AccordionTrigger><AccordionContent>Använd vår <Link to="/kalkylator" className="coa-link">kalkylator</Link> för mg/ml.</AccordionContent></AccordionItem>
         </Accordion>
+      </section>
+
+      <section className="pdp-section">
+        <TelegramSupportCard title={`Frågor om ${product.name}?`} body="Skicka oss ett meddelande på Telegram — frågor om styrkor, analysdokumentation, förvaring och leverans besvaras på svenska." cta="Ställ en fråga" />
       </section>
 
       <section className="pdp-section">
