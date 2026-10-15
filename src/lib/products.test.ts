@@ -34,6 +34,7 @@ describe('Analyserapporter per styrka', () => {
       '30 mg': 'https://polypeptide.io/tests/201265-Retatrutide_30mg',
       '60 mg': 'https://polypeptide.io/tests/201435-Retatrutide_60mg',
     });
+  });
 });
 import { shippingInfo } from './products';
 describe('Leveransvillkor', () => {
