@@ -25,7 +25,11 @@
 .desktop-nav{display:flex;gap:26px;font-size:13px;font-weight:500;align-items:center}.desktop-nav a{position:relative;padding-block:29px}.desktop-nav a:hover,.desktop-nav a[data-status=active]{color:var(--primary)}.desktop-nav a[data-status=active]::after{content:"";height:3px;background:var(--primary);position:absolute;inset:auto 0 0}
 .header-tools{display:flex;gap:5px}.header-tools svg{width:21px;height:21px;stroke-width:1.6}.header-tools button{width:40px;height:40px}.mobile-menu-trigger{display:none}.cart-trigger{position:relative}.cart-count{position:absolute;right:0;top:0;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;background:var(--sun);color:var(--foreground);font-size:10px;font-weight:700}
 .mobile-nav-overlay{position:fixed;inset:0;z-index:60;background:rgba(6,20,45,.55);backdrop-filter:blur(6px);animation:navFade .25s ease}
-.mobile-nav{position:absolute;top:0;right:0;bottom:0;width:min(86vw,340px);display:flex;flex-direction:column;gap:4px;padding:88px 26px 26px;background:var(--primary);color:#fff;box-shadow:-18px 0 50px rgba(6,20,45,.35);animation:navSlide .3s cubic-bezier(.22,.9,.3,1);overflow-y:auto}
+.mobile-nav{position:absolute;top:0;right:0;bottom:0;width:min(86vw,340px);display:flex;flex-direction:column;gap:4px;padding:22px 26px 26px;background:var(--primary);color:#fff;box-shadow:-18px 0 50px rgba(6,20,45,.35);animation:navSlide .3s cubic-bezier(.22,.9,.3,1);overflow-y:auto}
+.mobile-nav-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:16px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,.18)}
+.mobile-nav-brand{font-family:var(--font-serif);font-size:22px;font-weight:650;color:#fff;letter-spacing:0}.mobile-nav-brand span{color:var(--sun)}
+.mobile-nav-close{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.14);color:#fff;border:0;cursor:pointer;flex-shrink:0}
+.mobile-nav-close:active{background:rgba(255,255,255,.28)}
 @keyframes navFade{from{opacity:0}}
 @keyframes navSlide{from{transform:translateX(100%)}}
 .mobile-nav a{display:flex;align-items:center;gap:14px;padding:15px 12px;border-radius:10px;color:#fff;font-family:var(--font-serif);font-size:21px;font-weight:700;letter-spacing:-.01em;animation:navItem .35s ease both;transition:background .15s ease}
