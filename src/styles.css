@@ -119,3 +119,24 @@ body{font-size:15px}
 .step-num{display:inline-grid;place-items:center;width:1.7rem;height:1.7rem;border-radius:999px;background:var(--primary);color:var(--primary-foreground);font-size:.85rem;font-weight:700;margin-right:.4rem}
 .calc-result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin-top:1rem}
 .calc-result-grid>div{display:grid;gap:.2rem;padding:.8rem 1rem;border-radius:var(--radius);background:var(--muted)}
+.fp-hero{background:radial-gradient(circle at 85% 10%,color-mix(in oklab,var(--sun) 22%,transparent),transparent 45%),linear-gradient(160deg,color-mix(in oklab,var(--primary) 8%,var(--background)),var(--background));padding:clamp(2.5rem,6vw,5rem) 0}
+.fp-hero-grid{display:grid;gap:3rem;align-items:center}@media(min-width:900px){.fp-hero-grid{grid-template-columns:1.05fr 1fr}}
+.fp-pill{display:inline-flex;gap:.5rem;align-items:center;padding:.4rem .9rem;border-radius:999px;background:var(--card);border:1px solid var(--border);font-size:.8rem;font-weight:600}
+.fp-hero-copy h1{font-family:var(--font-serif);font-size:clamp(2.5rem,6vw,4.5rem);line-height:1;font-weight:700;margin:1.25rem 0;letter-spacing:-.03em}
+.fp-hero-copy h1 em,.fp-cta em{font-style:normal;color:var(--primary);background:linear-gradient(transparent 62%,color-mix(in oklab,var(--sun) 70%,transparent) 62%)}
+.fp-hero-copy>p{color:var(--muted-foreground);font-size:1.1rem;max-width:34rem}
+.fp-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem}
+.fp-stats{display:flex;gap:2.5rem;margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.fp-stats dt{font-family:var(--font-serif);font-size:1.8rem;font-weight:700;color:var(--primary)}.fp-stats dd{color:var(--muted-foreground);font-size:.85rem}
+.fp-hero-visual{position:relative}.fp-hero-visual img{width:100%;aspect-ratio:4/3.4;object-fit:cover;border-radius:2rem;box-shadow:0 30px 60px -25px color-mix(in oklab,var(--primary) 45%,transparent)}
+.fp-float{position:absolute;left:-1rem;bottom:1.5rem;display:flex;gap:.75rem;align-items:center;padding:.9rem 1.1rem;border-radius:1.1rem;background:color-mix(in oklab,var(--card) 88%,transparent);backdrop-filter:blur(12px);border:1px solid var(--border);box-shadow:0 12px 30px -12px color-mix(in oklab,var(--foreground) 30%,transparent);transition:transform .2s}
+.fp-float:hover{transform:translateY(-3px)}.fp-float>svg:first-child{color:var(--primary)}.fp-float span{display:block;font-size:.78rem;color:var(--muted-foreground)}
+@media(max-width:899px){.fp-float{left:.75rem}}
+.fp-features{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:-1rem;padding-bottom:3rem}@media(min-width:900px){.fp-features{grid-template-columns:repeat(4,1fr)}}
+.fp-feature{padding:1.25rem;border-radius:1.25rem;background:var(--card);border:1px solid var(--border);transition:border-color .2s,transform .2s}.fp-feature:hover{border-color:var(--sun);transform:translateY(-2px)}
+.fp-feature svg{color:var(--primary);margin-bottom:.75rem}.fp-feature strong{display:block}.fp-feature p{font-size:.85rem;color:var(--muted-foreground)}
+.fp-steps{padding:4rem 0}.fp-steps h2,.fp-cta h2{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;letter-spacing:-.02em}
+.fp-steps ol{display:grid;gap:1rem;margin-top:1.5rem}@media(min-width:768px){.fp-steps ol{grid-template-columns:repeat(3,1fr)}}
+.fp-steps li{padding:1.5rem;border-radius:1.25rem;background:var(--secondary)}.fp-steps li span{display:inline-grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:999px;background:var(--sun);color:var(--sun-foreground);font-weight:700;margin-bottom:.75rem}.fp-steps li strong{display:block}.fp-steps li p{color:var(--muted-foreground);font-size:.9rem}
+.fp-cta{display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:space-between;align-items:center;margin-bottom:4rem;padding:clamp(2rem,5vw,3.5rem);border-radius:2rem;background:var(--primary);color:var(--primary-foreground)}
+.fp-cta em{color:var(--sun);background:none}.fp-cta p{opacity:.85;max-width:36rem;margin-top:.5rem}
