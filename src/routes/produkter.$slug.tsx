@@ -71,7 +71,6 @@ function Detail() {
               <Button onClick={() => { change(variant.slug, quantity); setCartOpen(true); }}>Lägg i varukorg — {formatPrice(total)} <ArrowRight /></Button>
             </div>
             <p className="detail-delivery"><Truck size={14} /> {shippingInfo.summary}</p>
-            <p className="detail-notice">Exempelpriser. Beställningar och betalningar är inte aktiverade ännu.</p>
           </div>
 
           <div className="pdp-info-cards">
