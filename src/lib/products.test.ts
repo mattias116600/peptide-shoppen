@@ -52,3 +52,22 @@ describe('Supportkanal', () => {
     expect(supportInfo.url).toBe(`https://t.me/${supportInfo.handle.replace('@','')}`);
   });
 });
+import { isValidPhone, normalizePhone } from './products';
+describe('Telefonnummer i kassan', () => {
+  it('accepts Swedish numbers written with spaces, dashes or +46', () => {
+    expect(isValidPhone('070 123 45 67')).toBe(true);
+    expect(isValidPhone('+46 70 123 45 67')).toBe(true);
+    expect(isValidPhone('08-12 34 56')).toBe(true);
+  });
+  it('rejects empty, foreign or badly formatted numbers', () => {
+    expect(isValidPhone('')).toBe(false);
+    expect(isValidPhone('1234')).toBe(false);
+    expect(isValidPhone('+1 202 555 0173')).toBe(false);
+    expect(isValidPhone('070-abc')).toBe(false);
+    expect(isValidPhone('070123456789012345')).toBe(false);
+  });
+  it('strips separators before checking the number', () => {
+    expect(normalizePhone('+46 70-123 45 67')).toBe('+46701234567');
+    expect(normalizePhone('070 123 45 67')).toBe('0701234567');
+  });
+});
