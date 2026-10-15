@@ -28,6 +28,7 @@ export function updateCart(items: CartItem[], slug: string, delta: number): Cart
   return items.map(item => item.slug === slug ? {...item,quantity:item.quantity + delta} : item).filter(item => item.quantity > 0);
 }
 export function cartTotal(items: CartItem[]) { return items.reduce((total,item) => total + (products.find(p => p.slug === item.slug)?.price ?? 0) * item.quantity,0); }
+export const shippingInfo = { carrier: 'PostNord', leadTime: '1–3 arbetsdagar', summary: 'Skickas med PostNord. Leverans 1–3 arbetsdagar.' } as const;
 export type PeptideInfo = { about: string[]; specs: [string, string][] };
 export const peptideInfo: Record<string, PeptideInfo> = {
   'retatrutide': { about: ['Retatrutide (LY3437943) är en syntetisk peptid med 39 aminosyror som studeras som trippelagonist vid GIP-, GLP-1- och glukagonreceptorerna.', 'Peptiden används i laboratoriestudier inom metabol forskning, bland annat receptorbindning och signalvägar.'],

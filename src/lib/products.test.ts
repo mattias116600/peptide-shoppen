@@ -36,3 +36,11 @@ describe('Analyserapporter per styrka', () => {
     });
   });
 });
+import { shippingInfo } from './products';
+describe('Leveransvillkor', () => {
+  it('names the carrier and the delivery time shown across the site', () => {
+    expect(shippingInfo.carrier).toBe('PostNord');
+    expect(shippingInfo.leadTime).toBe('1–3 arbetsdagar');
+    expect(shippingInfo.summary).toBe('Skickas med PostNord. Leverans 1–3 arbetsdagar.');
+  });
+});

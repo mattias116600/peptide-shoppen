@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowRight, FlaskConical, FileText, Layers, ShieldCheck, Calculator, BookOpen } from 'lucide-react';
+import { ArrowRight, FlaskConical, FileText, Layers, ShieldCheck, Calculator, BookOpen, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/store/product-card';
-import { findGroup } from '@/lib/products';
+import { findGroup, shippingInfo } from '@/lib/products';
 import hero from '@/assets/nordic-lab-hero.jpg';
 
 export const Route = createFileRoute('/')({
@@ -53,6 +53,13 @@ function Home() {
         <Link to="/produkter">Alla produkter <ArrowRight /></Link>
       </div>
       <div className="product-grid">{['retatrutide', 'ghk-cu', 'mots-c', 'bpc-157-tb-500'].map(slug => { const p = findGroup(slug); return p ? <ProductCard product={p} key={p.slug} /> : null; })}</div>
+    </section>
+    <section className="nordic-shipping">
+      <div className="content-width nordic-shipping-inner">
+        <span className="nordic-shipping-icon"><Truck /></span>
+        <div><strong>Skickas med {shippingInfo.carrier}</strong><p>Neutral förpackning och leverans {shippingInfo.leadTime}.</p></div>
+        <span className="nordic-shipping-tag">{shippingInfo.leadTime}</span>
+      </div>
     </section>
     <section className="nordic-lab-band">
       <div className="content-width nordic-lab-inner">
