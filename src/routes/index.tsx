@@ -30,7 +30,7 @@ function Home() {
       <img className="nordic-hero-image" src={hero} alt="Tre illustrativa forskningsvialer med blå och gula lock" width={1920} height={1024} fetchPriority="high" />
       <div className="content-width nordic-hero-content">
         <div className="nordic-hero-copy">
-          <div className="eyebrow"><span className="eyebrow-line" aria-hidden="true" /> FORSKNING. I FOKUS.</div>
+          <div className="eyebrow"><span className="mini-flag" aria-hidden="true" /> FORSKNING. I FOKUS.</div>
           <h1>Peptidesweden.<span>Precision börjar här.</span></h1>
           <p>Ett utvalt sortiment av peptider för laboratorieforskning. Tydlig information, valbara styrkor och tillgängliga analysrapporter.</p>
           <div className="nordic-hero-actions">
