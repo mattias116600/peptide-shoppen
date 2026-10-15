@@ -14,14 +14,34 @@ import vial from '@/assets/peptide-vial.webp.asset.json';
 export const Route = createFileRoute('/produkter/$slug')({
   validateSearch: (search: Record<string, unknown>): { styrka?: string | undefined } => ({ styrka: typeof search['styrka'] === 'string' ? search['styrka'] : undefined }),
   loader: ({ params }) => { const product = findGroup(params.slug); if (!product) throw notFound(); return product; },
-  head: ({ loaderData }) => ({ meta: [
-    { title: `${loaderData?.name ?? 'Produkt'} för forskning | Peptidesweden` },
-    { name: 'description', content: loaderData?.description ?? 'Forskningspeptider från Peptidesweden.' },
-    { property: 'og:title', content: `${loaderData?.name ?? 'Produkt'} | Peptidesweden` },
-    { property: 'og:description', content: 'Produktinformation för laboratorieforskning.' },
-    { property: 'og:type', content: 'product' },
-    { name: 'twitter:card', content: 'summary_large_image' },
-  ] }),
+  head: ({ loaderData, params }) => ({
+    meta: [
+      { title: `${loaderData?.name ?? 'Produkt'} för forskning | Peptidesweden` },
+      { name: 'description', content: loaderData?.description ?? 'Forskningspeptider från Peptidesweden.' },
+      { property: 'og:title', content: `${loaderData?.name ?? 'Produkt'} | Peptidesweden` },
+      { property: 'og:description', content: 'Produktinformation för laboratorieforskning.' },
+      { property: 'og:type', content: 'product' },
+      { property: 'og:url', content: `/produkter/${params.slug}` },
+      { name: 'twitter:card', content: 'summary_large_image' },
+    ],
+    links: [{ rel: 'canonical', href: `/produkter/${params.slug}` }],
+    scripts: loaderData ? [{ type: 'application/ld+json', children: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: loaderData.name,
+      description: loaderData.description,
+      category: loaderData.category,
+      brand: { '@type': 'Brand', name: 'Peptidesweden' },
+      offers: loaderData.variants.map(v => ({
+        '@type': 'Offer',
+        name: `${loaderData.name} ${v.amount}`,
+        price: v.price,
+        priceCurrency: 'SEK',
+        availability: 'https://schema.org/InStock',
+        url: `/produkter/${params.slug}?styrka=${v.slug}`,
+      })),
+    }) }] : [],
+  }),
   component: Detail,
 });
 
