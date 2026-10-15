@@ -6,3 +6,4 @@
 - [x] Add product browsing, product details and a session cart.
 - [x] Verify navigation and shopping interactions on desktop and mobile.
 - [x] Redesign the entire storefront with a distinct new visual direction and verify browsing on desktop and mobile.
+- [x] State that orders ship with PostNord with 1–3 working day delivery on the front page, product pages, cart, footer and FAQ, and verify it in the browser.
