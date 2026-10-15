@@ -44,3 +44,11 @@ describe('Leveransvillkor', () => {
     expect(shippingInfo.summary).toBe('Skickas med PostNord. Leverans 1–3 arbetsdagar.');
   });
 });
+import { supportInfo } from './products';
+describe('Supportkanal', () => {
+  it('links every support button to the Telegram handle the owner supplied', () => {
+    expect(supportInfo.handle).toBe('@peptideswedenn');
+    expect(supportInfo.url).toBe('https://t.me/peptideswedenn');
+    expect(supportInfo.url).toBe(`https://t.me/${supportInfo.handle.replace('@','')}`);
+  });
+});
