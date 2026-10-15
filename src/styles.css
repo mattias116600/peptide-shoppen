@@ -170,3 +170,36 @@
 .contact-direct strong{font-size:14px}
 .contact-direct p{font-size:12px;margin-top:6px}
 }
+
+/* ---------- Telegram support ---------- */
+.header-tg{display:grid;place-items:center;width:40px;height:40px;flex-shrink:0;border:1px solid var(--border);border-radius:4px;background:var(--card);color:var(--primary);transition:background .15s,color .15s,border-color .15s}
+.header-tg:hover{background:var(--primary);border-color:var(--primary);color:var(--primary-foreground)}
+.header-tg svg{width:18px;height:18px}
+.mobile-nav-tg{display:flex;align-items:center;gap:12px;margin-top:26px;padding:15px 16px;background:color-mix(in oklab,var(--sun) 14%,transparent);border:1px solid color-mix(in oklab,var(--sun) 45%,transparent);border-radius:5px;color:var(--primary-foreground)}
+.mobile-nav-tg-icon{display:grid;place-items:center;width:30px;height:30px;flex-shrink:0;border-radius:999px;background:var(--sun);color:var(--ink)}
+.mobile-nav-tg .mobile-nav-label{font-size:15px;font-weight:600}
+.mobile-nav-handle{margin-left:auto;font-size:11px;opacity:.7}
+.mobile-nav-tg svg{width:17px;height:17px;flex-shrink:0}
+.tg-row{display:flex;align-items:center;gap:13px;margin-top:12px;padding:13px 15px;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--sun);border-radius:5px;text-align:left;transition:border-color .15s,box-shadow .15s}
+.tg-row:hover{border-color:var(--primary);box-shadow:0 12px 26px -20px color-mix(in oklab,var(--primary) 60%,transparent)}
+.tg-row-icon{display:grid;place-items:center;width:32px;height:32px;flex-shrink:0;border-radius:999px;background:color-mix(in oklab,var(--primary) 10%,transparent);color:var(--primary)}
+.tg-row-icon svg{width:15px;height:15px}
+.tg-row-text{display:flex;flex-direction:column;gap:3px;min-width:0}
+.tg-row-text strong{font-size:13px;font-weight:600;color:var(--foreground)}
+.tg-row-text small{font-size:11px;color:var(--muted-foreground)}
+.tg-row-arrow{width:16px;height:16px;flex-shrink:0;margin-left:auto;color:var(--primary)}
+.tg-card{display:flex;align-items:center;gap:26px;margin-top:34px;padding:32px 30px;background:var(--primary);color:var(--primary-foreground);border-radius:var(--radius)}
+.tg-card-icon{display:grid;place-items:center;width:52px;height:52px;flex-shrink:0;border-radius:999px;background:color-mix(in oklab,var(--sun) 22%,transparent);color:var(--sun)}
+.tg-card-icon svg{width:24px;height:24px}
+.tg-card-copy{min-width:0}
+.tg-card .eyebrow{color:var(--sun);margin-bottom:10px}
+.tg-card .eyebrow .eyebrow-line{background:var(--sun)}
+.tg-card h2{font-size:22px;line-height:1.2;margin:0}
+.tg-card p{font-size:13px;line-height:1.8;opacity:.82;margin-top:10px;max-width:520px}
+.tg-card-handle{display:inline-block;margin-top:14px;padding:6px 14px;border:1px solid color-mix(in oklab,var(--sun) 55%,transparent);border-radius:999px;font-size:11px;font-weight:600;color:var(--sun)}
+.tg-card-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-left:auto;flex-shrink:0;height:48px;padding-inline:24px;background:var(--sun);color:var(--ink);border-radius:4px;font-size:13px;font-weight:700;white-space:nowrap;transition:transform .15s,box-shadow .15s}
+.tg-card-btn:hover{transform:translateY(-1px);box-shadow:0 16px 32px -18px color-mix(in oklab,var(--sun) 70%,transparent)}
+.tg-card-btn svg{width:15px;height:15px}
+.footer-tg{display:flex;align-items:center;gap:9px;font-size:11px;opacity:.85;margin-top:10px}
+.footer-tg svg{width:15px;height:15px;color:var(--sun);flex-shrink:0}
+.footer-tg a{color:var(--sun);font-weight:600}
