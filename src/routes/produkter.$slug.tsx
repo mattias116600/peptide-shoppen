@@ -4,7 +4,7 @@ import { ArrowRight, Plus, Minus, FlaskConical, ShieldAlert, Truck, FileText, Cr
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { findGroup, formatPrice, productGroups, peptideInfo } from '@/lib/products';
+import { findGroup, formatPrice, productGroups, peptideInfo, shippingInfo } from '@/lib/products';
 import { articles } from '@/lib/articles';
 import { useStore } from '@/components/store/store-provider';
 import { ProductCard } from '@/components/store/product-card';
@@ -70,12 +70,13 @@ function Detail() {
               </div>
               <Button onClick={() => { change(variant.slug, quantity); setCartOpen(true); }}>Lägg i varukorg — {formatPrice(total)} <ArrowRight /></Button>
             </div>
+            <p className="detail-delivery"><Truck size={14} /> {shippingInfo.summary}</p>
             <p className="detail-notice">Exempelpriser. Beställningar och betalningar är inte aktiverade ännu.</p>
           </div>
 
           <div className="pdp-info-cards">
             <div><FileText size={18} /><div><strong>Analysrapport</strong>{variant.coaUrl ? <p>Batch {variant.batch} — <a href={variant.coaUrl} target="_blank" rel="noopener noreferrer" className="coa-link">Visa analysrapport (CoA)</a></p> : <p>Batchspecifika rapporter publiceras när de finns tillgängliga.</p>}</div></div>
-            <div><Truck size={18} /><div><strong>Leverans</strong><p>Fraktvillkor kommer snart.</p></div></div>
+            <div><Truck size={18} /><div><strong>Leverans</strong><p>{shippingInfo.summary}</p></div></div>
             <div><CreditCard size={18} /><div><strong>Betalning</strong><p>Betalningsalternativ är inte aktiverade ännu.</p></div></div>
           </div>
 
@@ -114,7 +115,7 @@ function Detail() {
         <div className="eyebrow">VARFÖR PEPTIDESWEDEN</div>
         <h2 className="pdp-h2">Därför väljer forskare oss</h2>
         <div className="pdp-why">
-          {[['Tydlig dokumentation','Analysrapporter länkas per batch när de finns.'],['Svensk kundtjänst','Frågor besvaras på svenska.'],['Diskret förpackning','Neutral förpackning vid leverans.'],['Endast forskning','Vi säljer enbart för laboratoriebruk.']].map(([t,d]) => <div key={t}><strong>{t}</strong><p>{d}</p></div>)}
+          {[['Tydlig dokumentation','Analysrapporter länkas per batch när de finns.'],['Svensk kundtjänst','Frågor besvaras på svenska.'],['Diskret förpackning','Neutral förpackning skickad med PostNord.'],['Endast forskning','Vi säljer enbart för laboratoriebruk.']].map(([t,d]) => <div key={t}><strong>{t}</strong><p>{d}</p></div>)}
         </div>
       </section>
 
