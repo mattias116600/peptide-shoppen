@@ -71,14 +71,14 @@ function Detail() {
           </div>
 
           <div className="pdp-info-cards">
-            <div><FileText size={18} /><div><strong>Analysrapport</strong><p>Batchspecifika rapporter publiceras när de finns tillgängliga.</p></div></div>
+            <div><FileText size={18} /><div><strong>Analysrapport</strong>{variant.coaUrl ? <p>Batch {variant.batch} — <a href={variant.coaUrl} target="_blank" rel="noopener noreferrer" className="coa-link">Visa analysrapport (CoA)</a></p> : <p>Batchspecifika rapporter publiceras när de finns tillgängliga.</p>}</div></div>
             <div><Truck size={18} /><div><strong>Leverans</strong><p>Fraktvillkor kommer snart.</p></div></div>
             <div><CreditCard size={18} /><div><strong>Betalning</strong><p>Betalningsalternativ är inte aktiverade ännu.</p></div></div>
           </div>
 
           <Accordion type="single" collapsible defaultValue="information">
             <AccordionItem value="information"><AccordionTrigger>Produktbeskrivning</AccordionTrigger><AccordionContent>Innehåll: {product.name}, {variant.amount}. {product.description} Endast för forskningsändamål. Bilden är en varumärkesillustration, inte en bild av en verifierad produktbatch.</AccordionContent></AccordionItem>
-            <AccordionItem value="documentation"><AccordionTrigger>Analys & dokumentation</AccordionTrigger><AccordionContent>Batchspecifika analysrapporter är ännu inte tillgängliga. Renhet eller tredjepartstestning påstås inte utan verifierad dokumentation.</AccordionContent></AccordionItem>
+            <AccordionItem value="documentation"><AccordionTrigger>Analys & dokumentation</AccordionTrigger><AccordionContent>{variant.coaUrl ? <>Analysrapport för batch {variant.batch}: <a href={variant.coaUrl} target="_blank" rel="noopener noreferrer" className="coa-link">{variant.coaUrl}</a>. Rapporten tillhandahålls av en extern part.</> : 'Batchspecifika analysrapporter är ännu inte tillgängliga. Renhet eller tredjepartstestning påstås inte utan verifierad dokumentation.'}</AccordionContent></AccordionItem>
           </Accordion>
         </div>
       </div>
