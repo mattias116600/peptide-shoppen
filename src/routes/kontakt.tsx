@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowRight, BookOpen, Calculator, FileCheck2, Mail, MessageCircleQuestion } from 'lucide-react';
+import { ArrowRight, BookOpen, Calculator, FileCheck2, Mail, MessageCircleQuestion, Send } from 'lucide-react';
+import { TelegramSupportCard } from '@/components/store/support-telegram';
+import { supportInfo } from '@/lib/products';
 import vialImg from '@/assets/peptides-hero.jpg';
 
 export const Route = createFileRoute('/kontakt')({
@@ -75,7 +77,10 @@ function Contact() {
               Börja med snabbvägarna nedan — oftast finns svaret redan på sajten.
             </p>
             <div className="about-hero-actions">
-              <Link to="/faq" className="about-btn-primary">
+              <a className="about-btn-primary" href={supportInfo.url} target="_blank" rel="noopener noreferrer">
+                Ställ en fråga på Telegram <Send />
+              </a>
+              <Link to="/faq" className="about-btn-outline">
                 Besök FAQ <ArrowRight />
               </Link>
               <Link to="/produkter" className="about-btn-outline">
@@ -107,13 +112,15 @@ function Contact() {
             ))}
           </div>
 
+          <TelegramSupportCard title="Support på Telegram" body="Frågor om sortimentet, analysdokumentation, förvaring eller en beställning? Öppna en chatt med oss — du får svar på svenska." cta="Öppna Telegram" />
+
           <div className="contact-direct">
             <span className="about-value-icon"><Mail /></span>
             <div>
               <strong>Direkt e-postkontakt</strong>
               <p>
                 En verifierad e-postadress för kundfrågor läggs upp här inom kort.
-                Tills dess är snabbvägarna ovan det snabbaste sättet att få svar.
+                Tills dess är Telegram kanalen ovan det snabbaste sättet att få svar.
               </p>
             </div>
           </div>

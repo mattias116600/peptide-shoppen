@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { FlaskConical, RotateCcw, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { TelegramSupportRow } from '@/components/store/support-telegram';
 import { calculateConcentration, parseDecimal } from '@/lib/concentration';
 export const Route = createFileRoute('/kalkylator')({head:()=>({meta:[{title:'Peptidkalkylator | Peptidesweden'},{name:'description',content:'Beräkna masskoncentration i mg/ml för laboratorieforskning. Massa dividerad med slutlig lösningsvolym.'},{property:'og:title',content:'Peptidkalkylator | Peptidesweden'},{property:'og:description',content:'En enkel beräkning av masskoncentration för laboratoriet.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:Calculator});
 const MASS_PRESETS=['5','10','15','20','30','50','60','100'];
@@ -33,6 +34,7 @@ function Calculator(){
   </section>
   <section className="calculator-step"><h3>Så fungerar det</h3><p>Koncentrationen är peptidens massa dividerad med lösningens slutliga volym. Exempel: 10 mg i 2 ml ger 5 mg/ml, vilket motsvarar 5 000 µg/ml.</p></section>
   <p className="calculator-notice">Endast en matematisk beräkning för laboratorieforskning. Inte doseringsråd eller anvisningar för användning på människor eller djur.</p>
+  <TelegramSupportRow note="Behöver du hjälp med beräkningen? Fråga oss på Telegram" />
   <Button variant="link" asChild><Link to="/blogg/$slug" params={{slug:'koncentration-i-laboratoriet'}}>Läs om masskoncentration <ArrowRight/></Link></Button>
  </main>
 }

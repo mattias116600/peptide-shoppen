@@ -16,3 +16,5 @@
 - Keep editorial article content in a shared browser-safe module and render individual articles as typed dynamic routes so links and metadata stay consistent.
 
 - Keep one consolidated storefront stylesheet instead of accumulating redesign override layers, so all pages share a predictable visual system.
+
+- Keep storefront-wide facts such as delivery terms and the support contact in the shared browser-safe product module, and render them through one component, so every surface shows the same value.

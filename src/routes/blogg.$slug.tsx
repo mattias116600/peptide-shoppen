@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { ArrowLeft, ArrowUpRight, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { articles } from '@/lib/articles';
+import { TelegramSupportRow } from '@/components/store/support-telegram';
 
 export const Route = createFileRoute('/blogg/$slug')({
   loader: ({ params }) => { const article = articles.find(a => a.slug === params.slug); if (!article) throw notFound(); return article; },
@@ -37,5 +38,6 @@ function ArticlePage() {
     {a.productSlug && <Button asChild><Link to="/produkter/$slug" params={{ slug: a.productSlug }}>Se produkten <ArrowUpRight size={16} /></Link></Button>}
     {related.length > 0 && <section className="article-section"><h2>Läs också</h2><ul>{related.map(r => <li key={r.slug}><Link to="/blogg/$slug" params={{ slug: r.slug }} className="article-link">{r.title}</Link></li>)}</ul></section>}
     <p className="calculator-notice">Allmän information för laboratorieforskning, inte medicinsk rådgivning.</p>
+    <TelegramSupportRow note="Frågor om artikeln? Skriv till oss på Telegram" />
   </main>;
 }

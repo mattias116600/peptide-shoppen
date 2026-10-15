@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Check, CheckCircle2, CreditCard, FlaskConical, H
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/components/store/store-provider';
 import { products, formatPrice, cartTotal, shippingInfo } from '@/lib/products';
+import { TelegramSupportRow } from '@/components/store/support-telegram';
 import vial from '@/assets/peptide-vial.jpg';
 
 export const Route = createFileRoute('/kassa')({
@@ -106,6 +107,7 @@ function CheckoutPage() {
           ))}
           <div className="kassa-summary-total"><span>Totalt</span><strong>{formatPrice(order.total)}</strong></div>
           <p className="kassa-shipping"><Truck size={14} /> {shippingInfo.summary}</p>
+          <TelegramSupportRow note="Frågor om din beställning? Skriv till oss på Telegram" />
         </aside>
       </main>
     );
@@ -240,6 +242,7 @@ function CheckoutPage() {
         })}
         <div className="kassa-summary-total"><span>Totalt</span><strong>{formatPrice(total)}</strong></div>
         <p className="kassa-shipping"><Truck size={14} /> {shippingInfo.summary}</p>
+        <TelegramSupportRow note="Frågor innan du beställer? Skriv till oss på Telegram" />
       </aside>
     </main>
   );
