@@ -21,3 +21,18 @@ describe('Product groups', () => {
     expect(findGroup('retatrutide')?.variants.map(v => v.amount)).toEqual(['10 mg','15 mg','20 mg','30 mg','60 mg']);
   });
 });
+import { products } from './products';
+describe('Analyserapporter per styrka', () => {
+  it('links every Retatrutide strength to its own batch report', () => {
+    const coa = Object.fromEntries(
+      products.filter(p => p.group === 'retatrutide').map(p => [p.amount, p.coaUrl]),
+    );
+    expect(coa).toEqual({
+      '10 mg': 'https://polypeptide.io/tests/201465-Retatrutide_10mg',
+      '15 mg': 'https://polypeptide.io/tests/204643-Retatrutide_15mg',
+      '20 mg': 'https://polypeptide.io/tests/201565-Retatrutide_20mg',
+      '30 mg': 'https://polypeptide.io/tests/201265-Retatrutide_30mg',
+      '60 mg': 'https://polypeptide.io/tests/201435-Retatrutide_60mg',
+    });
+  });
+});

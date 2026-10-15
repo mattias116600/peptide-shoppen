@@ -1,10 +1,10 @@
 export type Product = { slug: string; group: string; name: string; amount: string; price: number; category: string; description: string; badge?: string; batch?: string; coaUrl?: string };
 export const products: Product[] = [
-  {slug:'retatrutide-10',group:'retatrutide',name:'Retatrutide',amount:'10 mg',price:899,category:'Peptider',description:'Peptid för studier inom metabol forskning.',badge:'POPULÄR'},
-  {slug:'retatrutide-15',group:'retatrutide',name:'Retatrutide',amount:'15 mg',price:1199,category:'Peptider',description:'Peptid för studier inom metabol forskning.'},
-  {slug:'retatrutide-20',group:'retatrutide',name:'Retatrutide',amount:'20 mg',price:1499,category:'Peptider',description:'Peptid för studier inom metabol forskning.'},
-  {slug:'retatrutide-30',group:'retatrutide',name:'Retatrutide',amount:'30 mg',price:2099,category:'Peptider',description:'Peptid för studier inom metabol forskning.',batch:'208465',coaUrl:'https://polypeptide.io/tests/208465-Retatrutide_30mg'},
-  {slug:'retatrutide-60',group:'retatrutide',name:'Retatrutide',amount:'60 mg',price:3799,category:'Peptider',description:'Peptid för studier inom metabol forskning.'},
+  {slug:'retatrutide-10',group:'retatrutide',name:'Retatrutide',amount:'10 mg',price:899,category:'Peptider',description:'Peptid för studier inom metabol forskning.',badge:'POPULÄR',batch:'201465',coaUrl:'https://polypeptide.io/tests/201465-Retatrutide_10mg'},
+  {slug:'retatrutide-15',group:'retatrutide',name:'Retatrutide',amount:'15 mg',price:1199,category:'Peptider',description:'Peptid för studier inom metabol forskning.',batch:'204643',coaUrl:'https://polypeptide.io/tests/204643-Retatrutide_15mg'},
+  {slug:'retatrutide-20',group:'retatrutide',name:'Retatrutide',amount:'20 mg',price:1499,category:'Peptider',description:'Peptid för studier inom metabol forskning.',batch:'201565',coaUrl:'https://polypeptide.io/tests/201565-Retatrutide_20mg'},
+  {slug:'retatrutide-30',group:'retatrutide',name:'Retatrutide',amount:'30 mg',price:2099,category:'Peptider',description:'Peptid för studier inom metabol forskning.',batch:'201265',coaUrl:'https://polypeptide.io/tests/201265-Retatrutide_30mg'},
+  {slug:'retatrutide-60',group:'retatrutide',name:'Retatrutide',amount:'60 mg',price:3799,category:'Peptider',description:'Peptid för studier inom metabol forskning.',batch:'201435',coaUrl:'https://polypeptide.io/tests/201435-Retatrutide_60mg'},
   {slug:'ghk-cu-50',group:'ghk-cu',name:'GHK-Cu',amount:'50 mg',price:399,category:'Peptider',description:'Koppartripeptid för forskning inom hudbiologi.',badge:'UTVALD'},
   {slug:'ghk-cu-100',group:'ghk-cu',name:'GHK-Cu',amount:'100 mg',price:699,category:'Peptider',description:'Koppartripeptid för forskning inom hudbiologi.'},
   {slug:'mots-c-40',group:'mots-c',name:'MOTS-C',amount:'40 mg',price:649,category:'Peptider',description:'Mitokondriell peptid för metabol forskning.',batch:'208445',coaUrl:'https://polypeptide.io/tests/208445-MOTS-C_40mg'},
