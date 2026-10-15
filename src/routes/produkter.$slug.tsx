@@ -4,7 +4,7 @@ import { ArrowRight, Plus, Minus, FlaskConical, ShieldAlert, Truck, FileText, Cr
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { findGroup, formatPrice, productGroups } from '@/lib/products';
+import { findGroup, formatPrice, productGroups, peptideInfo } from '@/lib/products';
 import { articles } from '@/lib/articles';
 import { useStore } from '@/components/store/store-provider';
 import { ProductCard } from '@/components/store/product-card';
@@ -93,11 +93,14 @@ function Detail() {
             <TabsTrigger value="forvaring">Förvaring</TabsTrigger>
             <TabsTrigger value="kvalitet">Kvalitet</TabsTrigger>
           </TabsList>
-          <TabsContent value="om" className="pdp-tab-body"><h2>Om {product.name}</h2><p>{product.description}</p><p>Produkten säljs uteslutande för laboratorie- och forskningsändamål. Inga medicinska påståenden görs.</p></TabsContent>
+          <TabsContent value="om" className="pdp-tab-body"><h2>Om {product.name}</h2><p>{product.description}</p>{peptideInfo[product.slug]?.about.map(t => <p key={t}>{t}</p>)}<p>Produkten säljs uteslutande för laboratorie- och forskningsändamål. Inga medicinska påståenden görs.</p></TabsContent>
           <TabsContent value="spec" className="pdp-tab-body"><h2>Specifikationer</h2><table className="pdp-spec"><tbody>
             <tr><th>Produkt</th><td>{product.name}</td></tr>
             <tr><th>Styrka</th><td>{variant.amount}</td></tr>
             <tr><th>Tillgängliga styrkor</th><td>{product.variants.map(v => v.amount).join(', ')}</td></tr>
+            {peptideInfo[product.slug]?.specs.map(([k, v]) => <tr key={k}><th>{k}</th><td>{v}</td></tr>)}
+            <tr><th>Renhet</th><td>Se batchens analysrapport</td></tr>
+            <tr><th>Förvaring</th><td>Torrt, mörkt, −20 °C för långtidsförvaring</td></tr>
             <tr><th>Kategori</th><td>{product.category}</td></tr>
             <tr><th>Form</th><td>Lyofiliserat pulver</td></tr>
             <tr><th>Batch</th><td>{variant.batch ?? 'Publiceras senare'}</td></tr>
