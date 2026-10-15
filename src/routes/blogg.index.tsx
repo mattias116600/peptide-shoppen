@@ -1,7 +1,34 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Clock } from 'lucide-react';
 import { articles } from '@/lib/articles';
-import hero from '@/assets/peptides-hero.jpg';
-import vial from '@/assets/peptide-vial.jpg';
-export const Route=createFileRoute('/blogg/')({head:()=>({meta:[{title:'Blogg & kunskap | Peptidesweden'},{name:'description',content:'Läs om peptider, analysrapporter och masskoncentration i Peptideswedens kunskapsblogg.'},{property:'og:title',content:'Blogg & kunskap | Peptidesweden'},{property:'og:description',content:'Grundläggande kunskap för ett genomtänkt forskningsperspektiv.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:Blog});
-function Blog(){return <main className="content-width"><div className="page-top"><div className="eyebrow"><span className="eyebrow-line"/> KUNSKAP & PERSPEKTIV</div><h1>Blogg</h1><p>Nyfikenhet är början. Kunskap tar dig vidare.</p></div><div className="blog-grid">{articles.map((article,i)=><article className="blog-card" key={article.slug}><Link to="/blogg/$slug" params={{slug:article.slug}} className="blog-image"><img src={i===1?vial:hero} alt={i===1?'Peptidesweden forskningsvial':'Forskningsvialer i en ljus laboratoriemiljö'} width={i===1?1024:1536} height={1024} loading="lazy"/></Link><div className="eyebrow">{article.category}</div><Link to="/blogg/$slug" params={{slug:article.slug}}><h2>{article.title}</h2></Link><p>{article.intro}</p><Link to="/blogg/$slug" params={{slug:article.slug}} className="article-link">Läs artikeln <ArrowUpRight size={16}/></Link></article>)}</div></main>}
+
+export const Route = createFileRoute('/blogg/')({
+  head: () => ({
+    meta: [
+      { title: 'Blogg om peptider & forskning | Peptidesweden' },
+      { name: 'description', content: 'Guider om peptider, Retatrutide, BPC-157, GHK-Cu, MOTS-C, analysrapporter, HPLC, förvaring och koncentration — Peptideswedens kunskapsblogg.' },
+      { property: 'og:title', content: 'Blogg om peptider & forskning | Peptidesweden' },
+      { property: 'og:description', content: 'Tio guider om peptider, analys och laboratoriekunskap.' },
+      { property: 'og:type', content: 'website' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+    ],
+    links: [{ rel: 'canonical', href: '/blogg' }],
+  }),
+  component: Blog,
+});
+
+const fmt = (d: string) => new Date(d).toLocaleDateString('sv-SE', { day: 'numeric', month: 'long', year: 'numeric' });
+
+function Blog() {
+  return <main className="content-width">
+    <div className="page-top"><div className="eyebrow"><span className="eyebrow-line" /> KUNSKAP & PERSPEKTIV</div><h1>Blogg om peptider</h1><p>Guider om peptider, analysrapporter och laboratoriekunskap.</p></div>
+    <div className="blog-grid">{articles.map((a, i) => <article className="blog-card" key={a.slug}>
+      <Link to="/blogg/$slug" params={{ slug: a.slug }} className="blog-image"><img src={a.image} alt={a.imageAlt} width={1280} height={720} loading={i < 3 ? 'eager' : 'lazy'} /></Link>
+      <div className="eyebrow">{a.category}</div>
+      <Link to="/blogg/$slug" params={{ slug: a.slug }}><h2>{a.title}</h2></Link>
+      <p>{a.intro}</p>
+      <p className="blog-meta"><time dateTime={a.date}>{fmt(a.date)}</time> · <Clock size={13} /> {a.readTime} min</p>
+      <Link to="/blogg/$slug" params={{ slug: a.slug }} className="article-link">Läs artikeln <ArrowUpRight size={16} /></Link>
+    </article>)}</div>
+  </main>;
+}
