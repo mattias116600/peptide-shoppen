@@ -203,3 +203,4 @@
 .footer-tg{display:flex;align-items:center;gap:9px;font-size:11px;opacity:.85;margin-top:10px}
 .footer-tg svg{width:15px;height:15px;color:var(--sun);flex-shrink:0}
 .footer-tg a{color:var(--sun);font-weight:600}
+@media(max-width:640px){.tg-card{flex-direction:column;align-items:flex-start;gap:18px;padding:24px 20px;margin-top:24px}.tg-card-btn{margin-left:0;width:100%}.tg-card h2{font-size:19px}.tg-card p{font-size:12px}.tg-row{padding:12px 13px;gap:11px}.tg-row-text strong{font-size:12px}.tg-row-icon{width:28px;height:28px}.header-tg{width:38px;height:38px}.mobile-nav-tg{margin-top:20px;padding:14px}}
