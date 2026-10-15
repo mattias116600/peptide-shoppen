@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createFileRoute, Link, notFound } from '@tanstack/react-router';
-import { ArrowRight, Plus, Minus, FlaskConical, ShieldAlert, Truck, FileText, CreditCard } from 'lucide-react';
+import { ArrowRight, Plus, Minus, FlaskConical, ShieldAlert, Truck, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
