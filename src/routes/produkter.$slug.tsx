@@ -52,11 +52,11 @@ function Detail() {
           <div className="pdp-label">Storlek <span>{variant.amount}</span></div>
           <div className="size-grid" role="radiogroup" aria-label="Välj storlek">
             {product.variants.map(v => (
-              <button key={v.slug} type="button" role="radio" aria-checked={v.slug === variant.slug} data-active={v.slug === variant.slug} className="size-tile" onClick={() => navigate({ search: { styrka: v.slug }, replace: true, resetScroll: false })}>
+              <Button variant="outline" key={v.slug} type="button" role="radio" aria-checked={v.slug === variant.slug} data-active={v.slug === variant.slug} className="size-tile" onClick={() => navigate({ search: { styrka: v.slug }, replace: true, resetScroll: false })}>
                 <strong>{v.amount}</strong>
                 <span>{formatPrice(v.price)}</span>
                 <small>{formatPrice(Math.round(v.price / mgOf(v.amount)))}/mg</small>
-              </button>
+              </Button>
             ))}
           </div>
 

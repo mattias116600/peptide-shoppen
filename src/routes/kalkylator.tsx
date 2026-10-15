@@ -7,7 +7,7 @@ export const Route = createFileRoute('/kalkylator')({head:()=>({meta:[{title:'Pe
 const MASS_PRESETS=['5','10','15','20','30','50','60','100'];
 const VOLUME_PRESETS=['1','2','3','5','10'];
 function Presets({values,current,unit,onPick,label}:{values:string[];current:string;unit:string;onPick:(v:string)=>void;label:string}){
- return <div className="strength-options" role="group" aria-label={label}>{values.map(v=><button key={v} type="button" className="strength-chip" aria-pressed={current===v} data-active={current===v} onClick={()=>onPick(v)}>{v} {unit}</button>)}</div>
+ return <div className="strength-options" role="group" aria-label={label}>{values.map(v=><Button variant="outline" key={v} type="button" className="strength-chip" aria-pressed={current===v} data-active={current===v} onClick={()=>onPick(v)}>{v} {unit}</Button>)}</div>
 }
 function Calculator(){
  const [mass,setMass]=useState('10'); const [volume,setVolume]=useState('2');
