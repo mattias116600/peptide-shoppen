@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createFileRoute, Link, notFound } from '@tanstack/react-router';
-import { ArrowRight, Plus, Minus, FlaskConical, ShieldAlert, Truck, FileText, CreditCard } from 'lucide-react';
+import { ArrowRight, Plus, Minus, FlaskConical, ShieldAlert, Truck, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -71,13 +71,11 @@ function Detail() {
               <Button onClick={() => { change(variant.slug, quantity); setCartOpen(true); }}>Lägg i varukorg — {formatPrice(total)} <ArrowRight /></Button>
             </div>
             <p className="detail-delivery"><Truck size={14} /> {shippingInfo.summary}</p>
-            <p className="detail-notice">Exempelpriser. Beställningar och betalningar är inte aktiverade ännu.</p>
           </div>
 
           <div className="pdp-info-cards">
             <div><FileText size={18} /><div><strong>Analysrapport</strong>{variant.coaUrl ? <p>Batch {variant.batch} — <a href={variant.coaUrl} target="_blank" rel="noopener noreferrer" className="coa-link">Visa analysrapport (CoA)</a></p> : <p>Batchspecifika rapporter publiceras när de finns tillgängliga.</p>}</div></div>
             <div><Truck size={18} /><div><strong>Leverans</strong><p>{shippingInfo.summary}</p></div></div>
-            <div><CreditCard size={18} /><div><strong>Betalning</strong><p>Betalningsalternativ är inte aktiverade ännu.</p></div></div>
           </div>
 
           <Accordion type="single" collapsible defaultValue="information">
