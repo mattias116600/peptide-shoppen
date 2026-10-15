@@ -28,3 +28,16 @@ export function updateCart(items: CartItem[], slug: string, delta: number): Cart
   return items.map(item => item.slug === slug ? {...item,quantity:item.quantity + delta} : item).filter(item => item.quantity > 0);
 }
 export function cartTotal(items: CartItem[]) { return items.reduce((total,item) => total + (products.find(p => p.slug === item.slug)?.price ?? 0) * item.quantity,0); }
+export type PeptideInfo = { about: string[]; specs: [string, string][] };
+export const peptideInfo: Record<string, PeptideInfo> = {
+  'retatrutide': { about: ['Retatrutide (LY3437943) är en syntetisk peptid med 39 aminosyror som studeras som trippelagonist vid GIP-, GLP-1- och glukagonreceptorerna.', 'Peptiden används i laboratoriestudier inom metabol forskning, bland annat receptorbindning och signalvägar.'],
+    specs: [['Alternativt namn','LY3437943'],['Summaformel','C221H342N46O68'],['Molmassa','ca 4 731 g/mol'],['CAS-nummer','2381089-83-2'],['Sekvenslängd','39 aminosyror']] },
+  'ghk-cu': { about: ['GHK-Cu är ett komplex av tripeptiden glycyl-L-histidyl-L-lysin och koppar(II).', 'Den förekommer naturligt i plasma och studeras inom hudbiologi, kollagensyntes och vävnadsforskning in vitro.'],
+    specs: [['Sekvens','Gly-His-Lys (Cu²⁺)'],['Summaformel','C14H24N6O4Cu'],['Molmassa','ca 404 g/mol'],['CAS-nummer','49557-75-7'],['Sekvenslängd','3 aminosyror']] },
+  'mots-c': { about: ['MOTS-C är en peptid med 16 aminosyror som kodas av mitokondriellt DNA (12S rRNA).', 'Den studeras inom forskning om cellulär energimetabolism och AMPK-signalering.'],
+    specs: [['Sekvens','MRWQEMGYIFYPRKLR'],['Summaformel','C101H152N28O22S2'],['Molmassa','ca 2 175 g/mol'],['CAS-nummer','1627580-64-6'],['Sekvenslängd','16 aminosyror']] },
+  'bpc-157': { about: ['BPC-157 är en syntetisk pentadekapeptid härledd från en skyddande protein-sekvens i magsaft.', 'Peptiden används i prekliniska laboratoriestudier inom vävnads- och cellforskning.'],
+    specs: [['Sekvens','GEPPPGKPADDAGLV'],['Summaformel','C62H98N16O22'],['Molmassa','ca 1 419 g/mol'],['CAS-nummer','137525-51-0'],['Sekvenslängd','15 aminosyror']] },
+  'bpc-157-tb-500': { about: ['En blend av BPC-157 och TB-500 (ett syntetiskt fragment relaterat till tymosin beta-4) i samma vial.', 'Kombinationen används i laboratoriestudier där båda peptiderna undersöks tillsammans.'],
+    specs: [['Innehåll','BPC-157 + TB-500'],['BPC-157 molmassa','ca 1 419 g/mol (CAS 137525-51-0)'],['TB-500 molmassa','ca 4 963 g/mol (CAS 77591-33-4)']] },
+};
