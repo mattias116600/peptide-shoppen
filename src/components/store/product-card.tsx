@@ -24,7 +24,7 @@ export function ProductCard({ product }: { product: ProductGroup }) {
         <p>{product.description}</p>
         <div className="strength-options" role="radiogroup" aria-label={`Välj styrka för ${product.name}`}>
           {product.variants.map(v => (
-            <button key={v.slug} type="button" role="radio" aria-checked={v.slug === variant.slug} className="strength-chip" data-active={v.slug === variant.slug} onClick={() => setSelected(v.slug)}>{v.amount}</button>
+            <Button variant="outline" key={v.slug} type="button" role="radio" aria-checked={v.slug === variant.slug} className="strength-chip" data-active={v.slug === variant.slug} onClick={() => setSelected(v.slug)}>{v.amount}</Button>
           ))}
         </div>
         <div className="product-bottom">

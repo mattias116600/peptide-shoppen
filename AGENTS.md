@@ -14,3 +14,5 @@
 - Define storefront visual styles and semantic color tokens in src/styles.css so shared routes remain visually consistent.
 - Keep the calculator limited to laboratory mass concentration, with validation and arithmetic in a tested browser-safe module; it must not calculate human or animal doses.
 - Keep editorial article content in a shared browser-safe module and render individual articles as typed dynamic routes so links and metadata stay consistent.
+
+- Keep one consolidated storefront stylesheet instead of accumulating redesign override layers, so all pages share a predictable visual system.
