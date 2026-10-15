@@ -1,13 +1,13 @@
-import peptider from '@/assets/blog/peptider.jpg';
-import analysrapport from '@/assets/blog/analysrapport.jpg';
-import koncentration from '@/assets/blog/koncentration.jpg';
-import retatrutide from '@/assets/blog/retatrutide.jpg';
-import bpc157 from '@/assets/blog/bpc157.jpg';
-import ghkcu from '@/assets/blog/ghkcu.jpg';
-import motsc from '@/assets/blog/motsc.jpg';
-import forvaring from '@/assets/blog/forvaring.jpg';
-import hplc from '@/assets/blog/hplc.jpg';
-import tb500 from '@/assets/blog/tb500.jpg';
+import peptider from '@/assets/blog/peptider.webp.asset.json';
+import analysrapport from '@/assets/blog/analysrapport.webp.asset.json';
+import koncentration from '@/assets/blog/koncentration.webp.asset.json';
+import retatrutide from '@/assets/blog/retatrutide.webp.asset.json';
+import bpc157 from '@/assets/blog/bpc157.webp.asset.json';
+import ghkcu from '@/assets/blog/ghkcu.webp.asset.json';
+import motsc from '@/assets/blog/motsc.webp.asset.json';
+import forvaring from '@/assets/blog/forvaring.webp.asset.json';
+import hplc from '@/assets/blog/hplc.webp.asset.json';
+import tb500 from '@/assets/blog/tb500.webp.asset.json';
 
 export type Article = {
   slug: string; title: string; metaTitle: string; description: string; category: string;
