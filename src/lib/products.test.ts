@@ -14,3 +14,10 @@ describe('Session cart', () => {
     expect(updateCart([], 'unknown',1)).toEqual([]);
   });
 });
+import { productGroups, findGroup } from './products';
+describe('Product groups', () => {
+  it('shows each peptide once with its strengths', () => {
+    expect(productGroups.map(g => g.slug)).toEqual(['retatrutide','ghk-cu','mots-c','bpc-157','bpc-157-tb-500']);
+    expect(findGroup('retatrutide')?.variants.map(v => v.amount)).toEqual(['10 mg','15 mg','20 mg','30 mg','60 mg']);
+  });
+});
