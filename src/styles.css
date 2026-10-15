@@ -3,8 +3,8 @@
 @source "../src";
 @custom-variant dark (&:is(.dark *));
 @theme inline {
- --font-sans: 'Manrope', sans-serif;
- --font-serif: 'Space Grotesk', sans-serif;
+ --font-sans: 'Plus Jakarta Sans', sans-serif;
+ --font-serif: 'Sora', sans-serif;
  --color-background:var(--background);--color-foreground:var(--foreground);--color-card:var(--card);--color-card-foreground:var(--foreground);--color-popover:var(--background);--color-popover-foreground:var(--foreground);--color-primary:var(--primary);--color-primary-foreground:var(--primary-foreground);--color-secondary:var(--secondary);--color-secondary-foreground:var(--foreground);--color-muted:var(--secondary);--color-muted-foreground:var(--muted-foreground);--color-accent:var(--secondary);--color-accent-foreground:var(--foreground);--color-border:var(--border);--color-input:var(--border);--color-ring:var(--primary);--color-destructive:var(--destructive);--color-overlay:var(--overlay);--radius-sm:8px;--radius-md:10px;--radius-lg:14px;--color-sun:var(--sun);--color-sun-foreground:var(--sun-foreground);
 }
 :root{--background:oklch(.985 .006 250);--foreground:oklch(.22 .05 258);--card:oklch(1 0 0);--primary:oklch(.45 .15 258);--primary-foreground:oklch(.99 .005 250);--secondary:oklch(.95 .02 250);--muted-foreground:oklch(.5 .04 255);--border:oklch(.9 .02 255);--destructive:oklch(.55 .2 25);--ink:oklch(.22 .08 260);--overlay:oklch(.18 .06 260 / .5);--hero-wash:oklch(.95 .02 250);--sage:oklch(.84 .16 90);--sun:oklch(.85 .17 90);--sun-foreground:oklch(.22 .06 260);--radius:14px;--section-space:96px}
@@ -140,3 +140,11 @@ body{font-size:15px}
 .fp-steps li{padding:1.5rem;border-radius:1.25rem;background:var(--secondary)}.fp-steps li span{display:inline-grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:999px;background:var(--sun);color:var(--sun-foreground);font-weight:700;margin-bottom:.75rem}.fp-steps li strong{display:block}.fp-steps li p{color:var(--muted-foreground);font-size:.9rem}
 .fp-cta{display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:space-between;align-items:center;margin-bottom:4rem;padding:clamp(2rem,5vw,3.5rem);border-radius:2rem;background:var(--primary);color:var(--primary-foreground)}
 .fp-cta em{color:var(--sun);background:none}.fp-cta p{opacity:.85;max-width:36rem;margin-top:.5rem}
+/* Redesign v3: Sora + Plus Jakarta Sans, deeper Nordic blue */
+:root{--background:oklch(.99 .004 250);--foreground:oklch(.2 .045 260);--primary:oklch(.42 .16 262);--secondary:oklch(.955 .018 252);--border:oklch(.91 .015 255);--ink:oklch(.2 .07 262);--sun:oklch(.86 .17 92)}
+body{font-size:15px;line-height:1.6}
+h1,h2,h3,.brand{font-family:var(--font-serif);font-weight:700;letter-spacing:-.035em}
+.section-heading h2{font-size:clamp(2rem,4vw,3rem)}
+.fp-hero-copy h1{font-weight:800;letter-spacing:-.045em}
+.fp-feature,.fp-steps li,.product-card{border-radius:1.5rem}
+.desktop-nav{font-family:var(--font-sans);font-weight:600}
