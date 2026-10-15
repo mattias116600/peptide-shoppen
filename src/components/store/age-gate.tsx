@@ -16,7 +16,7 @@ export function AgeGate() {
     <div className="age-gate" role="dialog" aria-modal="true" aria-labelledby="age-gate-title">
       {status !== 'checking' && (
         <div className="age-gate-card">
-          <div className="brand"><span className="mini-flag" aria-hidden="true" /> peptide<span className="text-primary">sweden</span></div>
+          <div className="brand"><span className="brand-mark" aria-hidden="true"><SwedenFlag /></span><span>peptide<span>sweden</span></span></div>
           <div className="age-gate-icon"><ShieldCheck size={30} /></div>
           {status === 'open' ? <>
             <h2 id="age-gate-title">Ålderskontroll</h2>
