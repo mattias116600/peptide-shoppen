@@ -81,7 +81,6 @@ function Detail() {
 
           <Accordion type="single" collapsible defaultValue="information">
             <AccordionItem value="information"><AccordionTrigger>Produktbeskrivning</AccordionTrigger><AccordionContent>Innehåll: {product.name}, {variant.amount}. {product.description} Endast för forskningsändamål. Bilden är en varumärkesillustration, inte en bild av en verifierad produktbatch.</AccordionContent></AccordionItem>
-            <AccordionItem value="documentation"><AccordionTrigger>Analys & dokumentation</AccordionTrigger><AccordionContent>{variant.coaUrl ? <>Analysrapport för batch {variant.batch}: <a href={variant.coaUrl} target="_blank" rel="noopener noreferrer" className="coa-link">{variant.coaUrl}</a>. Rapporten tillhandahålls av en extern part.</> : 'Batchspecifika analysrapporter är ännu inte tillgängliga. Renhet eller tredjepartstestning påstås inte utan verifierad dokumentation.'}</AccordionContent></AccordionItem>
           </Accordion>
         </div>
       </div>
