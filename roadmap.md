@@ -5,4 +5,4 @@
 - [x] Build Swedish storefront inspired by the reference with original imagery.
 - [x] Add product browsing, product details and a session cart.
 - [x] Verify navigation and shopping interactions on desktop and mobile.
-- [ ] Redesign the entire storefront with a distinct new visual direction and verify browsing on desktop and mobile.
+- [x] Redesign the entire storefront with a distinct new visual direction and verify browsing on desktop and mobile.
