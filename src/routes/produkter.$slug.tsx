@@ -131,7 +131,7 @@ function Detail() {
       <section className="pdp-section">
         <h2 className="pdp-h2">Relaterade artiklar</h2>
         <div className="pdp-related">
-          {articles.map(a => <Link key={a.slug} to="/blogg/$slug" params={{ slug: a.slug }}><span>{a.category}</span><strong>{a.title}</strong></Link>)}
+          {[...articles].sort((a, b) => Number(b.productSlug === product.slug) - Number(a.productSlug === product.slug)).slice(0, 3).map(a => <Link key={a.slug} to="/blogg/$slug" params={{ slug: a.slug }}><span>{a.category}</span><strong>{a.title}</strong></Link>)}
         </div>
       </section>
 
