@@ -165,4 +165,8 @@
 .about-cta{padding-block:48px}
 .about-cta h2{font-size:28px}
 .about-cta p{font-size:13px;padding-inline:8px}
+.contact-shortcut-link{margin-top:10px;font-size:11px}
+.contact-direct{flex-direction:column;gap:14px;padding:20px 18px;margin-top:14px}
+.contact-direct strong{font-size:14px}
+.contact-direct p{font-size:12px;margin-top:6px}
 }
