@@ -1,7 +1,7 @@
 # Peptidesweden
 - [x] Add secure admin login, order management and discount codes with login-only accounts entirely on the user's VPS (SQLite via node:sqlite, accounts created with scripts/admin.mjs, no Lovable Cloud).
 - [x] Take crypto payments through NOWPayments hosted invoices; signed IPN callbacks mark fully paid orders as paid, and checkout falls back to manual payment when the keys are not set.
-- [ ] Send order confirmation emails; checkout says a confirmation is sent but no email service is connected yet.
+- [x] Send an order confirmation when an order is placed and a shipping email with the PostNord tracking link when it is marked shipped; any SMTP provider via .env, resend from /admin.
 - [x] Bundle all storefront images and fonts locally for self-hosted VPS deployment and verify they load without external media hosting.
 - [x] Resolve reported mobile-hook React reference issue and verify it.
 - [x] Provide navigation for Produkter, Om oss, Blogg, Kalkylator, FAQ, Kontakt and add the missing pages.

@@ -30,3 +30,4 @@
 - The customer return page `/kassa/tack` shows an order only with its random `public_token`; never look orders up by order number alone on public pages.
 - Images are stored as keys, never build URLs: `bundled:<name>` for images in src/assets (mapped in `src/lib/media.ts`) or `/media/<file>` for admin uploads in `data/uploads`, served by `src/routes/media/$file.ts`. Uploads go through `/api/admin/upload`, which requires an admin session and checks the file's bytes.
 - If the database cannot be opened, storefront reads fall back to the starting content so pages still render.
+- Customer emails go through `src/server/order-emails.server.ts`: each kind is sent at most once (timestamps on the order) unless resent from /admin, and every attempt is logged in the order history. Templates are in `src/server/email-templates.server.ts` and must escape every customer-supplied value. Without `MAIL_FROM` + SMTP settings nothing is sent and checkout must not promise an email.

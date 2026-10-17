@@ -310,3 +310,4 @@
 .admin-section-editor .kassa-field input,.admin-section-editor .kassa-field textarea{background:var(--card)}
 .admin-section-head{display:flex;align-items:center;justify-content:space-between;font-size:13px}
 @media(max-width:900px){.admin-heading-action{margin-left:0}.admin-danger{margin-left:0}}
+.admin-card>h2{display:flex;align-items:center;gap:7px}
