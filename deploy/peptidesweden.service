@@ -8,7 +8,7 @@ User=www-data
 Group=www-data
 WorkingDirectory=/var/www/peptidesweden
 EnvironmentFile=/var/www/peptidesweden/.env
-ExecStart=/usr/bin/node .output/server/index.mjs
+ExecStart=/usr/bin/node --disable-warning=ExperimentalWarning .output/server/index.mjs
 Restart=always
 RestartSec=3
 NoNewPrivileges=true

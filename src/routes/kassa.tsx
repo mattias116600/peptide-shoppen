@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, CreditCard, FlaskConical, Home, ListChecks, Mail, Minus, Package, Phone, Plus, ShoppingBag, Truck, User } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, CreditCard, FlaskConical, Home, ListChecks, Mail, Minus, Package, Phone, Plus, ShoppingBag, TicketPercent, Truck, User, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/components/store/store-provider';
 import { products, formatPrice, cartTotal, shippingInfo, isValidPhone } from '@/lib/products';
 import { TelegramSupportRow } from '@/components/store/support-telegram';
 import vial from '@/assets/peptide-vial.webp';
+import { checkDiscountFn, placeOrderFn } from '@/lib/shop-api';
+import type { PlacedOrder } from '@/lib/commerce';
 
 export const Route = createFileRoute('/kassa')({
   head: () => ({
@@ -20,18 +22,6 @@ export const Route = createFileRoute('/kassa')({
   }),
   component: CheckoutPage,
 });
-
-type PlacedOrder = {
-  ref: string;
-  email: string;
-  phone: string;
-  name: string;
-  address: string;
-  zip: string;
-  city: string;
-  total: number;
-  lines: { name: string; amount: string; qty: number; price: number }[];
-};
 
 const steps = [
   { label: 'Varukorg', icon: ShoppingBag },
@@ -68,7 +58,48 @@ function CheckoutPage() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', zip: '', city: '' });
   const [touched, setTouched] = useState(false);
   const [order, setOrder] = useState<PlacedOrder | null>(null);
-  const total = cartTotal(items);
+  const [codeInput, setCodeInput] = useState('');
+  const [discount, setDiscount] = useState<{ code: string; amount: number } | null>(null);
+  const [discountError, setDiscountError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const subtotal = cartTotal(items);
+  const total = subtotal - (discount?.amount ?? 0);
+
+  const applyCode = async (code: string) => {
+    setDiscountError('');
+    if (!code.trim()) return;
+    try {
+      const result = await checkDiscountFn({ data: { code, cart: items } });
+      if (result.ok) setDiscount({ code: result.value.code, amount: result.value.amount });
+      else { setDiscount(null); setDiscountError(result.error); }
+    } catch {
+      setDiscount(null);
+      setDiscountError('Kunde inte kontrollera koden just nu.');
+    }
+  };
+
+  // Re-price the code whenever the cart changes, since percentages and minimum totals depend on it.
+  useEffect(() => {
+    if (discount && items.length) void applyCode(discount.code);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
+
+  const submitOrder = async () => {
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      const result = await placeOrderFn({ data: { customer: form, cart: items, ...(discount ? { discountCode: discount.code } : {}) } });
+      if (!result.ok) { setSubmitError(result.error); return; }
+      setOrder(result.value);
+      clear();
+      setDone(true);
+    } catch {
+      setSubmitError('Beställningen kunde inte skickas. Kontrollera uppgifterna och försök igen, eller kontakta oss på Telegram.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
   const phoneValid = isValidPhone(form.phone);
   const formValid = !!form.name.trim() && /\S+@\S+\.\S+/.test(form.email) && phoneValid && !!form.address.trim() && !!form.zip.trim() && !!form.city.trim();
 
@@ -114,8 +145,9 @@ function CheckoutPage() {
           </div>
           <h2>Din beställning</h2>
           {order.lines.map(l => (
-            <div key={l.name + l.amount}><span>{l.name} {l.amount} × {l.qty}</span><span>{formatPrice(l.price * l.qty)}</span></div>
+            <div key={l.slug}><span>{l.name} {l.amount} × {l.qty}</span><span>{formatPrice(l.unitPrice * l.qty)}</span></div>
           ))}
+          {order.discountCode && <div className="kassa-discount-line"><span>Rabatt ({order.discountCode})</span><span>−{formatPrice(order.discountAmount)}</span></div>}
           <div className="kassa-summary-total"><span>Totalt</span><strong>{formatPrice(order.total)}</strong></div>
           <p className="kassa-shipping"><Truck size={14} /> {shippingInfo.summary}</p>
           <TelegramSupportRow note="Frågor om din beställning? Skriv till oss på Telegram" />
@@ -232,26 +264,10 @@ function CheckoutPage() {
             </div>
           </div>
           <div className="kassa-actions">
-            <Button variant="outline" onClick={() => setStep(1)}><ArrowLeft /> Tillbaka</Button>
-            <Button onClick={() => {
-              setOrder({
-                ref: `PSW-${Math.floor(10000 + Math.random() * 90000)}`,
-                email: form.email,
-                phone: form.phone,
-                name: form.name,
-                address: form.address,
-                zip: form.zip,
-                city: form.city,
-                total,
-                lines: items.map(i => {
-                  const p = products.find(pp => pp.slug === i.slug);
-                  return p ? { name: p.name, amount: p.amount, qty: i.quantity, price: p.price } : null;
-                }).filter((l): l is NonNullable<typeof l> => l !== null),
-              });
-              clear();
-              setDone(true);
-            }}>Slutför beställning — {formatPrice(total)} <Check /></Button>
+            <Button variant="outline" onClick={() => setStep(1)} disabled={submitting}><ArrowLeft /> Tillbaka</Button>
+            <Button onClick={submitOrder} disabled={submitting}>{submitting ? 'Skickar beställning…' : <>Slutför beställning — {formatPrice(total)} <Check /></>}</Button>
           </div>
+          {submitError && <p className="kassa-error" role="alert">{submitError}</p>}
         </section>
       )}
 
@@ -262,6 +278,20 @@ function CheckoutPage() {
           if (!p) return null;
           return <div key={p.slug}><span>{p.name} {p.amount} × {item.quantity}</span><span>{formatPrice(p.price * item.quantity)}</span></div>;
         })}
+        {discount ? (
+          <div className="kassa-discount-line">
+            <span><TicketPercent size={13} /> {discount.code}
+              <button type="button" className="kassa-discount-remove" aria-label="Ta bort rabattkod" onClick={() => { setDiscount(null); setCodeInput(''); }}><X size={13} /></button>
+            </span>
+            <span>−{formatPrice(discount.amount)}</span>
+          </div>
+        ) : (
+          <form className="kassa-discount" onSubmit={e => { e.preventDefault(); void applyCode(codeInput); }}>
+            <input value={codeInput} onChange={e => setCodeInput(e.target.value)} placeholder="Rabattkod" aria-label="Rabattkod" maxLength={32} autoCapitalize="characters" />
+            <Button type="submit" size="sm" variant="outline" disabled={!codeInput.trim()}>Använd</Button>
+          </form>
+        )}
+        {discountError && <p className="kassa-error" role="alert">{discountError}</p>}
         <div className="kassa-summary-total"><span>Totalt</span><strong>{formatPrice(total)}</strong></div>
         <p className="kassa-shipping"><Truck size={14} /> {shippingInfo.summary}</p>
         <TelegramSupportRow note="Frågor innan du beställer? Skriv till oss på Telegram" />

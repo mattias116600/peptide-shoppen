@@ -10,7 +10,7 @@
 <!-- LOVABLE:END -->
 
 - Keep storefront navigation, search, and the session-only cart in the root StoreProvider layout so browsing between routes preserves cart state without pretending orders are persisted.
-- Keep sample catalog data and cart calculations in the browser-safe product module; no checkout or verified batch claims until actual commerce services and documentation are supplied.
+- Keep sample catalog data and cart calculations in the browser-safe product module; no verified batch claims until documentation is supplied.
 - Define storefront visual styles and semantic color tokens in src/styles.css so shared routes remain visually consistent.
 - Keep the calculator limited to laboratory mass concentration, with validation and arithmetic in a tested browser-safe module; it must not calculate human or animal doses.
 - Keep editorial article content in a shared browser-safe module and render individual articles as typed dynamic routes so links and metadata stay consistent.
@@ -21,3 +21,8 @@
 
 - Self-hosted VPS builds use `npm run build:vps` (NITRO_PRESET=node-server, output .output/); deploy files live in deploy/. Why: editor builds stay on the default target while the VPS runs plain Node behind Nginx.
 - Import storefront images as local files from src/assets and serve fonts from public/fonts; do not reference Lovable asset pointers at runtime. Why: the VPS deployment must contain all presentation assets and work without external media hosting.
+
+- Orders, discount codes and admin accounts live in SQLite through `node:sqlite` (Node 22.13+) in `src/server/*.server.ts`; schema is `src/server/schema.sql`, shared with the admin CLI. Why: the user self-hosts on a VPS and declines Lovable Cloud, and `node:sqlite` needs no native add-ons.
+- Server functions live in `src/lib/shop-api.ts`. Every admin function calls `requireAdmin()` itself; the `/admin` route guard is only for navigation. Order totals and discounts are always recomputed on the server from the catalogue.
+- Admin accounts are created only with `scripts/admin.mjs` on the server; never add a public sign-up or first-run setup page.
+- Shared order and discount rules (statuses, `evaluateDiscount`, pricing) stay browser-safe in `src/lib/commerce.ts` so checkout, admin pages and server agree.

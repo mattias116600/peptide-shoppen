@@ -10,19 +10,29 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as KalkylatorRouteImport } from './routes/kalkylator'
 import { Route as KassaRouteImport } from './routes/kassa'
 import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as OmOssRouteImport } from './routes/om-oss'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminRabattkoderRouteImport } from './routes/admin.rabattkoder'
 import { Route as BloggIndexRouteImport } from './routes/blogg.index'
 import { Route as BloggSlugRouteImport } from './routes/blogg.$slug'
 import { Route as ProdukterIndexRouteImport } from './routes/produkter.index'
 import { Route as ProdukterSlugRouteImport } from './routes/produkter.$slug'
+import { Route as AdminOrdrarRefRouteImport } from './routes/admin.ordrar.$ref'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -50,6 +60,21 @@ const OmOssRoute = OmOssRouteImport.update({
   path: '/om-oss',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRabattkoderRoute = AdminRabattkoderRouteImport.update({
+  id: '/rabattkoder',
+  path: '/rabattkoder',
+  getParentRoute: () => AdminRoute,
+} as any)
 const BloggIndexRoute = BloggIndexRouteImport.update({
   id: '/blogg/',
   path: '/blogg/',
@@ -70,18 +95,28 @@ const ProdukterSlugRoute = ProdukterSlugRouteImport.update({
   path: '/produkter/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminOrdrarRefRoute = AdminOrdrarRefRouteImport.update({
+  id: '/ordrar/$ref',
+  path: '/ordrar/$ref',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/faq': typeof FaqRoute
   '/kalkylator': typeof KalkylatorRoute
   '/kassa': typeof KassaRoute
   '/kontakt': typeof KontaktRoute
   '/om-oss': typeof OmOssRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/rabattkoder': typeof AdminRabattkoderRoute
   '/blogg/$slug': typeof BloggSlugRoute
   '/produkter/$slug': typeof ProdukterSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/blogg/': typeof BloggIndexRoute
   '/produkter/': typeof ProdukterIndexRoute
+  '/admin/ordrar/$ref': typeof AdminOrdrarRefRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -90,37 +125,51 @@ export interface FileRoutesByTo {
   '/kassa': typeof KassaRoute
   '/kontakt': typeof KontaktRoute
   '/om-oss': typeof OmOssRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/rabattkoder': typeof AdminRabattkoderRoute
   '/blogg/$slug': typeof BloggSlugRoute
   '/produkter/$slug': typeof ProdukterSlugRoute
+  '/admin': typeof AdminIndexRoute
   '/blogg': typeof BloggIndexRoute
   '/produkter': typeof ProdukterIndexRoute
+  '/admin/ordrar/$ref': typeof AdminOrdrarRefRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/faq': typeof FaqRoute
   '/kalkylator': typeof KalkylatorRoute
   '/kassa': typeof KassaRoute
   '/kontakt': typeof KontaktRoute
   '/om-oss': typeof OmOssRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/rabattkoder': typeof AdminRabattkoderRoute
   '/blogg/$slug': typeof BloggSlugRoute
   '/produkter/$slug': typeof ProdukterSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/blogg/': typeof BloggIndexRoute
   '/produkter/': typeof ProdukterIndexRoute
+  '/admin/ordrar/$ref': typeof AdminOrdrarRefRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/faq'
     | '/kalkylator'
     | '/kassa'
     | '/kontakt'
     | '/om-oss'
+    | '/admin/login'
+    | '/admin/rabattkoder'
     | '/blogg/$slug'
     | '/produkter/$slug'
+    | '/admin/'
     | '/blogg/'
     | '/produkter/'
+    | '/admin/ordrar/$ref'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -129,26 +178,36 @@ export interface FileRouteTypes {
     | '/kassa'
     | '/kontakt'
     | '/om-oss'
+    | '/admin/login'
+    | '/admin/rabattkoder'
     | '/blogg/$slug'
     | '/produkter/$slug'
+    | '/admin'
     | '/blogg'
     | '/produkter'
+    | '/admin/ordrar/$ref'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/faq'
     | '/kalkylator'
     | '/kassa'
     | '/kontakt'
     | '/om-oss'
+    | '/admin/login'
+    | '/admin/rabattkoder'
     | '/blogg/$slug'
     | '/produkter/$slug'
+    | '/admin/'
     | '/blogg/'
     | '/produkter/'
+    | '/admin/ordrar/$ref'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   FaqRoute: typeof FaqRoute
   KalkylatorRoute: typeof KalkylatorRoute
   KassaRoute: typeof KassaRoute
@@ -167,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -204,6 +270,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OmOssRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/rabattkoder': {
+      id: '/admin/rabattkoder'
+      path: '/rabattkoder'
+      fullPath: '/admin/rabattkoder'
+      preLoaderRoute: typeof AdminRabattkoderRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/blogg/': {
       id: '/blogg/'
       path: '/blogg'
@@ -232,11 +319,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdukterSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ordrar/$ref': {
+      id: '/admin/ordrar/$ref'
+      path: '/ordrar/$ref'
+      fullPath: '/admin/ordrar/$ref'
+      preLoaderRoute: typeof AdminOrdrarRefRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminRabattkoderRoute: typeof AdminRabattkoderRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminOrdrarRefRoute: typeof AdminOrdrarRefRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminLoginRoute: AdminLoginRoute,
+  AdminRabattkoderRoute: AdminRabattkoderRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  AdminOrdrarRefRoute: AdminOrdrarRefRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   FaqRoute: FaqRoute,
   KalkylatorRoute: KalkylatorRoute,
   KassaRoute: KassaRoute,
