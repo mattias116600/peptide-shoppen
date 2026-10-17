@@ -1,5 +1,5 @@
 # Peptidesweden
-- [ ] Bundle all storefront images and fonts locally for self-hosted VPS deployment and verify they load without external media hosting.
+- [x] Bundle all storefront images and fonts locally for self-hosted VPS deployment and verify they load without external media hosting.
 - [x] Resolve reported mobile-hook React reference issue and verify it.
 - [x] Provide navigation for Produkter, Om oss, Blogg, Kalkylator, FAQ, Kontakt and add the missing pages.
 - [x] Verify new page navigation and laboratory concentration calculator.
