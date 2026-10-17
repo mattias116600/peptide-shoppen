@@ -1,8 +1,4 @@
-# Peptide Shoppen
 
-make site like this but called peptidesweden 
-
-https://sverigepeptider.se/
 
 This project was built with [Lovable](https://lovable.dev).
 
