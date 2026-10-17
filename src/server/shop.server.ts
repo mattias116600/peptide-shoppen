@@ -1,10 +1,10 @@
 // Server-only order and discount storage.
-import { randomInt } from 'node:crypto';
+import { randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
 import type { DatabaseSync } from 'node:sqlite';
 import { getDb, nowIso, transaction } from './db.server';
 import {
   evaluateDiscount, linesSubtotal, normalizeCode, priceLines,
-  type CustomerInput, type DiscountKind, type DiscountRule, type OrderStatus, type PlacedOrder,
+  PAID_PAYMENT_STATUSES, type CustomerInput, type DiscountKind, type DiscountRule, type OrderStatus, type PaymentInfo, type PlacedOrder,
 } from '@/lib/commerce';
 
 type DiscountRow = { id: number; code: string; kind: DiscountKind; value: number; active: number; min_total: number; max_uses: number | null; uses: number; expires_at: string | null; created_at: string };
@@ -34,7 +34,7 @@ export function quoteDiscount(code: string, cart: CartInput) {
 
 export class OrderError extends Error {}
 
-export function placeOrder(customer: CustomerInput, cart: CartInput, discountCode?: string): PlacedOrder {
+export function placeOrder(customer: CustomerInput, cart: CartInput, discountCode?: string): PlacedOrder & { publicToken: string } {
   const lines = priceLines(cart);
   if (!lines.length) throw new OrderError('Varukorgen är tom.');
   const subtotal = linesSubtotal(lines);
@@ -55,20 +55,22 @@ export function placeOrder(customer: CustomerInput, cart: CartInput, discountCod
     do ref = `PSW-${randomInt(100000, 1000000)}`;
     while (db.prepare('SELECT 1 FROM orders WHERE ref = ?').get(ref));
     const total = subtotal - discountAmount;
+    // Lets the customer's browser look up its own order status without guessing order numbers.
+    const publicToken = randomBytes(18).toString('base64url');
     const { lastInsertRowid } = db
-      .prepare(`INSERT INTO orders (ref, name, email, phone, address, zip, city, subtotal, discount_code, discount_amount, total, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-      .run(ref, customer.name, customer.email, customer.phone, customer.address, customer.zip, customer.city, subtotal, appliedCode, discountAmount, total, createdAt, createdAt);
+      .prepare(`INSERT INTO orders (ref, name, email, phone, address, zip, city, subtotal, discount_code, discount_amount, total, public_token, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .run(ref, customer.name, customer.email, customer.phone, customer.address, customer.zip, customer.city, subtotal, appliedCode, discountAmount, total, publicToken, createdAt, createdAt);
     const insertLine = db.prepare('INSERT INTO order_lines (order_id, slug, name, amount, unit_price, qty) VALUES (?, ?, ?, ?, ?, ?)');
     for (const l of lines) insertLine.run(lastInsertRowid, l.slug, l.name, l.amount, l.unitPrice, l.qty);
     db.prepare('INSERT INTO order_events (order_id, at, actor, message) VALUES (?, ?, ?, ?)').run(lastInsertRowid, createdAt, 'kund', 'Beställning lagd i kassan');
-    return { ...customer, ref, createdAt, subtotal, discountCode: appliedCode, discountAmount, total, lines };
+    return { ...customer, ref, createdAt, subtotal, discountCode: appliedCode, discountAmount, total, lines, publicToken };
   });
 }
 
-type OrderRow = { id: number; ref: string; status: OrderStatus; name: string; email: string; phone: string; address: string; zip: string; city: string; subtotal: number; discount_code: string | null; discount_amount: number; total: number; tracking: string; admin_note: string; created_at: string; updated_at: string };
+type OrderRow = { id: number; ref: string; status: OrderStatus; public_token: string; payment_provider: string | null; payment_ref: string | null; payment_url: string | null; payment_status: string | null; name: string; email: string; phone: string; address: string; zip: string; city: string; subtotal: number; discount_code: string | null; discount_amount: number; total: number; tracking: string; admin_note: string; created_at: string; updated_at: string };
 export type OrderSummary = { ref: string; status: OrderStatus; name: string; email: string; total: number; itemCount: number; discountCode: string | null; createdAt: string };
-export type OrderDetail = PlacedOrder & { status: OrderStatus; tracking: string; adminNote: string; updatedAt: string; events: { at: string; actor: string; message: string }[] };
+export type OrderDetail = PlacedOrder & { payment: PaymentInfo; status: OrderStatus; tracking: string; adminNote: string; updatedAt: string; events: { at: string; actor: string; message: string }[] };
 
 export function listOrders(opts: { status?: OrderStatus | undefined; q?: string | undefined; limit?: number; offset?: number }) {
   const where: string[] = [];
@@ -113,6 +115,7 @@ export function getOrder(ref: string): OrderDetail | null {
     ref: o.ref, status: o.status, name: o.name, email: o.email, phone: o.phone, address: o.address, zip: o.zip, city: o.city,
     subtotal: o.subtotal, discountCode: o.discount_code, discountAmount: o.discount_amount, total: o.total,
     tracking: o.tracking, adminNote: o.admin_note, createdAt: o.created_at, updatedAt: o.updated_at, lines, events,
+    payment: { provider: o.payment_provider, ref: o.payment_ref, url: o.payment_url, status: o.payment_status },
   };
 }
 
@@ -128,6 +131,71 @@ export function updateOrder(ref: string, actor: string, patch: { status?: OrderS
     if (next.note !== o.admin_note) log('Intern anteckning uppdaterad');
     db.prepare('UPDATE orders SET status = ?, tracking = ?, admin_note = ?, updated_at = ? WHERE id = ?').run(next.status, next.tracking, next.note, at, o.id);
   });
+}
+
+function logEvent(db: DatabaseSync, orderId: number | bigint, actor: string, message: string, at = nowIso()) {
+  db.prepare('INSERT INTO order_events (order_id, at, actor, message) VALUES (?, ?, ?, ?)').run(orderId, at, actor, message);
+}
+
+export function attachPayment(ref: string, payment: { provider: string; ref: string; url: string }) {
+  transaction(db => {
+    const o = db.prepare('SELECT id FROM orders WHERE ref = ?').get(ref) as { id: number } | undefined;
+    if (!o) throw new OrderError('Ordern finns inte.');
+    const at = nowIso();
+    db.prepare("UPDATE orders SET payment_provider = ?, payment_ref = ?, payment_url = ?, payment_status = 'waiting', updated_at = ? WHERE id = ?").run(payment.provider, payment.ref, payment.url, at, o.id);
+    logEvent(db, o.id, 'system', `Betalning skapad hos ${payment.provider} (faktura ${payment.ref})`, at);
+  });
+}
+
+/** Cancels a fresh order whose payment could not be started, and gives back its discount use. */
+export function cancelUnstartedOrder(ref: string, reason: string) {
+  transaction(db => {
+    const o = db.prepare('SELECT id, discount_code FROM orders WHERE ref = ?').get(ref) as { id: number; discount_code: string | null } | undefined;
+    if (!o) return;
+    const at = nowIso();
+    db.prepare("UPDATE orders SET status = 'avbruten', updated_at = ? WHERE id = ?").run(at, o.id);
+    if (o.discount_code) db.prepare('UPDATE discount_codes SET uses = MAX(uses - 1, 0) WHERE code = ?').run(o.discount_code);
+    logEvent(db, o.id, 'system', `Avbruten: ${reason}`, at);
+  });
+}
+
+export type PaymentUpdate = { provider: string; orderRef: string; invoiceId: string | null; paymentId: string; status: string; priceAmount: number; priceCurrency: string; paidText: string };
+export type PaymentUpdateResult = 'updated' | 'unchanged' | 'unknown-order' | 'mismatch';
+
+/** Applies a verified payment notification. Orders turn "betald" only when the full SEK amount is confirmed. */
+export function recordPaymentUpdate(u: PaymentUpdate): PaymentUpdateResult {
+  return transaction(db => {
+    const o = db.prepare('SELECT id, status, total, payment_ref, payment_status FROM orders WHERE ref = ?').get(u.orderRef) as
+      | Pick<OrderRow, 'id' | 'status' | 'total' | 'payment_ref' | 'payment_status'>
+      | undefined;
+    if (!o) return 'unknown-order';
+    const at = nowIso();
+    if ((u.invoiceId && o.payment_ref && u.invoiceId !== o.payment_ref) || u.priceCurrency !== 'sek' || Math.round(u.priceAmount) !== o.total) {
+      logEvent(db, o.id, u.provider, `Avvisad betalningsnotis: belopp/faktura stämmer inte (${u.priceAmount} ${u.priceCurrency.toUpperCase()}, faktura ${u.invoiceId ?? '—'})`, at);
+      return 'mismatch';
+    }
+    if (o.payment_status === u.status) return 'unchanged';
+    // A late "confirming" must not undo a payment that is already confirmed.
+    if (o.payment_status && PAID_PAYMENT_STATUSES.includes(o.payment_status) && !PAID_PAYMENT_STATUSES.includes(u.status) && u.status !== 'refunded') return 'unchanged';
+    db.prepare('UPDATE orders SET payment_status = ?, updated_at = ? WHERE id = ?').run(u.status, at, o.id);
+    logEvent(db, o.id, u.provider, `Betalning ${u.status}${u.paidText ? ` (${u.paidText})` : ''}, betalnings-id ${u.paymentId}`, at);
+    if (PAID_PAYMENT_STATUSES.includes(u.status) && o.status === 'ny') {
+      db.prepare("UPDATE orders SET status = 'betald' WHERE id = ?").run(o.id);
+      logEvent(db, o.id, u.provider, 'Status ändrad: ny → betald', at);
+    }
+    return 'updated';
+  });
+}
+
+export type PublicOrderStatus = { ref: string; total: number; status: OrderStatus; paymentStatus: string | null; paymentUrl: string | null };
+
+export function getPublicOrder(ref: string, token: string): PublicOrderStatus | null {
+  const o = getDb().prepare('SELECT ref, total, status, public_token, payment_status, payment_url FROM orders WHERE ref = ?').get(ref) as
+    | Pick<OrderRow, 'ref' | 'total' | 'status' | 'public_token' | 'payment_status' | 'payment_url'>
+    | undefined;
+  if (!o || !o.public_token || o.public_token.length !== token.length) return null;
+  if (!timingSafeEqual(Buffer.from(o.public_token), Buffer.from(token))) return null;
+  return { ref: o.ref, total: o.total, status: o.status, paymentStatus: o.payment_status, paymentUrl: o.payment_url };
 }
 
 export function listDiscounts(): DiscountCode[] {

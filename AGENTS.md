@@ -26,3 +26,5 @@
 - Server functions live in `src/lib/shop-api.ts`. Every admin function calls `requireAdmin()` itself; the `/admin` route guard is only for navigation. Order totals and discounts are always recomputed on the server from the catalogue.
 - Admin accounts are created only with `scripts/admin.mjs` on the server; never add a public sign-up or first-run setup page.
 - Shared order and discount rules (statuses, `evaluateDiscount`, pricing) stay browser-safe in `src/lib/commerce.ts` so checkout, admin pages and server agree.
+- Payments go through NOWPayments (`src/server/nowpayments.server.ts`): checkout creates a hosted invoice in SEK and redirects to it; `/api/nowpayments/ipn` accepts only HMAC-signed callbacks and applies them via `recordPaymentUpdate`, which checks invoice id, currency and total before marking an order paid. Without `NOWPAYMENTS_API_KEY`, `NOWPAYMENTS_IPN_SECRET` and `PUBLIC_SITE_URL`, checkout stores orders for manual payment.
+- The customer return page `/kassa/tack` shows an order only with its random `public_token`; never look orders up by order number alone on public pages.

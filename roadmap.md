@@ -1,6 +1,6 @@
 # Peptidesweden
 - [x] Add secure admin login, order management and discount codes with login-only accounts entirely on the user's VPS (SQLite via node:sqlite, accounts created with scripts/admin.mjs, no Lovable Cloud).
-- [ ] Connect a real payment provider; orders are stored as "Ny – inväntar betalning" and marked paid manually in /admin.
+- [x] Take crypto payments through NOWPayments hosted invoices; signed IPN callbacks mark fully paid orders as paid, and checkout falls back to manual payment when the keys are not set.
 - [ ] Send order confirmation emails; checkout says a confirmation is sent but no email service is connected yet.
 - [x] Bundle all storefront images and fonts locally for self-hosted VPS deployment and verify they load without external media hosting.
 - [x] Resolve reported mobile-hook React reference issue and verify it.

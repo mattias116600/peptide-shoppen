@@ -45,10 +45,16 @@ CREATE TABLE IF NOT EXISTS orders (
   total INTEGER NOT NULL,
   tracking TEXT NOT NULL DEFAULT '',
   admin_note TEXT NOT NULL DEFAULT '',
+  public_token TEXT NOT NULL DEFAULT '',
+  payment_provider TEXT,
+  payment_ref TEXT,
+  payment_url TEXT,
+  payment_status TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS orders_created ON orders(created_at DESC);
+-- Columns added after the first release are also added to existing databases in db.server.ts.
 
 CREATE TABLE IF NOT EXISTS order_lines (
   order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
