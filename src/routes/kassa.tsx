@@ -3,9 +3,9 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowLeft, ArrowRight, Bitcoin, Check, CheckCircle2, CreditCard, FlaskConical, Home, ListChecks, Mail, Minus, Package, Phone, Plus, ShoppingBag, TicketPercent, Truck, User, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/components/store/store-provider';
-import { products, formatPrice, cartTotal, shippingInfo, isValidPhone } from '@/lib/products';
+import { formatPrice, cartTotal, shippingInfo, isValidPhone } from '@/lib/products';
+import { resolveImage } from '@/lib/media';
 import { TelegramSupportRow } from '@/components/store/support-telegram';
-import vial from '@/assets/peptide-vial.webp';
 import { checkDiscountFn, getCheckoutConfigFn, placeOrderFn } from '@/lib/shop-api';
 import type { PlacedOrder } from '@/lib/commerce';
 
@@ -53,7 +53,8 @@ function StepBar({ current }: { current: number }) {
 }
 
 function CheckoutPage() {
-  const { items, change, clear } = useStore();
+  const { items, change, clear, catalog } = useStore();
+  const { products, groups } = catalog;
   const { cryptoPayments } = Route.useLoaderData();
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(false);
@@ -65,7 +66,7 @@ function CheckoutPage() {
   const [discountError, setDiscountError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
-  const subtotal = cartTotal(items);
+  const subtotal = cartTotal(items, products);
   const total = subtotal - (discount?.amount ?? 0);
 
   const applyCode = async (code: string) => {
@@ -208,7 +209,7 @@ function CheckoutPage() {
               if (!p) return null;
               return (
                 <div className="cart-item" key={p.slug}>
-                  <img src={vial} alt={p.name} width={80} height={80} />
+                  <img src={resolveImage(groups.find(g => g.slug === p.group)?.image)} alt={p.name} width={80} height={80} />
                   <div>
                     <h3>{p.name}</h3>
                     <p>{p.amount}</p>

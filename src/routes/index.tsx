@@ -2,7 +2,8 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowRight, FlaskConical, FileText, Layers, ShieldCheck, Calculator, BookOpen, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/store/product-card';
-import { findGroup, shippingInfo } from '@/lib/products';
+import { shippingInfo } from '@/lib/products';
+import { useCatalog } from '@/components/store/store-provider';
 import hero from '@/assets/nordic-lab-hero.webp';
 
 export const Route = createFileRoute('/')({
@@ -17,14 +18,16 @@ export const Route = createFileRoute('/')({
   component: Home,
 });
 
-const features = [
+const features = (groups: number, strengths: number) => [
   { icon: FlaskConical, title: 'Endast laboratorieforskning', sub: 'Ett fokuserat sortiment' },
-  { icon: Layers, title: '5 peptider · 11 styrkor', sub: 'Välj efter ditt forskningsprojekt' },
+  { icon: Layers, title: `${groups} ${groups === 1 ? 'peptid' : 'peptider'} · ${strengths} ${strengths === 1 ? 'styrka' : 'styrkor'}`, sub: 'Välj efter ditt forskningsprojekt' },
   { icon: FileText, title: 'Batchspecifika rapporter', sub: 'Se tillgängliga analyser' },
   { icon: ShieldCheck, title: 'Tydlig produktinformation', sub: 'Specifikationer på varje produktsida' },
 ];
 
 function Home() {
+  const { groups, products } = useCatalog();
+  const featured = groups.filter(g => g.featured);
   return <main>
     <section className="nordic-hero">
       <img className="nordic-hero-image" src={hero} alt="Tre illustrativa forskningsvialer med blå och gula lock" width={1920} height={1024} fetchPriority="high" />
@@ -44,7 +47,7 @@ function Home() {
     </section>
     <section className="nordic-strip">
       <div className="content-width nordic-strip-inner">
-        {features.map(f => <div className="nordic-strip-item" key={f.title}><f.icon /><div><strong>{f.title}</strong><p>{f.sub}</p></div></div>)}
+        {features(groups.length, products.length).map(f => <div className="nordic-strip-item" key={f.title}><f.icon /><div><strong>{f.title}</strong><p>{f.sub}</p></div></div>)}
       </div>
     </section>
     <section className="content-width home-products">
@@ -52,7 +55,7 @@ function Home() {
         <div><div className="eyebrow"><span className="eyebrow-line" /> SORTIMENTET</div><h2>Utvalda forskningspeptider</h2><p>En peptid. Flera styrkor. Hitta ditt alternativ.</p></div>
         <Link to="/produkter">Alla produkter <ArrowRight /></Link>
       </div>
-      <div className="product-grid">{['retatrutide', 'ghk-cu', 'mots-c', 'bpc-157-tb-500'].map(slug => { const p = findGroup(slug); return p ? <ProductCard product={p} key={p.slug} /> : null; })}</div>
+      <div className="product-grid">{(featured.length ? featured : groups).slice(0, 4).map(p => <ProductCard product={p} key={p.slug} />)}</div>
     </section>
     <section className="nordic-shipping">
       <div className="content-width nordic-shipping-inner">

@@ -22,9 +22,15 @@ import { Route as AdminRabattkoderRouteImport } from './routes/admin.rabattkoder
 import { Route as BloggIndexRouteImport } from './routes/blogg.index'
 import { Route as BloggSlugRouteImport } from './routes/blogg.$slug'
 import { Route as KassaTackRouteImport } from './routes/kassa_.tack'
+import { Route as MediaFileRouteImport } from './routes/media/$file'
 import { Route as ProdukterIndexRouteImport } from './routes/produkter.index'
 import { Route as ProdukterSlugRouteImport } from './routes/produkter.$slug'
+import { Route as AdminBloggIndexRouteImport } from './routes/admin.blogg.index'
+import { Route as AdminBloggSlugRouteImport } from './routes/admin.blogg.$slug'
 import { Route as AdminOrdrarRefRouteImport } from './routes/admin.ordrar.$ref'
+import { Route as AdminProdukterIndexRouteImport } from './routes/admin.produkter.index'
+import { Route as AdminProdukterSlugRouteImport } from './routes/admin.produkter.$slug'
+import { Route as ApiAdminUploadRouteImport } from './routes/api/admin/upload'
 import { Route as ApiNowpaymentsIpnRouteImport } from './routes/api/nowpayments/ipn'
 
 const IndexRoute = IndexRouteImport.update({
@@ -92,6 +98,11 @@ const KassaTackRoute = KassaTackRouteImport.update({
   path: '/kassa/tack',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MediaFileRoute = MediaFileRouteImport.update({
+  id: '/media/$file',
+  path: '/media/$file',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProdukterIndexRoute = ProdukterIndexRouteImport.update({
   id: '/produkter/',
   path: '/produkter/',
@@ -102,10 +113,35 @@ const ProdukterSlugRoute = ProdukterSlugRouteImport.update({
   path: '/produkter/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminBloggIndexRoute = AdminBloggIndexRouteImport.update({
+  id: '/blogg/',
+  path: '/blogg/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBloggSlugRoute = AdminBloggSlugRouteImport.update({
+  id: '/blogg/$slug',
+  path: '/blogg/$slug',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminOrdrarRefRoute = AdminOrdrarRefRouteImport.update({
   id: '/ordrar/$ref',
   path: '/ordrar/$ref',
   getParentRoute: () => AdminRoute,
+} as any)
+const AdminProdukterIndexRoute = AdminProdukterIndexRouteImport.update({
+  id: '/produkter/',
+  path: '/produkter/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProdukterSlugRoute = AdminProdukterSlugRouteImport.update({
+  id: '/produkter/$slug',
+  path: '/produkter/$slug',
+  getParentRoute: () => AdminRoute,
+} as any)
+const ApiAdminUploadRoute = ApiAdminUploadRouteImport.update({
+  id: '/api/admin/upload',
+  path: '/api/admin/upload',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiNowpaymentsIpnRoute = ApiNowpaymentsIpnRouteImport.update({
   id: '/api/nowpayments/ipn',
@@ -125,12 +161,18 @@ export interface FileRoutesByFullPath {
   '/admin/rabattkoder': typeof AdminRabattkoderRoute
   '/blogg/$slug': typeof BloggSlugRoute
   '/kassa/tack': typeof KassaTackRoute
+  '/media/$file': typeof MediaFileRoute
   '/produkter/$slug': typeof ProdukterSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/blogg/': typeof BloggIndexRoute
   '/produkter/': typeof ProdukterIndexRoute
+  '/admin/blogg/$slug': typeof AdminBloggSlugRoute
   '/admin/ordrar/$ref': typeof AdminOrdrarRefRoute
+  '/admin/produkter/$slug': typeof AdminProdukterSlugRoute
+  '/api/admin/upload': typeof ApiAdminUploadRoute
   '/api/nowpayments/ipn': typeof ApiNowpaymentsIpnRoute
+  '/admin/blogg/': typeof AdminBloggIndexRoute
+  '/admin/produkter/': typeof AdminProdukterIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -143,12 +185,18 @@ export interface FileRoutesByTo {
   '/admin/rabattkoder': typeof AdminRabattkoderRoute
   '/blogg/$slug': typeof BloggSlugRoute
   '/kassa/tack': typeof KassaTackRoute
+  '/media/$file': typeof MediaFileRoute
   '/produkter/$slug': typeof ProdukterSlugRoute
   '/admin': typeof AdminIndexRoute
   '/blogg': typeof BloggIndexRoute
   '/produkter': typeof ProdukterIndexRoute
+  '/admin/blogg/$slug': typeof AdminBloggSlugRoute
   '/admin/ordrar/$ref': typeof AdminOrdrarRefRoute
+  '/admin/produkter/$slug': typeof AdminProdukterSlugRoute
+  '/api/admin/upload': typeof ApiAdminUploadRoute
   '/api/nowpayments/ipn': typeof ApiNowpaymentsIpnRoute
+  '/admin/blogg': typeof AdminBloggIndexRoute
+  '/admin/produkter': typeof AdminProdukterIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -163,12 +211,18 @@ export interface FileRoutesById {
   '/admin/rabattkoder': typeof AdminRabattkoderRoute
   '/blogg/$slug': typeof BloggSlugRoute
   '/kassa_/tack': typeof KassaTackRoute
+  '/media/$file': typeof MediaFileRoute
   '/produkter/$slug': typeof ProdukterSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/blogg/': typeof BloggIndexRoute
   '/produkter/': typeof ProdukterIndexRoute
+  '/admin/blogg/$slug': typeof AdminBloggSlugRoute
   '/admin/ordrar/$ref': typeof AdminOrdrarRefRoute
+  '/admin/produkter/$slug': typeof AdminProdukterSlugRoute
+  '/api/admin/upload': typeof ApiAdminUploadRoute
   '/api/nowpayments/ipn': typeof ApiNowpaymentsIpnRoute
+  '/admin/blogg/': typeof AdminBloggIndexRoute
+  '/admin/produkter/': typeof AdminProdukterIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -184,12 +238,18 @@ export interface FileRouteTypes {
     | '/admin/rabattkoder'
     | '/blogg/$slug'
     | '/kassa/tack'
+    | '/media/$file'
     | '/produkter/$slug'
     | '/admin/'
     | '/blogg/'
     | '/produkter/'
+    | '/admin/blogg/$slug'
     | '/admin/ordrar/$ref'
+    | '/admin/produkter/$slug'
+    | '/api/admin/upload'
     | '/api/nowpayments/ipn'
+    | '/admin/blogg/'
+    | '/admin/produkter/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -202,12 +262,18 @@ export interface FileRouteTypes {
     | '/admin/rabattkoder'
     | '/blogg/$slug'
     | '/kassa/tack'
+    | '/media/$file'
     | '/produkter/$slug'
     | '/admin'
     | '/blogg'
     | '/produkter'
+    | '/admin/blogg/$slug'
     | '/admin/ordrar/$ref'
+    | '/admin/produkter/$slug'
+    | '/api/admin/upload'
     | '/api/nowpayments/ipn'
+    | '/admin/blogg'
+    | '/admin/produkter'
   id:
     | '__root__'
     | '/'
@@ -221,12 +287,18 @@ export interface FileRouteTypes {
     | '/admin/rabattkoder'
     | '/blogg/$slug'
     | '/kassa_/tack'
+    | '/media/$file'
     | '/produkter/$slug'
     | '/admin/'
     | '/blogg/'
     | '/produkter/'
+    | '/admin/blogg/$slug'
     | '/admin/ordrar/$ref'
+    | '/admin/produkter/$slug'
+    | '/api/admin/upload'
     | '/api/nowpayments/ipn'
+    | '/admin/blogg/'
+    | '/admin/produkter/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -239,9 +311,11 @@ export interface RootRouteChildren {
   OmOssRoute: typeof OmOssRoute
   BloggSlugRoute: typeof BloggSlugRoute
   KassaTackRoute: typeof KassaTackRoute
+  MediaFileRoute: typeof MediaFileRoute
   ProdukterSlugRoute: typeof ProdukterSlugRoute
   BloggIndexRoute: typeof BloggIndexRoute
   ProdukterIndexRoute: typeof ProdukterIndexRoute
+  ApiAdminUploadRoute: typeof ApiAdminUploadRoute
   ApiNowpaymentsIpnRoute: typeof ApiNowpaymentsIpnRoute
 }
 
@@ -338,6 +412,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KassaTackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/media/$file': {
+      id: '/media/$file'
+      path: '/media/$file'
+      fullPath: '/media/$file'
+      preLoaderRoute: typeof MediaFileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produkter/': {
       id: '/produkter/'
       path: '/produkter'
@@ -352,12 +433,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdukterSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/blogg/': {
+      id: '/admin/blogg/'
+      path: '/blogg'
+      fullPath: '/admin/blogg/'
+      preLoaderRoute: typeof AdminBloggIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/blogg/$slug': {
+      id: '/admin/blogg/$slug'
+      path: '/blogg/$slug'
+      fullPath: '/admin/blogg/$slug'
+      preLoaderRoute: typeof AdminBloggSlugRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/ordrar/$ref': {
       id: '/admin/ordrar/$ref'
       path: '/ordrar/$ref'
       fullPath: '/admin/ordrar/$ref'
       preLoaderRoute: typeof AdminOrdrarRefRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/admin/produkter/': {
+      id: '/admin/produkter/'
+      path: '/produkter'
+      fullPath: '/admin/produkter/'
+      preLoaderRoute: typeof AdminProdukterIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/produkter/$slug': {
+      id: '/admin/produkter/$slug'
+      path: '/produkter/$slug'
+      fullPath: '/admin/produkter/$slug'
+      preLoaderRoute: typeof AdminProdukterSlugRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/api/admin/upload': {
+      id: '/api/admin/upload'
+      path: '/api/admin/upload'
+      fullPath: '/api/admin/upload'
+      preLoaderRoute: typeof ApiAdminUploadRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/nowpayments/ipn': {
       id: '/api/nowpayments/ipn'
@@ -373,14 +489,22 @@ interface AdminRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AdminRabattkoderRoute: typeof AdminRabattkoderRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminBloggSlugRoute: typeof AdminBloggSlugRoute
   AdminOrdrarRefRoute: typeof AdminOrdrarRefRoute
+  AdminProdukterSlugRoute: typeof AdminProdukterSlugRoute
+  AdminBloggIndexRoute: typeof AdminBloggIndexRoute
+  AdminProdukterIndexRoute: typeof AdminProdukterIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminRabattkoderRoute: AdminRabattkoderRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminBloggSlugRoute: AdminBloggSlugRoute,
   AdminOrdrarRefRoute: AdminOrdrarRefRoute,
+  AdminProdukterSlugRoute: AdminProdukterSlugRoute,
+  AdminBloggIndexRoute: AdminBloggIndexRoute,
+  AdminProdukterIndexRoute: AdminProdukterIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -395,9 +519,11 @@ const rootRouteChildren: RootRouteChildren = {
   OmOssRoute: OmOssRoute,
   BloggSlugRoute: BloggSlugRoute,
   KassaTackRoute: KassaTackRoute,
+  MediaFileRoute: MediaFileRoute,
   ProdukterSlugRoute: ProdukterSlugRoute,
   BloggIndexRoute: BloggIndexRoute,
   ProdukterIndexRoute: ProdukterIndexRoute,
+  ApiAdminUploadRoute: ApiAdminUploadRoute,
   ApiNowpaymentsIpnRoute: ApiNowpaymentsIpnRoute,
 }
 export const routeTree = rootRouteImport

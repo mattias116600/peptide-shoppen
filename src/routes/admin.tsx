@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, redirect, useRouter, useRouterState } from '@tanstack/react-router';
-import { LogOut, Package, TicketPercent, ExternalLink } from 'lucide-react';
+import { ExternalLink, FlaskConical, LogOut, Newspaper, Package, TicketPercent } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SwedenFlag } from '@/components/store/sweden-flag';
 import { getAdminFn, logoutFn } from '@/lib/shop-api';
@@ -35,6 +35,8 @@ function AdminLayout() {
         <nav className="admin-nav" aria-label="Admin">
           <Link to="/admin" activeOptions={{ exact: true, includeSearch: false }}><Package size={16} /> Ordrar</Link>
           <Link to="/admin/rabattkoder"><TicketPercent size={16} /> Rabattkoder</Link>
+          <Link to="/admin/produkter"><FlaskConical size={16} /> Produkter</Link>
+          <Link to="/admin/blogg"><Newspaper size={16} /> Blogg</Link>
         </nav>
         <div className="admin-user">
           <a href="/" target="_blank" rel="noopener noreferrer" className="admin-site-link"><ExternalLink size={14} /> Butiken</a>

@@ -2,6 +2,8 @@
 import { randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
 import type { DatabaseSync } from 'node:sqlite';
 import { getDb, nowIso, transaction } from './db.server';
+import { OrderError } from './errors.server';
+import { getStorefrontCatalog } from './catalog.server';
 import {
   evaluateDiscount, linesSubtotal, normalizeCode, priceLines,
   PAID_PAYMENT_STATUSES, type CustomerInput, type DiscountKind, type DiscountRule, type OrderStatus, type PaymentInfo, type PlacedOrder,
@@ -23,7 +25,7 @@ function findDiscount(db: DatabaseSync, code: string) {
 export type CartInput = { slug: string; quantity: number }[];
 
 export function quoteDiscount(code: string, cart: CartInput) {
-  const subtotal = linesSubtotal(priceLines(cart));
+  const subtotal = linesSubtotal(priceLines(cart, getStorefrontCatalog().products));
   const rule = findDiscount(getDb(), code);
   if (!rule) throw new OrderError('Rabattkoden finns inte.');
   const check = evaluateDiscount(rule, subtotal);
@@ -32,10 +34,10 @@ export function quoteDiscount(code: string, cart: CartInput) {
 }
 
 
-export class OrderError extends Error {}
+export { OrderError };
 
 export function placeOrder(customer: CustomerInput, cart: CartInput, discountCode?: string): PlacedOrder & { publicToken: string } {
-  const lines = priceLines(cart);
+  const lines = priceLines(cart, getStorefrontCatalog().products);
   if (!lines.length) throw new OrderError('Varukorgen är tom.');
   const subtotal = linesSubtotal(lines);
   return transaction(db => {

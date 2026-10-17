@@ -1,7 +1,7 @@
 // Server functions for checkout and the admin area. Handlers run only on the server;
 // every admin function checks the session itself rather than trusting the route guard.
 import { createServerFn } from '@tanstack/react-start';
-import { deleteCookie, getCookie, getRequestHeader, getRequestIP, setCookie } from '@tanstack/react-start/server';
+import { deleteCookie, getCookie, setCookie } from '@tanstack/react-start/server';
 import { z } from 'zod';
 import { orderStatuses } from './commerce';
 import { isValidPhone, normalizePhone } from './products';
@@ -9,31 +9,13 @@ import {
   checkCredentials, clearLoginFailures, createSession, destroySession, loginLockMinutes, recordLoginFailure, sessionAdmin,
 } from '@/server/auth.server';
 import {
-  OrderError, attachPayment, cancelUnstartedOrder, createDiscount, deleteDiscount, getOrder, getPublicOrder, listDiscounts, listOrders, orderStats, placeOrder,
+  attachPayment, cancelUnstartedOrder, createDiscount, deleteDiscount, getOrder, getPublicOrder, listDiscounts, listOrders, orderStats, placeOrder,
   quoteDiscount, setDiscountActive, updateOrder,
 } from '@/server/shop.server';
 import { createInvoice, nowPaymentsConfig } from '@/server/nowpayments.server';
+import { ADMIN_COOKIE, attempt, clientIp, requireAdmin } from '@/server/request.server';
 
-const COOKIE = 'psw_admin';
-
-// Nginx overwrites X-Real-IP with the connecting address; the app itself only listens on 127.0.0.1.
-const clientIp = () => getRequestHeader('x-real-ip') ?? getRequestIP() ?? 'unknown';
-
-function requireAdmin() {
-  const admin = sessionAdmin(getCookie(COOKIE));
-  if (!admin) throw new Error('Inte inloggad.');
-  return admin;
-}
-
-/** Turns expected business errors into a result the UI can show instead of a 500. */
-function attempt<T>(fn: () => T): { ok: true; value: T } | { ok: false; error: string } {
-  try {
-    return { ok: true, value: fn() };
-  } catch (error) {
-    if (error instanceof OrderError || (error instanceof Error && error.message.startsWith('Ogiltig'))) return { ok: false, error: error.message };
-    throw error;
-  }
-}
+const COOKIE = ADMIN_COOKIE;
 
 const cartSchema = z.array(z.object({ slug: z.string().max(80), quantity: z.number().int().min(1).max(99) })).min(1).max(40);
 const customerSchema = z.object({

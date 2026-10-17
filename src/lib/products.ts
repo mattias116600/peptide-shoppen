@@ -1,3 +1,5 @@
+// Starting catalogue, copied into the database on first start (src/server/catalog.server.ts).
+// The live catalogue comes from the server; see src/components/store/store-provider.tsx.
 export type Product = { slug: string; group: string; name: string; amount: string; price: number; category: string; description: string; badge?: string; batch?: string; coaUrl?: string };
 export const products: Product[] = [
   {slug:'retatrutide-10',group:'retatrutide',name:'Retatrutide',amount:'10 mg',price:899,category:'Peptider',description:'Peptid för studier inom metabol forskning.',badge:'POPULÄR',batch:'201465',coaUrl:'https://polypeptide.io/tests/201465-Retatrutide_10mg'},
@@ -12,22 +14,27 @@ export const products: Product[] = [
   {slug:'bpc-157-20',group:'bpc-157',name:'BPC-157',amount:'20 mg',price:649,category:'Peptider',description:'Pentadekapeptid för laboratoriestudier.',batch:'626665',coaUrl:'https://polypeptide.io/tests/626665-BPC-157_20mg'},
   {slug:'bpc-157-tb-500-20',group:'bpc-157-tb-500',name:'BPC-157 + TB-500',amount:'20 mg',price:799,category:'Blends',description:'En kombination av två forskningspeptider.',badge:'BLEND',batch:'949595',coaUrl:'https://polypeptide.io/tests/949595-BPC-157+TB-500_20mg'},
 ];
-export type ProductGroup = { slug: string; name: string; category: string; description: string; badge?: string | undefined; variants: [Product, ...Product[]] };
+export type ProductGroup = {
+  slug: string; name: string; category: string; description: string; badge?: string | undefined;
+  image: string; featured: boolean; about: string[]; specs: [string, string][];
+  variants: [Product, ...Product[]];
+};
+const seedFeatured = ['retatrutide', 'ghk-cu', 'mots-c', 'bpc-157-tb-500'];
 export const productGroups: ProductGroup[] = products.reduce<ProductGroup[]>((groups, p) => {
   const g = groups.find(x => x.slug === p.group);
   if (g) { g.variants.push(p); if (p.badge && !g.badge) g.badge = p.badge; }
-  else groups.push({ slug: p.group, name: p.name, category: p.category, description: p.description, badge: p.badge, variants: [p] });
+  else groups.push({ slug: p.group, name: p.name, category: p.category, description: p.description, badge: p.badge, image: 'bundled:vial', featured: seedFeatured.includes(p.group), about: [], specs: [], variants: [p] });
   return groups;
 }, []);
-export const findGroup = (slug: string) => productGroups.find(g => g.slug === slug);
+export const findGroup = (slug: string, groups: ProductGroup[] = productGroups) => groups.find(g => g.slug === slug);
 export const formatPrice = (value: number) => `${new Intl.NumberFormat('sv-SE').format(value)} kr`;
 export type CartItem = { slug: string; quantity: number };
-export function updateCart(items: CartItem[], slug: string, delta: number): CartItem[] {
+export function updateCart(items: CartItem[], slug: string, delta: number, catalog: Product[] = products): CartItem[] {
   const existing = items.find(item => item.slug === slug);
-  if (!existing) return delta > 0 && products.some(p => p.slug === slug) ? [...items, {slug,quantity:delta}] : items;
+  if (!existing) return delta > 0 && catalog.some(p => p.slug === slug) ? [...items, {slug,quantity:delta}] : items;
   return items.map(item => item.slug === slug ? {...item,quantity:item.quantity + delta} : item).filter(item => item.quantity > 0);
 }
-export function cartTotal(items: CartItem[]) { return items.reduce((total,item) => total + (products.find(p => p.slug === item.slug)?.price ?? 0) * item.quantity,0); }
+export function cartTotal(items: CartItem[], catalog: Product[] = products) { return items.reduce((total,item) => total + (catalog.find(p => p.slug === item.slug)?.price ?? 0) * item.quantity,0); }
 export const shippingInfo = { carrier: 'PostNord', leadTime: '1–3 arbetsdagar', summary: 'Skickas med PostNord. Leverans 1–3 arbetsdagar.' } as const;
 export const supportInfo = { handle: '@peptideswedenn', url: 'https://t.me/peptideswedenn', label: 'Support på Telegram', blurb: 'Ställ en fråga direkt — vi svarar på svenska.' } as const;
 export function normalizePhone(value: string) { return value.trim().replace(/[\s()\-.]/g, ''); }
@@ -45,3 +52,4 @@ export const peptideInfo: Record<string, PeptideInfo> = {
   'bpc-157-tb-500': { about: ['En blend av BPC-157 och TB-500 (ett syntetiskt fragment relaterat till tymosin beta-4) i samma vial.', 'Kombinationen används i laboratoriestudier där båda peptiderna undersöks tillsammans.'],
     specs: [['Innehåll','BPC-157 + TB-500'],['BPC-157 molmassa','ca 1 419 g/mol (CAS 137525-51-0)'],['TB-500 molmassa','ca 4 963 g/mol (CAS 77591-33-4)']] },
 };
+for (const g of productGroups) { const info = peptideInfo[g.slug]; if (info) { g.about = info.about; g.specs = info.specs; } }
