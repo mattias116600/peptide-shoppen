@@ -39,6 +39,11 @@ sudo nginx -t && sudo systemctl reload nginx
 Certifikatet förnyas automatiskt (`systemctl list-timers | grep certbot`).
 
 ## Uppdatera sajten
+Alla 13 bilder finns lokalt i `src/assets/` och typsnitten i `public/fonts/`.
+`npm run build:vps` tar med dem i `.output/public/`; inga bild- eller typsnittsförfrågningar behöver gå till Lovable eller Google.
+Behåll hela `.output/` när du kopierar ett färdigt bygge till servern, inte bara `.output/server/`.
+Telegram och externa CoA-rapporter är fortfarande externa länkar.
+
 ```bash
 cd /var/www/peptidesweden && git pull && npm ci && npm run build:vps
 sudo chown -R www-data:www-data . && sudo systemctl restart peptidesweden

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowRight, BookOpen, Calculator, FileCheck2, Mail, MessageCircleQuestion, Send } from 'lucide-react';
 import { TelegramSupportCard } from '@/components/store/support-telegram';
 import { supportInfo } from '@/lib/products';
-import vialImg from '@/assets/peptides-hero.webp.asset.json';
+import vialImg from '@/assets/peptides-hero.webp';
 
 export const Route = createFileRoute('/kontakt')({
   head: () => ({
@@ -89,7 +89,7 @@ function Contact() {
             </div>
           </div>
           <div className="about-hero-media">
-            <img src={vialImg.url} alt="Peptidvialer från Peptidesweden" loading="eager" />
+            <img src={vialImg} alt="Peptidvialer från Peptidesweden" loading="eager" />
             <span className="about-hero-tag">Laboratorieforskning</span>
           </div>
         </div>

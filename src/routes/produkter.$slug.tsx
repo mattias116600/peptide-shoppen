@@ -9,7 +9,7 @@ import { articles } from '@/lib/articles';
 import { useStore } from '@/components/store/store-provider';
 import { TelegramSupportCard, TelegramSupportRow } from '@/components/store/support-telegram';
 import { ProductCard } from '@/components/store/product-card';
-import vial from '@/assets/peptide-vial.webp.asset.json';
+import vial from '@/assets/peptide-vial.webp';
 
 export const Route = createFileRoute('/produkter/$slug')({
   validateSearch: (search: Record<string, unknown>): { styrka?: string | undefined } => ({ styrka: typeof search['styrka'] === 'string' ? search['styrka'] : undefined }),
@@ -61,7 +61,7 @@ function Detail() {
       <nav className="breadcrumb"><Link to="/">Hem</Link><span>/</span><Link to="/produkter">Produkter</Link><span>/</span><span>{product.name}</span></nav>
       <div className="detail-grid pdp">
         <div className="pdp-media">
-          <img className="detail-photo" src={vial.url} alt={`${product.name} forskningsvial`} width={1024} height={1024} />
+          <img className="detail-photo" src={vial} alt={`${product.name} forskningsvial`} width={1024} height={1024} />
           <span className="pdp-media-tag">{variant.amount}</span>
         </div>
         <div className="detail-copy">

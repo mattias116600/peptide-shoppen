@@ -3,7 +3,7 @@ import { ArrowRight, FlaskConical, FileText, Layers, ShieldCheck, Calculator, Bo
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/store/product-card';
 import { findGroup, shippingInfo } from '@/lib/products';
-import hero from '@/assets/nordic-lab-hero.webp.asset.json';
+import hero from '@/assets/nordic-lab-hero.webp';
 
 export const Route = createFileRoute('/')({
   head: () => ({ meta: [
@@ -27,7 +27,7 @@ const features = [
 function Home() {
   return <main>
     <section className="nordic-hero">
-      <img className="nordic-hero-image" src={hero.url} alt="Tre illustrativa forskningsvialer med blå och gula lock" width={1920} height={1024} fetchPriority="high" />
+      <img className="nordic-hero-image" src={hero} alt="Tre illustrativa forskningsvialer med blå och gula lock" width={1920} height={1024} fetchPriority="high" />
       <div className="content-width nordic-hero-content">
         <div className="nordic-hero-copy">
           <div className="eyebrow"><span className="mini-flag" aria-hidden="true" /> FORSKNING. I FOKUS.</div>
