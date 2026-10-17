@@ -58,5 +58,22 @@ export function priceLines(items: { slug: string; quantity: number }[]): PricedL
 }
 export const linesSubtotal = (lines: PricedLine[]) => lines.reduce((sum, l) => sum + l.unitPrice * l.qty, 0);
 
+// Statuses reported by NOWPayments for a crypto payment.
+export const paymentStatusLabel: Record<string, string> = {
+  waiting: 'Väntar på betalning',
+  confirming: 'Bekräftas på blockkedjan',
+  confirmed: 'Bekräftad',
+  sending: 'Skickas till butiken',
+  partially_paid: 'Delvis betald',
+  finished: 'Betald',
+  failed: 'Misslyckad',
+  refunded: 'Återbetald',
+  expired: 'Utgången',
+};
+/** Payment statuses that mean the full amount has been received on the blockchain. */
+export const PAID_PAYMENT_STATUSES = ['confirmed', 'sending', 'finished'];
+export const describePaymentStatus = (status: string | null) => (status ? paymentStatusLabel[status] ?? status : '—');
+
 export type CustomerInput = { name: string; email: string; phone: string; address: string; zip: string; city: string };
 export type PlacedOrder = CustomerInput & { ref: string; createdAt: string; subtotal: number; discountCode: string | null; discountAmount: number; total: number; lines: PricedLine[] };
+export type PaymentInfo = { provider: string | null; ref: string | null; url: string | null; status: string | null };

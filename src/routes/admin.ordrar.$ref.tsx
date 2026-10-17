@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { createFileRoute, Link, notFound, useRouter } from '@tanstack/react-router';
-import { ArrowLeft, Mail, Phone, Save } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, Save, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatPrice } from '@/lib/products';
-import { orderStatuses, orderStatusLabel, type OrderStatus } from '@/lib/commerce';
+import { describePaymentStatus, orderStatuses, orderStatusLabel, type OrderStatus } from '@/lib/commerce';
 import { getOrderFn, updateOrderFn } from '@/lib/shop-api';
 import { StatusPill, formatDateTime } from '@/components/admin/admin-ui';
 
@@ -76,6 +76,16 @@ function OrderPage() {
           <p className="admin-address">{order.name}<br />{order.address}<br />{order.zip} {order.city}</p>
           <p className="admin-contact"><Mail size={14} /> <a href={`mailto:${order.email}`}>{order.email}</a></p>
           <p className="admin-contact"><Phone size={14} /> <a href={`tel:${order.phone}`}>{order.phone}</a></p>
+          <h2 className="admin-subheading"><Wallet size={15} /> Betalning</h2>
+          {order.payment.provider ? (
+            <dl className="admin-totals">
+              <div><dt>Leverantör</dt><dd>{order.payment.provider}</dd></div>
+              <div><dt>Status</dt><dd>{describePaymentStatus(order.payment.status)}</dd></div>
+              <div><dt>Faktura</dt><dd>{order.payment.url ? <a className="admin-link" href={order.payment.url} target="_blank" rel="noopener noreferrer">{order.payment.ref}</a> : order.payment.ref}</dd></div>
+            </dl>
+          ) : (
+            <p className="admin-muted">Ingen onlinebetalning kopplad – markera ordern som betald manuellt när pengarna har kommit in.</p>
+          )}
         </section>
 
         <section className="admin-card">

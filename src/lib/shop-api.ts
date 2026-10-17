@@ -9,8 +9,10 @@ import {
   checkCredentials, clearLoginFailures, createSession, destroySession, loginLockMinutes, recordLoginFailure, sessionAdmin,
 } from '@/server/auth.server';
 import {
-  OrderError, createDiscount, deleteDiscount, getOrder, listDiscounts, listOrders, orderStats, placeOrder, quoteDiscount, setDiscountActive, updateOrder,
+  OrderError, attachPayment, cancelUnstartedOrder, createDiscount, deleteDiscount, getOrder, getPublicOrder, listDiscounts, listOrders, orderStats, placeOrder,
+  quoteDiscount, setDiscountActive, updateOrder,
 } from '@/server/shop.server';
+import { createInvoice, nowPaymentsConfig } from '@/server/nowpayments.server';
 
 const COOKIE = 'psw_admin';
 
@@ -59,12 +61,32 @@ export const checkDiscountFn = createServerFn({ method: 'POST' })
   .validator(z.object({ code: codeSchema, cart: cartSchema }))
   .handler(({ data }) => attempt(() => quoteDiscount(data.code, data.cart)));
 
+export const getCheckoutConfigFn = createServerFn({ method: 'GET' }).handler(() => ({ cryptoPayments: nowPaymentsConfig() !== null }));
+
 export const placeOrderFn = createServerFn({ method: 'POST' })
   .validator(z.object({ customer: customerSchema, cart: cartSchema, discountCode: codeSchema.optional() }))
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     if (!allowOrder(clientIp())) return { ok: false as const, error: 'För många beställningar på kort tid. Försök igen om en stund.' };
-    return attempt(() => placeOrder(data.customer, data.cart, data.discountCode));
+    const placed = attempt(() => placeOrder(data.customer, data.cart, data.discountCode));
+    if (!placed.ok) return placed;
+    const { publicToken, ...order } = placed.value;
+    const config = nowPaymentsConfig();
+    // Without NOWPayments keys (e.g. in the Lovable editor) orders are stored and marked paid by hand in /admin.
+    if (!config) return { ok: true as const, value: { order, paymentUrl: null } };
+    try {
+      const invoice = await createInvoice(config, { ref: order.ref, total: order.total, publicToken });
+      attachPayment(order.ref, { provider: 'NOWPayments', ref: invoice.id, url: invoice.url });
+      return { ok: true as const, value: { order, paymentUrl: invoice.url } };
+    } catch (error) {
+      console.error(error);
+      cancelUnstartedOrder(order.ref, 'betalningen kunde inte startas hos NOWPayments');
+      return { ok: false as const, error: 'Betalningen kunde inte startas just nu. Försök igen om en stund eller kontakta oss på Telegram.' };
+    }
   });
+
+export const getPublicOrderFn = createServerFn({ method: 'GET' })
+  .validator(z.object({ ref: z.string().max(20), token: z.string().max(64) }))
+  .handler(({ data }) => getPublicOrder(data.ref, data.token));
 
 // ---------- Session ----------
 

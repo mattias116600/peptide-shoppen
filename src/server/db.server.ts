@@ -17,7 +17,24 @@ export function getDb(): DatabaseSync {
   db = new DatabaseSync(file);
   db.exec('PRAGMA busy_timeout = 5000;');
   db.exec(schema);
+  migrate(db);
   return db;
+}
+
+// Columns added after the first release; CREATE TABLE IF NOT EXISTS does not add them to older files.
+const addedOrderColumns: [string, string][] = [
+  ['public_token', "TEXT NOT NULL DEFAULT ''"],
+  ['payment_provider', 'TEXT'],
+  ['payment_ref', 'TEXT'],
+  ['payment_url', 'TEXT'],
+  ['payment_status', 'TEXT'],
+];
+
+function migrate(conn: DatabaseSync) {
+  const existing = new Set((conn.prepare('PRAGMA table_info(orders)').all() as { name: string }[]).map(c => c.name));
+  for (const [name, type] of addedOrderColumns) {
+    if (!existing.has(name)) conn.exec(`ALTER TABLE orders ADD COLUMN ${name} ${type}`);
+  }
 }
 
 /** Test helper: point the module at a fresh database. */

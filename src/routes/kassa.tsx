@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, CreditCard, FlaskConical, Home, ListChecks, Mail, Minus, Package, Phone, Plus, ShoppingBag, TicketPercent, Truck, User, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bitcoin, Check, CheckCircle2, CreditCard, FlaskConical, Home, ListChecks, Mail, Minus, Package, Phone, Plus, ShoppingBag, TicketPercent, Truck, User, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/components/store/store-provider';
 import { products, formatPrice, cartTotal, shippingInfo, isValidPhone } from '@/lib/products';
 import { TelegramSupportRow } from '@/components/store/support-telegram';
 import vial from '@/assets/peptide-vial.webp';
-import { checkDiscountFn, placeOrderFn } from '@/lib/shop-api';
+import { checkDiscountFn, getCheckoutConfigFn, placeOrderFn } from '@/lib/shop-api';
 import type { PlacedOrder } from '@/lib/commerce';
 
 export const Route = createFileRoute('/kassa')({
@@ -20,6 +20,7 @@ export const Route = createFileRoute('/kassa')({
       { name: 'twitter:card', content: 'summary' },
     ],
   }),
+  loader: () => getCheckoutConfigFn(),
   component: CheckoutPage,
 });
 
@@ -53,6 +54,7 @@ function StepBar({ current }: { current: number }) {
 
 function CheckoutPage() {
   const { items, change, clear } = useStore();
+  const { cryptoPayments } = Route.useLoaderData();
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', zip: '', city: '' });
@@ -91,8 +93,13 @@ function CheckoutPage() {
     try {
       const result = await placeOrderFn({ data: { customer: form, cart: items, ...(discount ? { discountCode: discount.code } : {}) } });
       if (!result.ok) { setSubmitError(result.error); return; }
-      setOrder(result.value);
       clear();
+      if (result.value.paymentUrl) {
+        // Hand over to NOWPayments' hosted payment page; it returns to /kassa/tack afterwards.
+        window.location.assign(result.value.paymentUrl);
+        return;
+      }
+      setOrder(result.value.order);
       setDone(true);
     } catch {
       setSubmitError('Beställningen kunde inte skickas. Kontrollera uppgifterna och försök igen, eller kontakta oss på Telegram.');
@@ -259,13 +266,22 @@ function CheckoutPage() {
             </div>
             <div className="kassa-review-box">
               <h2>Betalning</h2>
-              <p><CreditCard size={14} /> Kortbetalning</p>
-              <p className="kassa-note">Betalningen genomförs säkert i nästa steg.</p>
+              {cryptoPayments ? (
+                <>
+                  <p><Bitcoin size={14} /> Kryptovaluta via NOWPayments</p>
+                  <p className="kassa-note">Du skickas till NOWPayments säkra betalsida och väljer där valuta, t.ex. Bitcoin eller USDT. Priset räknas om från kronor när du betalar.</p>
+                </>
+              ) : (
+                <>
+                  <p><CreditCard size={14} /> Betalning efter beställning</p>
+                  <p className="kassa-note">Vi kontaktar dig med betalningsinstruktioner när beställningen är mottagen.</p>
+                </>
+              )}
             </div>
           </div>
           <div className="kassa-actions">
             <Button variant="outline" onClick={() => setStep(1)} disabled={submitting}><ArrowLeft /> Tillbaka</Button>
-            <Button onClick={submitOrder} disabled={submitting}>{submitting ? 'Skickar beställning…' : <>Slutför beställning — {formatPrice(total)} <Check /></>}</Button>
+            <Button onClick={submitOrder} disabled={submitting}>{submitting ? (cryptoPayments ? 'Skapar betalning…' : 'Skickar beställning…') : <>{cryptoPayments ? 'Gå till betalning' : 'Slutför beställning'} — {formatPrice(total)} <Check /></>}</Button>
           </div>
           {submitError && <p className="kassa-error" role="alert">{submitError}</p>}
         </section>

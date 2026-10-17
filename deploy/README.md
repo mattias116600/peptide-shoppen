@@ -38,7 +38,20 @@ sudo -u www-data node --env-file=.env --disable-warning=ExperimentalWarning scri
 ```
 Logga sedan in på `https://peptidesweden.com/admin`. Sessionen gäller i 12 timmar; efter 5 felaktiga försök från samma IP spärras inloggningen i 15 minuter.
 
-## 5. Nginx + HTTPS
+## 5. Kryptobetalning med NOWPayments
+1. Logga in på NOWPayments: under **Settings → Payments** ställer du in utbetalningsplånbok, och under **Settings → Payments → API keys** skapar du en API-nyckel.
+2. Under **Settings → Payments → Instant payment notifications** genererar du en *IPN secret key* (den visas bara en gång) och sätter IPN-adressen till `https://peptidesweden.com/api/nowpayments/ipn`. Shoppen skickar även adressen med varje faktura.
+3. Lägg in nycklarna i `/var/www/peptidesweden/.env`:
+   ```bash
+   NOWPAYMENTS_API_KEY=din-api-nyckel
+   NOWPAYMENTS_IPN_SECRET=din-ipn-nyckel
+   PUBLIC_SITE_URL=https://peptidesweden.com
+   ```
+4. `sudo systemctl restart peptidesweden`
+
+Så fungerar det: kassan skapar en faktura i SEK och skickar kunden till NOWPayments betalsida. NOWPayments meddelar `/api/nowpayments/ipn` (signerat med IPN-nyckeln) när betalningen ändrar status. När hela beloppet är bekräftat sätts ordern automatiskt till **Betald** i `/admin`. Delbetalningar, utgångna och misslyckade betalningar loggas i orderns historik men ändrar inte orderstatus – hantera dem manuellt. Utan nycklar fungerar kassan som tidigare: ordern sparas och du markerar den betald manuellt.
+
+## 6. Nginx + HTTPS
 ```bash
 sudo mkdir -p /var/www/certbot
 sudo certbot certonly --nginx -d peptidesweden.com -d www.peptidesweden.com
