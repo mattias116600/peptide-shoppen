@@ -1,5 +1,5 @@
 # Peptidesweden
-- [ ] Add secure admin login, order management and discount codes; awaiting account and hosting requirements.
+- [ ] Add secure admin login, order management and discount codes with login-only accounts entirely on the user's VPS; blocked because this environment requires Lovable Cloud for backend implementation, which the user declines.
 - [x] Bundle all storefront images and fonts locally for self-hosted VPS deployment and verify they load without external media hosting.
 - [x] Resolve reported mobile-hook React reference issue and verify it.
 - [x] Provide navigation for Produkter, Om oss, Blogg, Kalkylator, FAQ, Kontakt and add the missing pages.
