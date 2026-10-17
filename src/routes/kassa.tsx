@@ -55,7 +55,7 @@ function StepBar({ current }: { current: number }) {
 function CheckoutPage() {
   const { items, change, clear, catalog } = useStore();
   const { products, groups } = catalog;
-  const { cryptoPayments } = Route.useLoaderData();
+  const { cryptoPayments, emails } = Route.useLoaderData();
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', zip: '', city: '' });
@@ -120,7 +120,7 @@ function CheckoutPage() {
           <div>
             <span className="eyebrow"><span className="eyebrow-line" /> Beställning mottagen</span>
             <h1>Tack för din beställning!</h1>
-            <p>Bekräftelse skickas till <strong>{order.email}</strong>. Nedan ser du vad som händer nu.</p>
+            <p>{emails ? <>En bekräftelse skickas till <strong>{order.email}</strong>.</> : <>Spara ditt ordernummer <strong>{order.ref}</strong>.</>} Nedan ser du vad som händer nu.</p>
           </div>
         </section>
         <div className="confirm-main">
@@ -132,7 +132,7 @@ function CheckoutPage() {
           <div className="confirm-card">
             <h2><ListChecks size={15} /> Vad händer nu?</h2>
             <ol className="confirm-steps">
-              <li><span>1</span>Orderbekräftelse skickas till {order.email}.</li>
+              <li><span>1</span>{emails ? `Orderbekräftelse skickas till ${order.email}.` : 'Vi kontaktar dig med betalningsinstruktioner.'}</li>
               <li><span>2</span>Din beställning packas i neutral förpackning.</li>
               <li><span>3</span>Skickas med PostNord — leverans 1–3 arbetsdagar.</li>
             </ol>

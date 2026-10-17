@@ -51,7 +51,25 @@ Logga sedan in på `https://peptidesweden.com/admin`. Sessionen gäller i 12 tim
 
 Så fungerar det: kassan skapar en faktura i SEK och skickar kunden till NOWPayments betalsida. NOWPayments meddelar `/api/nowpayments/ipn` (signerat med IPN-nyckeln) när betalningen ändrar status. När hela beloppet är bekräftat sätts ordern automatiskt till **Betald** i `/admin`. Delbetalningar, utgångna och misslyckade betalningar loggas i orderns historik men ändrar inte orderstatus – hantera dem manuellt. Utan nycklar fungerar kassan som tidigare: ordern sparas och du markerar den betald manuellt.
 
-## 6. Nginx + HTTPS
+## 6. E-post till kunder
+Shoppen skickar en **orderbekräftelse** när en order läggs (med betallänk när NOWPayments används) och ett **leveransmejl** med PostNord-spårningslänk när du sparar ordern som *Skickad* med ett spårningsnummer i `/admin`. Båda går att skicka igen från orderns sida, och varje utskick syns i orderns historik.
+
+1. Skaffa SMTP-uppgifter från din e-postleverantör, t.ex. domänens webbhotell, Brevo, Mailgun eller Postmark.
+2. Lägg dem i `/var/www/peptidesweden/.env`:
+   ```bash
+   MAIL_FROM=Peptidesweden <order@peptidesweden.com>
+   SMTP_HOST=smtp.dinleverantor.se
+   SMTP_PORT=587
+   SMTP_USER=...
+   SMTP_PASS=...
+   ```
+   Port 587 använder STARTTLS och 465 krypterad anslutning direkt.
+3. Lägg till leverantörens **SPF**- och **DKIM**-poster i DNS för peptidesweden.com, och gärna en **DMARC**-post, annars hamnar mejlen ofta i skräpposten.
+4. `sudo systemctl restart peptidesweden`, lägg en testorder och kontrollera orderns historik i `/admin`.
+
+Utan `MAIL_FROM` skickas inga mejl; orderns historik visar då att inget skickades. För att testa utan att skicka på riktigt: `MAIL_TRANSPORT=outbox` sparar mejlen som filer i `data/outbox/`.
+
+## 7. Nginx + HTTPS
 ```bash
 sudo mkdir -p /var/www/certbot
 sudo certbot certonly --nginx -d peptidesweden.com -d www.peptidesweden.com

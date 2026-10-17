@@ -30,6 +30,8 @@ const addedOrderColumns: [string, string][] = [
   ['payment_ref', 'TEXT'],
   ['payment_url', 'TEXT'],
   ['payment_status', 'TEXT'],
+  ['confirmation_email_at', 'TEXT'],
+  ['shipping_email_at', 'TEXT'],
 ];
 
 function migrate(conn: DatabaseSync) {
