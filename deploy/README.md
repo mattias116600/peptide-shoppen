@@ -1,6 +1,6 @@
 # Driftsätta Peptidesweden på Ubuntu-VPS
 
-Testat: Ubuntu 22.04/24.04, Node.js 22, Nginx, Let's Encrypt.
+Testat: Ubuntu 22.04/24.04, Node.js 22.13 eller senare (krävs för inbyggda `node:sqlite`), Nginx, Let's Encrypt.
 
 ## 1. Förbered servern (en gång)
 ```bash
@@ -15,7 +15,7 @@ DNS: A-post för `peptidesweden.com` och `www` → serverns IP.
 sudo mkdir -p /var/www/peptidesweden && sudo chown $USER /var/www/peptidesweden
 git clone <ditt-repo> /var/www/peptidesweden && cd /var/www/peptidesweden
 cp .env.example .env            # justera vid behov
-npm ci
+npm install
 npm run build:vps               # skapar .output/
 sudo chown -R www-data:www-data /var/www/peptidesweden
 ```
@@ -27,7 +27,18 @@ sudo systemctl daemon-reload && sudo systemctl enable --now peptidesweden
 curl -I http://127.0.0.1:3000   # ska ge 200
 ```
 
-## 4. Nginx + HTTPS
+## 4. Skapa admin-konto
+Ordrar, rabattkoder och admin-konton sparas i en SQLite-fil på servern (`DATABASE_PATH` i `.env`, standard `data/peptidesweden.db`). Det finns ingen registreringssida – konton skapas bara här:
+```bash
+cd /var/www/peptidesweden
+sudo -u www-data node --env-file=.env --disable-warning=ExperimentalWarning scripts/admin.mjs create mattias   # frågar efter lösenord (minst 12 tecken)
+sudo -u www-data node --env-file=.env --disable-warning=ExperimentalWarning scripts/admin.mjs list
+sudo -u www-data node --env-file=.env --disable-warning=ExperimentalWarning scripts/admin.mjs password mattias # byter lösenord och loggar ut alla sessioner
+sudo -u www-data node --env-file=.env --disable-warning=ExperimentalWarning scripts/admin.mjs delete mattias
+```
+Logga sedan in på `https://peptidesweden.com/admin`. Sessionen gäller i 12 timmar; efter 5 felaktiga försök från samma IP spärras inloggningen i 15 minuter.
+
+## 5. Nginx + HTTPS
 ```bash
 sudo mkdir -p /var/www/certbot
 sudo certbot certonly --nginx -d peptidesweden.com -d www.peptidesweden.com
@@ -38,6 +49,13 @@ sudo nginx -t && sudo systemctl reload nginx
 ```
 Certifikatet förnyas automatiskt (`systemctl list-timers | grep certbot`).
 
+## Säkerhetskopiera ordrar
+Databasen ligger i `data/` (ignoreras av git och skrivs aldrig över vid uppdatering). Ta en konsekvent kopia medan sajten kör, t.ex. varje natt via cron:
+```bash
+sudo -u www-data sqlite3 /var/www/peptidesweden/data/peptidesweden.db ".backup '/var/backups/peptidesweden-$(date +%F).db'"
+```
+(`sudo apt install -y sqlite3` om kommandot saknas.)
+
 ## Uppdatera sajten
 Alla 13 bilder finns lokalt i `src/assets/` och typsnitten i `public/fonts/`.
 `npm run build:vps` tar med dem i `.output/public/`; inga bild- eller typsnittsförfrågningar behöver gå till Lovable eller Google.
@@ -45,7 +63,7 @@ Behåll hela `.output/` när du kopierar ett färdigt bygge till servern, inte b
 Telegram och externa CoA-rapporter är fortfarande externa länkar.
 
 ```bash
-cd /var/www/peptidesweden && git pull && npm ci && npm run build:vps
+cd /var/www/peptidesweden && git pull && npm install && npm run build:vps
 sudo chown -R www-data:www-data . && sudo systemctl restart peptidesweden
 ```
 
