@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowUpRight, Clock } from 'lucide-react';
-import { articles } from '@/lib/articles';
+import { listArticlesFn } from '@/lib/catalog-api';
+import { resolveImage } from '@/lib/media';
 
 export const Route = createFileRoute('/blogg/')({
   head: () => ({
@@ -14,16 +15,18 @@ export const Route = createFileRoute('/blogg/')({
     ],
     links: [{ rel: 'canonical', href: '/blogg' }],
   }),
+  loader: () => listArticlesFn(),
   component: Blog,
 });
 
 const fmt = (d: string) => new Date(d).toLocaleDateString('sv-SE', { day: 'numeric', month: 'long', year: 'numeric' });
 
 function Blog() {
+  const articles = Route.useLoaderData();
   return <main className="content-width">
     <div className="page-top"><div className="eyebrow"><span className="eyebrow-line" /> KUNSKAP & PERSPEKTIV</div><h1>Blogg om peptider</h1><p>Guider om peptider, analysrapporter och laboratoriekunskap.</p></div>
     <div className="blog-grid">{articles.map((a, i) => <article className="blog-card" key={a.slug}>
-      <Link to="/blogg/$slug" params={{ slug: a.slug }} className="blog-image"><img src={a.image} alt={a.imageAlt} width={1280} height={720} loading={i < 3 ? 'eager' : 'lazy'} /></Link>
+      {a.image && <Link to="/blogg/$slug" params={{ slug: a.slug }} className="blog-image"><img src={resolveImage(a.image)} alt={a.imageAlt} width={1280} height={720} loading={i < 3 ? 'eager' : 'lazy'} /></Link>}
       <div className="eyebrow">{a.category}</div>
       <Link to="/blogg/$slug" params={{ slug: a.slug }}><h2>{a.title}</h2></Link>
       <p>{a.intro}</p>

@@ -1,5 +1,5 @@
 // Browser-safe order and discount rules shared by checkout, admin pages and the server.
-import { products } from './products';
+import type { Product } from './products';
 
 export const orderStatuses = ['ny', 'betald', 'skickad', 'avbruten'] as const;
 export type OrderStatus = (typeof orderStatuses)[number];
@@ -45,12 +45,12 @@ export function describeDiscount(rule: Pick<DiscountRule, 'kind' | 'value'>) {
 export type PricedLine = { slug: string; name: string; amount: string; unitPrice: number; qty: number };
 
 /** Prices cart items from the catalogue so totals never depend on what the browser sends. */
-export function priceLines(items: { slug: string; quantity: number }[]): PricedLine[] {
+export function priceLines(items: { slug: string; quantity: number }[], catalog: Product[]): PricedLine[] {
   const merged = new Map<string, number>();
   for (const item of items) merged.set(item.slug, (merged.get(item.slug) ?? 0) + item.quantity);
   const lines: PricedLine[] = [];
   for (const [slug, qty] of merged) {
-    const p = products.find(product => product.slug === slug);
+    const p = catalog.find(product => product.slug === slug);
     if (!p || !Number.isInteger(qty) || qty < 1 || qty > 99) throw new Error('Ogiltig produkt eller antal i varukorgen.');
     lines.push({ slug, name: p.name, amount: p.amount, unitPrice: p.price, qty });
   }

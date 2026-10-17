@@ -10,7 +10,7 @@
 <!-- LOVABLE:END -->
 
 - Keep storefront navigation, search, and the session-only cart in the root StoreProvider layout so browsing between routes preserves cart state without pretending orders are persisted.
-- Keep sample catalog data and cart calculations in the browser-safe product module; no verified batch claims until documentation is supplied.
+- The live catalogue and blog come from SQLite (`src/server/catalog.server.ts`) and are edited in /admin. `src/lib/products.ts` and `src/lib/articles.ts` are only the starting content, copied in once by `src/server/seed.server.ts`; never read them directly in storefront pages. The root route loads the catalogue and `useCatalog()` exposes it; articles load per route. No verified batch claims until documentation is supplied.
 - Define storefront visual styles and semantic color tokens in src/styles.css so shared routes remain visually consistent.
 - Keep the calculator limited to laboratory mass concentration, with validation and arithmetic in a tested browser-safe module; it must not calculate human or animal doses.
 - Keep editorial article content in a shared browser-safe module and render individual articles as typed dynamic routes so links and metadata stay consistent.
@@ -28,3 +28,5 @@
 - Shared order and discount rules (statuses, `evaluateDiscount`, pricing) stay browser-safe in `src/lib/commerce.ts` so checkout, admin pages and server agree.
 - Payments go through NOWPayments (`src/server/nowpayments.server.ts`): checkout creates a hosted invoice in SEK and redirects to it; `/api/nowpayments/ipn` accepts only HMAC-signed callbacks and applies them via `recordPaymentUpdate`, which checks invoice id, currency and total before marking an order paid. Without `NOWPAYMENTS_API_KEY`, `NOWPAYMENTS_IPN_SECRET` and `PUBLIC_SITE_URL`, checkout stores orders for manual payment.
 - The customer return page `/kassa/tack` shows an order only with its random `public_token`; never look orders up by order number alone on public pages.
+- Images are stored as keys, never build URLs: `bundled:<name>` for images in src/assets (mapped in `src/lib/media.ts`) or `/media/<file>` for admin uploads in `data/uploads`, served by `src/routes/media/$file.ts`. Uploads go through `/api/admin/upload`, which requires an admin session and checks the file's bytes.
+- If the database cannot be opened, storefront reads fall back to the starting content so pages still render.

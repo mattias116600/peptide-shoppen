@@ -3,6 +3,7 @@ import { mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import schema from './schema.sql?raw';
+import { seedContent } from './seed.server';
 
 let db: DatabaseSync | undefined;
 
@@ -18,6 +19,7 @@ export function getDb(): DatabaseSync {
   db.exec('PRAGMA busy_timeout = 5000;');
   db.exec(schema);
   migrate(db);
+  seedContent(db);
   return db;
 }
 

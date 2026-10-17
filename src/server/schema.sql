@@ -71,3 +71,54 @@ CREATE TABLE IF NOT EXISTS order_events (
   actor TEXT NOT NULL,
   message TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
+
+-- Catalogue. Seeded once from src/lib/products.ts, then edited in /admin/produkter.
+CREATE TABLE IF NOT EXISTS product_groups (
+  slug TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  category TEXT NOT NULL,
+  description TEXT NOT NULL DEFAULT '',
+  badge TEXT NOT NULL DEFAULT '',
+  image TEXT NOT NULL DEFAULT 'bundled:vial',
+  featured INTEGER NOT NULL DEFAULT 0,
+  active INTEGER NOT NULL DEFAULT 1,
+  about TEXT NOT NULL DEFAULT '[]',
+  specs TEXT NOT NULL DEFAULT '[]',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS product_variants (
+  slug TEXT PRIMARY KEY,
+  group_slug TEXT NOT NULL REFERENCES product_groups(slug) ON DELETE CASCADE,
+  amount TEXT NOT NULL,
+  price INTEGER NOT NULL CHECK (price > 0),
+  batch TEXT NOT NULL DEFAULT '',
+  coa_url TEXT NOT NULL DEFAULT '',
+  active INTEGER NOT NULL DEFAULT 1,
+  sort_order INTEGER NOT NULL DEFAULT 0
+);
+
+-- Blog. Seeded once from src/lib/articles.ts, then edited in /admin/blogg.
+CREATE TABLE IF NOT EXISTS articles (
+  slug TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  meta_title TEXT NOT NULL DEFAULT '',
+  description TEXT NOT NULL DEFAULT '',
+  category TEXT NOT NULL DEFAULT '',
+  intro TEXT NOT NULL DEFAULT '',
+  date TEXT NOT NULL,
+  read_time INTEGER NOT NULL DEFAULT 3,
+  image TEXT NOT NULL DEFAULT '',
+  image_alt TEXT NOT NULL DEFAULT '',
+  keywords TEXT NOT NULL DEFAULT '[]',
+  product_slug TEXT NOT NULL DEFAULT '',
+  sections TEXT NOT NULL DEFAULT '[]',
+  published INTEGER NOT NULL DEFAULT 1,
+  updated_at TEXT NOT NULL
+);

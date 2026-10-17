@@ -62,12 +62,16 @@ sudo nginx -t && sudo systemctl reload nginx
 ```
 Certifikatet förnyas automatiskt (`systemctl list-timers | grep certbot`).
 
-## Säkerhetskopiera ordrar
+## Säkerhetskopiera ordrar, produkter och blogg
 Databasen ligger i `data/` (ignoreras av git och skrivs aldrig över vid uppdatering). Ta en konsekvent kopia medan sajten kör, t.ex. varje natt via cron:
 ```bash
 sudo -u www-data sqlite3 /var/www/peptidesweden/data/peptidesweden.db ".backup '/var/backups/peptidesweden-$(date +%F).db'"
+sudo tar -czf "/var/backups/peptidesweden-bilder-$(date +%F).tgz" -C /var/www/peptidesweden/data uploads
 ```
-(`sudo apt install -y sqlite3` om kommandot saknas.)
+(`sudo apt install -y sqlite3` om kommandot saknas.) Databasen innehåller ordrar, rabattkoder, admin-konton, produkter och bloggartiklar; `data/uploads/` innehåller bilder som laddats upp i admin.
+
+## Produkter och blogg
+Produkter hanteras i `/admin/produkter` och artiklar i `/admin/blogg`. Vid första start kopieras dagens sortiment och de tio artiklarna in i databasen; därefter är det admin som gäller (ändringar i `src/lib/products.ts` och `src/lib/articles.ts` påverkar bara nya installationer). Om du uppdaterar Nginx-konfigurationen från repot: `sudo cp deploy/nginx-peptidesweden.conf /etc/nginx/sites-available/peptidesweden && sudo nginx -t && sudo systemctl reload nginx` – den tillåter bilduppladdningar upp till 5 MB.
 
 ## Uppdatera sajten
 Alla 13 bilder finns lokalt i `src/assets/` och typsnitten i `public/fonts/`.

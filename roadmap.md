@@ -14,3 +14,4 @@
 - [x] Add Telegram support (@peptideswedenn) to the header, mobile menu, footer, cart, checkout, confirmation, product pages, FAQ, calculator, articles and contact page, and verify it on desktop and mobile.
 - [x] Remove the Swedish flag only from the mobile menu drawer, keeping it in the header, footer, age gate and front page, and verify on desktop and mobile.
 - [x] Add a validated phone number field to the checkout details step, carry it into the order summary and confirmation, and verify on phone and desktop.
+- [x] Manage products (strengths, prices, CoA links, images, visibility, order, front-page picks) and blog articles (create, edit, drafts, images) in /admin; content lives in SQLite, seeded once from the starting catalogue and articles.

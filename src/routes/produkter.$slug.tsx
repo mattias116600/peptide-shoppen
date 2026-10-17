@@ -4,16 +4,16 @@ import { ArrowRight, Plus, Minus, FlaskConical, ShieldAlert, Truck, FileText } f
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { findGroup, formatPrice, productGroups, peptideInfo, shippingInfo } from '@/lib/products';
-import { articles } from '@/lib/articles';
-import { useStore } from '@/components/store/store-provider';
+import { formatPrice, shippingInfo } from '@/lib/products';
+import { useCatalog, useStore } from '@/components/store/store-provider';
+import { getProductPageFn } from '@/lib/catalog-api';
+import { resolveImage } from '@/lib/media';
 import { TelegramSupportCard, TelegramSupportRow } from '@/components/store/support-telegram';
 import { ProductCard } from '@/components/store/product-card';
-import vial from '@/assets/peptide-vial.webp';
 
 export const Route = createFileRoute('/produkter/$slug')({
   validateSearch: (search: Record<string, unknown>): { styrka?: string | undefined } => ({ styrka: typeof search['styrka'] === 'string' ? search['styrka'] : undefined }),
-  loader: ({ params }) => { const product = findGroup(params.slug); if (!product) throw notFound(); return product; },
+  loader: async ({ params }) => { const { group, related } = await getProductPageFn({ data: { slug: params.slug } }); if (!group) throw notFound(); return { ...group, related }; },
   head: ({ loaderData, params }) => ({
     meta: [
       { title: `${loaderData?.name ?? 'Produkt'} för forskning | Peptidesweden` },
@@ -49,6 +49,7 @@ const mgOf = (amount: string) => parseFloat(amount.replace(',', '.'));
 
 function Detail() {
   const product = Route.useLoaderData();
+  const { groups: productGroups } = useCatalog();
   const { styrka } = Route.useSearch();
   const navigate = Route.useNavigate();
   const variant = product.variants.find(v => v.slug === styrka) ?? product.variants[0];
@@ -61,7 +62,7 @@ function Detail() {
       <nav className="breadcrumb"><Link to="/">Hem</Link><span>/</span><Link to="/produkter">Produkter</Link><span>/</span><span>{product.name}</span></nav>
       <div className="detail-grid pdp">
         <div className="pdp-media">
-          <img className="detail-photo" src={vial} alt={`${product.name} forskningsvial`} width={1024} height={1024} />
+          <img className="detail-photo" src={resolveImage(product.image)} alt={`${product.name} forskningsvial`} width={1024} height={1024} />
           <span className="pdp-media-tag">{variant.amount}</span>
         </div>
         <div className="detail-copy">
@@ -114,12 +115,12 @@ function Detail() {
             <TabsTrigger value="forvaring">Förvaring</TabsTrigger>
             <TabsTrigger value="kvalitet">Kvalitet</TabsTrigger>
           </TabsList>
-          <TabsContent value="om" className="pdp-tab-body"><h2>Om {product.name}</h2><p>{product.description}</p>{peptideInfo[product.slug]?.about.map(t => <p key={t}>{t}</p>)}<p>Produkten säljs uteslutande för laboratorie- och forskningsändamål. Inga medicinska påståenden görs.</p></TabsContent>
+          <TabsContent value="om" className="pdp-tab-body"><h2>Om {product.name}</h2><p>{product.description}</p>{product.about.map(t => <p key={t}>{t}</p>)}<p>Produkten säljs uteslutande för laboratorie- och forskningsändamål. Inga medicinska påståenden görs.</p></TabsContent>
           <TabsContent value="spec" className="pdp-tab-body"><h2>Specifikationer</h2><table className="pdp-spec"><tbody>
             <tr><th>Produkt</th><td>{product.name}</td></tr>
             <tr><th>Styrka</th><td>{variant.amount}</td></tr>
             <tr><th>Tillgängliga styrkor</th><td>{product.variants.map(v => v.amount).join(', ')}</td></tr>
-            {peptideInfo[product.slug]?.specs.map(([k, v]) => <tr key={k}><th>{k}</th><td>{v}</td></tr>)}
+            {product.specs.map(([k, v]) => <tr key={k}><th>{k}</th><td>{v}</td></tr>)}
             <tr><th>Renhet</th><td>Se batchens analysrapport</td></tr>
             <tr><th>Förvaring</th><td>Torrt, mörkt, −20 °C för långtidsförvaring</td></tr>
             <tr><th>Kategori</th><td>{product.category}</td></tr>
@@ -155,7 +156,7 @@ function Detail() {
       <section className="pdp-section">
         <h2 className="pdp-h2">Relaterade artiklar</h2>
         <div className="pdp-related">
-          {[...articles].sort((a, b) => Number(b.productSlug === product.slug) - Number(a.productSlug === product.slug)).slice(0, 3).map(a => <Link key={a.slug} to="/blogg/$slug" params={{ slug: a.slug }}><span>{a.category}</span><strong>{a.title}</strong></Link>)}
+          {product.related.map(a => <Link key={a.slug} to="/blogg/$slug" params={{ slug: a.slug }}><span>{a.category}</span><strong>{a.title}</strong></Link>)}
         </div>
       </section>
 

@@ -16,6 +16,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { StoreProvider } from "@/components/store/store-provider";
 import { StoreHeader, StoreFooter } from "@/components/store/store-shell";
 import { AgeGate } from "@/components/store/age-gate";
+import { getCatalogFn } from "@/lib/catalog-api";
 
 function NotFoundComponent() {
   return (
@@ -99,6 +100,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: "/fonts/fonts.css" },
     ],
   }),
+  // The catalogue is shared by the header search, cart, footer and product pages.
+  loader: () => getCatalogFn(),
+  staleTime: 30_000,
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -121,6 +125,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const catalog = Route.useLoaderData();
   const isAdmin = useRouterState({ select: s => s.location.pathname === '/admin' || s.location.pathname.startsWith('/admin/') });
 
   if (isAdmin) {
@@ -133,7 +138,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <StoreProvider>
+      <StoreProvider catalog={catalog}>
         <AgeGate />
         <StoreHeader />
         <Outlet />
