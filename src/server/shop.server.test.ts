@@ -13,9 +13,17 @@ describe('orders', () => {
   it('prices orders from the catalogue, not from the client', () => {
     const order = placeOrder(customer, [{ slug: 'bpc-157-10', quantity: 2 }, { slug: 'ghk-cu-50', quantity: 1 }]);
     expect(order.subtotal).toBe(399 * 2 + 399);
-    expect(order.total).toBe(order.subtotal);
+    expect(order.shipping).toBe(62);
+    expect(order.total).toBe(order.subtotal + 62);
     expect(order.ref).toMatch(/^PSW-\d{6}$/);
     expect(getOrder(order.ref)?.lines).toHaveLength(2);
+  });
+
+  it('ships free from 2 000 kr after discount', () => {
+    expect(placeOrder(customer, [{ slug: 'bpc-157-10', quantity: 5 }])).toMatchObject({ subtotal: 1995, shipping: 62, total: 2057 });
+    expect(placeOrder(customer, [{ slug: 'bpc-157-10', quantity: 6 }])).toMatchObject({ subtotal: 2394, shipping: 0, total: 2394 });
+    createDiscount({ code: 'HALV', kind: 'percent', value: 50, minTotal: 0, maxUses: null, expiresAt: null });
+    expect(placeOrder(customer, [{ slug: 'bpc-157-10', quantity: 6 }], 'HALV')).toMatchObject({ discountAmount: 1197, shipping: 62, total: 1259 });
   });
 
   it('rejects unknown products', () => {
@@ -24,9 +32,9 @@ describe('orders', () => {
 
   it('applies a discount code and counts the use', () => {
     createDiscount({ code: 'sommar10', kind: 'percent', value: 10, minTotal: 0, maxUses: 1, expiresAt: null });
-    expect(quoteDiscount(' Sommar10 ', [{ slug: 'retatrutide-10', quantity: 1 }])).toMatchObject({ code: 'SOMMAR10', amount: 90, total: 809 });
+    expect(quoteDiscount(' Sommar10 ', [{ slug: 'retatrutide-10', quantity: 1 }])).toMatchObject({ code: 'SOMMAR10', amount: 90, shipping: 62, total: 871 });
     const order = placeOrder(customer, [{ slug: 'retatrutide-10', quantity: 1 }], 'SOMMAR10');
-    expect(order).toMatchObject({ discountCode: 'SOMMAR10', discountAmount: 90, total: 809 });
+    expect(order).toMatchObject({ discountCode: 'SOMMAR10', discountAmount: 90, shipping: 62, total: 871 });
     expect(listDiscounts()[0]?.uses).toBe(1);
     expect(() => placeOrder(customer, [{ slug: 'retatrutide-10', quantity: 1 }], 'SOMMAR10')).toThrow(/förbrukad/);
   });
@@ -46,7 +54,7 @@ describe('orders', () => {
     expect(order.status).toBe('skickad');
     expect(order.tracking).toBe('ABC123');
     expect(order.events.map(e => e.message)).toEqual(expect.arrayContaining(['Status ändrad: ny → skickad', 'Spårningsnummer: ABC123']));
-    expect(orderStats()).toMatchObject({ revenue: 649, byStatus: { skickad: 1 } });
+    expect(orderStats()).toMatchObject({ revenue: 649 + 62, byStatus: { skickad: 1 } });
     expect(listOrders({ q: 'testsson' }).total).toBe(1);
     expect(listOrders({ status: 'ny' }).total).toBe(0);
   });

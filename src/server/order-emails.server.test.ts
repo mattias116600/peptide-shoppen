@@ -23,7 +23,7 @@ describe('config', () => {
 
 describe('templates', () => {
   const order: EmailOrder = {
-    ref: 'PSW-123456', ...customer, subtotal: 1798, discountCode: 'VIP15', discountAmount: 270, total: 1528, createdAt: '2026-10-17T10:00:00Z',
+    ref: 'PSW-123456', ...customer, subtotal: 1798, discountCode: 'VIP15', discountAmount: 270, shipping: 0, total: 1528, createdAt: '2026-10-17T10:00:00Z',
     lines: [{ slug: 'retatrutide-10', name: 'Retatrutide', amount: '10 mg', unitPrice: 899, qty: 2 }],
     paymentUrl: 'https://nowpayments.io/payment/?iid=1', paymentStatus: 'waiting', statusUrl: 'https://peptidesweden.com/kassa/tack?order=PSW-123456&t=x', tracking: '',
   };
@@ -34,7 +34,7 @@ describe('templates', () => {
     expect(mail.subject).toBe('Orderbekräftelse PSW-123456 – Peptidesweden');
     // Swedish number formatting uses non-breaking spaces between thousands.
     const text = mail.text.replace(/[\u00a0\u202f]/g, ' ');
-    for (const part of ['Retatrutide 10 mg × 2', '1 798 kr', 'Rabatt (VIP15)', '−270 kr', '1 528 kr', 'Gatan 1', 'https://nowpayments.io/payment/?iid=1']) expect(text).toContain(part);
+    for (const part of ['Retatrutide 10 mg × 2', '1 798 kr', 'Rabatt (VIP15)', '−270 kr', 'Frakt: Fri frakt', '1 528 kr', 'Gatan 1', 'https://nowpayments.io/payment/?iid=1']) expect(text).toContain(part);
     expect(mail.html).toContain('Betala ordern');
     expect(mail.html).toContain('Anna &lt;b&gt;Test&lt;/b&gt;');
     expect(mail.html).not.toContain('<b>Test</b>');
@@ -74,6 +74,7 @@ describe('sending', () => {
     expect(eml()).toHaveLength(1);
     expect(eml()[0]).toMatch(/To: anna@example\.se/);
     expect(eml()[0]).toMatch(/nowpayments\.io\/payment/);
+    expect(eml()[0]).toMatch(/Frakt: 62 kr/); // 399 kr order is below the free-shipping threshold
     const order = getOrder(ref)!;
     expect(order.emails.confirmationAt).toBeTruthy();
     expect(order.events.map(e => e.message)).toContain('Orderbekräftelse skickad till anna@example.se');

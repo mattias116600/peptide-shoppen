@@ -70,7 +70,7 @@ describe('products', () => {
   it('prices orders from the database and refuses hidden products', () => {
     const bpc = getAdminGroup('bpc-157')!;
     saveGroup({ ...bpc, variants: bpc.variants.map(v => ({ ...v, price: v.slug === 'bpc-157-10' ? 450 : v.price })) }, false);
-    expect(placeOrder(customer, [{ slug: 'bpc-157-10', quantity: 2 }]).total).toBe(900);
+    expect(placeOrder(customer, [{ slug: 'bpc-157-10', quantity: 2 }]).subtotal).toBe(900);
     setGroupActive('bpc-157', false);
     expect(getStorefrontCatalog().groups.some(g => g.slug === 'bpc-157')).toBe(false);
     expect(() => placeOrder(customer, [{ slug: 'bpc-157-10', quantity: 1 }])).toThrow(/Ogiltig/);

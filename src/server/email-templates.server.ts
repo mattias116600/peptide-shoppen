@@ -6,7 +6,7 @@ import type { MailMessage } from './mail.server';
 
 export type EmailOrder = {
   ref: string; name: string; email: string; phone: string; address: string; zip: string; city: string;
-  subtotal: number; discountCode: string | null; discountAmount: number; total: number; lines: PricedLine[];
+  subtotal: number; discountCode: string | null; discountAmount: number; shipping: number; total: number; lines: PricedLine[];
   createdAt: string; paymentUrl: string | null; paymentStatus: string | null; statusUrl: string | null; tracking: string;
 };
 
@@ -35,12 +35,14 @@ function linesHtml(o: EmailOrder) {
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin:8px 0 4px">
 ${o.lines.map(l => row(`${esc(l.name)} ${esc(l.amount)} × ${l.qty}`, esc(formatPrice(l.unitPrice * l.qty)))).join('')}
 ${o.discountCode ? row(`Rabatt (${esc(o.discountCode)})`, `−${esc(formatPrice(o.discountAmount))}`) : ''}
+${row('Frakt', o.shipping ? esc(formatPrice(o.shipping)) : 'Fri frakt')}
 ${row('Totalt', esc(formatPrice(o.total)), true)}</table>`;
 }
 
 const linesText = (o: EmailOrder) =>
   [...o.lines.map(l => `${l.name} ${l.amount} × ${l.qty}: ${formatPrice(l.unitPrice * l.qty)}`),
     ...(o.discountCode ? [`Rabatt (${o.discountCode}): −${formatPrice(o.discountAmount)}`] : []),
+    `Frakt: ${o.shipping ? formatPrice(o.shipping) : 'Fri frakt'}`,
     `Totalt: ${formatPrice(o.total)}`].join('\n');
 
 const addressHtml = (o: EmailOrder) => `${esc(o.name)}<br>${esc(o.address)}<br>${esc(o.zip)} ${esc(o.city)}<br>${esc(o.phone)}`;

@@ -12,7 +12,7 @@ const column: Record<OrderEmailKind, 'confirmation_email_at' | 'shipping_email_a
 
 type Row = {
   id: number; ref: string; name: string; email: string; phone: string; address: string; zip: string; city: string; subtotal: number;
-  discount_code: string | null; discount_amount: number; total: number; created_at: string; public_token: string; payment_url: string | null;
+  discount_code: string | null; discount_amount: number; shipping: number; total: number; created_at: string; public_token: string; payment_url: string | null;
   payment_status: string | null; tracking: string; status: string; confirmation_email_at: string | null; shipping_email_at: string | null;
 };
 
@@ -25,7 +25,7 @@ function loadOrder(ref: string): (EmailOrder & { id: number; status: string; sen
   const site = process.env['PUBLIC_SITE_URL']?.trim().replace(/\/+$/, '');
   return {
     id: o.id, status: o.status, ref: o.ref, name: o.name, email: o.email, phone: o.phone, address: o.address, zip: o.zip, city: o.city,
-    subtotal: o.subtotal, discountCode: o.discount_code, discountAmount: o.discount_amount, total: o.total, lines, createdAt: o.created_at,
+    subtotal: o.subtotal, discountCode: o.discount_code, discountAmount: o.discount_amount, shipping: o.shipping, total: o.total, lines, createdAt: o.created_at,
     paymentUrl: o.payment_url, paymentStatus: o.payment_status, tracking: o.tracking,
     statusUrl: site && o.public_token ? `${site}/kassa/tack?order=${encodeURIComponent(o.ref)}&t=${encodeURIComponent(o.public_token)}` : null,
     sentAt: { confirmation: o.confirmation_email_at, shipping: o.shipping_email_at },

@@ -22,4 +22,6 @@
   <url><loc>https://peptidesweden.com/om-oss</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
   <url><loc>https://peptidesweden.com/kontakt</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
   <url><loc>https://peptidesweden.com/faq</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://peptidesweden.com/kopvillkor</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://peptidesweden.com/integritetspolicy</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
 </urlset>

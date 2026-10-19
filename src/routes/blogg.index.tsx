@@ -9,7 +9,7 @@ export const Route = createFileRoute('/blogg/')({
       { title: 'Blogg om peptider & forskning | Peptidesweden' },
       { name: 'description', content: 'Guider om peptider, Retatrutide, BPC-157, GHK-Cu, MOTS-C, analysrapporter, HPLC, förvaring och koncentration — Peptideswedens kunskapsblogg.' },
       { property: 'og:title', content: 'Blogg om peptider & forskning | Peptidesweden' },
-      { property: 'og:description', content: 'Tio guider om peptider, analys och laboratoriekunskap.' },
+      { property: 'og:description', content: 'Guider om peptider, analys och laboratoriekunskap.' },
       { property: 'og:type', content: 'website' },
       { name: 'twitter:card', content: 'summary_large_image' },
     ],
