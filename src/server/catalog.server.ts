@@ -143,7 +143,7 @@ function toArticle(r: ArticleRow): AdminArticle {
 
 export const toPublicArticle = (a: AdminArticle): Article => ({
   slug: a.slug, title: a.title, metaTitle: a.metaTitle || a.title, description: a.description, category: a.category, intro: a.intro, date: a.date,
-  readTime: a.readTime, image: a.image, imageAlt: a.imageAlt, keywords: a.keywords, sections: a.sections, ...(a.productSlug ? { productSlug: a.productSlug } : {}),
+  readTime: a.readTime, image: a.image, imageAlt: a.imageAlt, keywords: a.keywords, sections: a.sections, updatedAt: a.updatedAt, ...(a.productSlug ? { productSlug: a.productSlug } : {}),
 });
 
 export function listArticles(includeDrafts = false): AdminArticle[] {

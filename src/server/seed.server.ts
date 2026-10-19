@@ -33,4 +33,26 @@ export function seedContent(db: DatabaseSync) {
     mark('seeded_articles');
     db.exec('COMMIT');
   }
+
+  // Shorter SEO titles (2026-10): only replace a title the admin has not changed since seeding.
+  if (!done('seo_titles_2026_10')) {
+    db.exec('BEGIN');
+    const update = db.prepare('UPDATE articles SET meta_title = ? WHERE slug = ? AND meta_title = ?');
+    for (const [slug, before, after] of shortenedMetaTitles) update.run(after, slug, before);
+    mark('seo_titles_2026_10');
+    db.exec('COMMIT');
+  }
 }
+
+const shortenedMetaTitles: [slug: string, before: string, after: string][] = [
+  ['vad-ar-peptider', 'Vad är peptider? Guide om aminosyror och peptidbindningar', 'Vad är peptider? Aminosyror och bindningar'],
+  ['analys-och-dokumentation', 'Så läser du en CoA – analysrapport för peptider', 'Så läser du en analysrapport (CoA)'],
+  ['koncentration-i-laboratoriet', 'Räkna ut koncentration mg/ml – enkel guide för labbet', 'Räkna ut koncentration i mg/ml'],
+  ['retatrutide-forskning', 'Retatrutide – forskning, struktur och fakta', 'Retatrutide – forskning och fakta'],
+  ['bpc-157-forskning', 'BPC-157 – vad är det? Forskning och fakta', 'BPC-157 – forskning och fakta'],
+  ['ghk-cu-kopparpeptid', 'GHK-Cu kopparpeptid – struktur och forskning', 'GHK-Cu – kopparpeptiden i forskningen'],
+  ['mots-c-mitokondriell-peptid', 'MOTS-C – mitokondriell peptid, forskning och fakta', 'MOTS-C – mitokondriell peptid i forskning'],
+  ['forvaring-av-peptider', 'Förvaring av peptider – temperatur, ljus och fukt', 'Förvaring av peptider: ljus, fukt, kyla'],
+  ['hplc-och-masspektrometri', 'HPLC och masspektrometri – så testas peptiders renhet', 'HPLC och masspektrometri för peptider'],
+  ['tb-500-thymosin-beta-4', 'TB-500 – thymosin beta-4 fragment, forskning och fakta', 'TB-500 – thymosin beta-4 i forskningen'],
+];

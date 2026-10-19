@@ -17,6 +17,7 @@ import { StoreProvider } from "@/components/store/store-provider";
 import { StoreHeader, StoreFooter } from "@/components/store/store-shell";
 import { AgeGate } from "@/components/store/age-gate";
 import { getCatalogFn } from "@/lib/catalog-api";
+import { DEFAULT_DESCRIPTION, SITE_NAME, seoHead } from "@/lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -79,27 +80,29 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Peptidesweden" },
-      { name: "description", content: "Peptidesweden – peptider för laboratorieforskning." },
-      { name: "author", content: "Peptidesweden" },
-      { property: "og:title", content: "Peptidesweden" },
-      { property: "og:description", content: "Peptider för laboratorieforskning." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "stylesheet", href: "/fonts/fonts.css" },
-    ],
-  }),
+  head: () => {
+    // Site-wide defaults; each page's seoHead() overrides title, description, URL and image.
+    const defaults = seoHead({ title: `${SITE_NAME} | Peptider för laboratorieforskning`, description: DEFAULT_DESCRIPTION, path: "/" });
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        ...defaults.meta,
+        { name: "author", content: SITE_NAME },
+        { name: "theme-color", content: "#0065a4" },
+        { property: "og:site_name", content: SITE_NAME },
+        { property: "og:locale", content: "sv_SE" },
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "stylesheet", href: "/fonts/fonts.css" },
+        { rel: "icon", href: "/favicon.ico", sizes: "48x48" },
+        { rel: "icon", href: "/icon.svg", type: "image/svg+xml" },
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+        { rel: "manifest", href: "/manifest.webmanifest" },
+      ],
+    };
+  },
   // The catalogue is shared by the header search, cart, footer and product pages.
   loader: () => getCatalogFn(),
   staleTime: 30_000,

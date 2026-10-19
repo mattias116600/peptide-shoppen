@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { seoHead } from '@/lib/seo';
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router';
 import { AlertTriangle, ArrowRight, CheckCircle2, Clock, Home, Package, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ export const Route = createFileRoute('/kassa_/tack')({
   }),
   loaderDeps: ({ search }) => ({ order: search.order, t: search.t }),
   loader: ({ deps }) => (deps.order && deps.t ? getPublicOrderFn({ data: { ref: deps.order, token: deps.t } }) : null),
-  head: () => ({ meta: [{ title: 'Din beställning — Peptidesweden' }, { name: 'robots', content: 'noindex' }] }),
+  head: () => seoHead({ title: 'Din beställning', description: 'Status för din beställning hos Peptidesweden.', path: '/kassa/tack', noindex: true }),
   component: ThankYouPage,
 });
 

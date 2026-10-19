@@ -1,19 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { breadcrumbLd, seoHead } from '@/lib/seo';
 import { LegalPage, type LegalSection } from '@/components/store/legal-page';
 import { companyInfo, shippingInfo } from '@/lib/products';
 
 export const Route = createFileRoute('/integritetspolicy')({
-  head: () => ({
-    meta: [
-      { title: 'Integritetspolicy | Peptidesweden' },
-      { name: 'description', content: 'Så behandlar Peptidesweden dina personuppgifter enligt GDPR: vilka uppgifter vi samlar in i kassan, varför, hur länge de sparas, vem som får dem och vilka rättigheter du har.' },
-      { property: 'og:title', content: 'Integritetspolicy | Peptidesweden' },
-      { property: 'og:description', content: 'Så behandlar vi dina personuppgifter.' },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:url', content: '/integritetspolicy' },
-    ],
-    links: [{ rel: 'canonical', href: '/integritetspolicy' }],
-  }),
+  head: () => seoHead({ title: 'Integritetspolicy', description: 'Så behandlar Peptidesweden dina personuppgifter enligt GDPR: vilka uppgifter vi samlar in i kassan, varför, hur länge de sparas, vem som får dem och vilka rättigheter du har.', path: '/integritetspolicy', jsonLd: [breadcrumbLd([['Hem', '/'], ['Integritetspolicy', '/integritetspolicy']])] }),
   component: Privacy,
 });
 

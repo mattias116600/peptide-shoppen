@@ -323,3 +323,4 @@
 .kassa-summary-total small{font-size:11px;font-weight:400;color:var(--muted-foreground)}.kassa-vat{font-size:11px;color:var(--muted-foreground);margin-top:6px}
 @media(max-width:640px){.legal-toc{padding:16px 18px}.legal-toc ol{grid-template-columns:1fr}.legal-section h2{font-size:20px}.legal-updated{margin-top:-12px}}
 .admin-card>h2{display:flex;align-items:center;gap:7px}
+.admin-char-count{font-size:11px;font-weight:400;color:var(--muted-foreground)}.admin-char-count[data-ok=false]{color:oklch(.55 .14 60)}

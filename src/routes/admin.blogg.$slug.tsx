@@ -133,7 +133,9 @@ function ArticleEditor({ article, isNew, products, categories }: { article: Arti
         <section className="admin-card">
           <h2>Sökmotorer och koppling</h2>
           <div className="admin-form-grid">
-            <label className="kassa-field"><span>SEO-titel (valfri)</span><input value={form.metaTitle} onChange={e => set('metaTitle', e.target.value)} placeholder="Samma som rubriken" maxLength={160} /></label>
+            <label className="kassa-field"><span>SEO-titel (valfri)</span><input value={form.metaTitle} onChange={e => set('metaTitle', e.target.value)} placeholder="Samma som rubriken" maxLength={160} />
+              <CharCount length={(form.metaTitle || form.title).length} ideal={[20, 44]} hint="Upp till 44 tecken får plats i Google tillsammans med ” | Peptidesweden”." />
+            </label>
             <label className="kassa-field"><span>Länka till produkt</span>
               <select value={form.productSlug} onChange={e => set('productSlug', e.target.value)}>
                 <option value="">Ingen</option>
@@ -144,7 +146,9 @@ function ArticleEditor({ article, isNew, products, categories }: { article: Arti
               <input type="number" min={1} max={120} value={readTime} onChange={e => { setAutoReadTime(false); set('readTime', Math.max(1, Number(e.target.value) || 1)); }} />
             </label>
           </div>
-          <label className="kassa-field"><span>Metabeskrivning (visas i sökresultat)</span><textarea rows={2} value={form.description} onChange={e => set('description', e.target.value)} maxLength={300} /></label>
+          <label className="kassa-field"><span>Metabeskrivning (visas i sökresultat)</span><textarea rows={2} value={form.description} onChange={e => set('description', e.target.value)} maxLength={300} />
+            <CharCount length={form.description.length} ideal={[120, 160]} hint="120–160 tecken visas bäst i sökresultat. Tom = ingressen används." />
+          </label>
           <label className="kassa-field"><span>Nyckelord, separerade med komma</span><input value={keywords} onChange={e => setKeywords(e.target.value)} /></label>
           <div className="admin-switches"><label><Switch checked={form.published} onCheckedChange={v => set('published', v)} /> Publicerad i bloggen</label></div>
         </section>
@@ -158,4 +162,9 @@ function ArticleEditor({ article, isNew, products, categories }: { article: Arti
       </form>
     </main>
   );
+}
+
+function CharCount({ length, ideal, hint }: { length: number; ideal: [number, number]; hint: string }) {
+  const ok = length >= ideal[0] && length <= ideal[1];
+  return <small className="admin-char-count" data-ok={ok}>{length} tecken · {hint}</small>;
 }

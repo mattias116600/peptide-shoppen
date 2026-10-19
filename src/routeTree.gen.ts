@@ -18,6 +18,7 @@ import { Route as KassaRouteImport } from './routes/kassa'
 import { Route as KontaktRouteImport } from './routes/kontakt'
 import { Route as KopvillkorRouteImport } from './routes/kopvillkor'
 import { Route as OmOssRouteImport } from './routes/om-oss'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminRabattkoderRouteImport } from './routes/admin.rabattkoder'
@@ -78,6 +79,11 @@ const KopvillkorRoute = KopvillkorRouteImport.update({
 const OmOssRoute = OmOssRouteImport.update({
   id: '/om-oss',
   path: '/om-oss',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/kontakt': typeof KontaktRoute
   '/kopvillkor': typeof KopvillkorRoute
   '/om-oss': typeof OmOssRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/rabattkoder': typeof AdminRabattkoderRoute
   '/blogg/$slug': typeof BloggSlugRoute
@@ -197,6 +204,7 @@ export interface FileRoutesByTo {
   '/kontakt': typeof KontaktRoute
   '/kopvillkor': typeof KopvillkorRoute
   '/om-oss': typeof OmOssRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/rabattkoder': typeof AdminRabattkoderRoute
   '/blogg/$slug': typeof BloggSlugRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/kontakt': typeof KontaktRoute
   '/kopvillkor': typeof KopvillkorRoute
   '/om-oss': typeof OmOssRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/rabattkoder': typeof AdminRabattkoderRoute
   '/blogg/$slug': typeof BloggSlugRoute
@@ -254,6 +263,7 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/kopvillkor'
     | '/om-oss'
+    | '/sitemap.xml'
     | '/admin/login'
     | '/admin/rabattkoder'
     | '/blogg/$slug'
@@ -280,6 +290,7 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/kopvillkor'
     | '/om-oss'
+    | '/sitemap.xml'
     | '/admin/login'
     | '/admin/rabattkoder'
     | '/blogg/$slug'
@@ -307,6 +318,7 @@ export interface FileRouteTypes {
     | '/kontakt'
     | '/kopvillkor'
     | '/om-oss'
+    | '/sitemap.xml'
     | '/admin/login'
     | '/admin/rabattkoder'
     | '/blogg/$slug'
@@ -335,6 +347,7 @@ export interface RootRouteChildren {
   KontaktRoute: typeof KontaktRoute
   KopvillkorRoute: typeof KopvillkorRoute
   OmOssRoute: typeof OmOssRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BloggSlugRoute: typeof BloggSlugRoute
   KassaTackRoute: typeof KassaTackRoute
   MediaFileRoute: typeof MediaFileRoute
@@ -408,6 +421,13 @@ declare module '@tanstack/react-router' {
       path: '/om-oss'
       fullPath: '/om-oss'
       preLoaderRoute: typeof OmOssRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -559,6 +579,7 @@ const rootRouteChildren: RootRouteChildren = {
   KontaktRoute: KontaktRoute,
   KopvillkorRoute: KopvillkorRoute,
   OmOssRoute: OmOssRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   BloggSlugRoute: BloggSlugRoute,
   KassaTackRoute: KassaTackRoute,
   MediaFileRoute: MediaFileRoute,

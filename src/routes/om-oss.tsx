@@ -1,19 +1,11 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { seoHead } from '@/lib/seo';
 import { FlaskConical, FileCheck2, Truck, Microscope, ArrowRight } from 'lucide-react';
 import vialImg from '@/assets/peptide-vial.webp';
 import { shippingInfo } from '@/lib/products';
 
 export const Route = createFileRoute('/om-oss')({
-  head: () => ({
-    meta: [
-      { title: 'Vår filosofi | Peptidesweden' },
-      { name: 'description', content: 'Lär känna Peptidesweden och vår filosofi kring precision och transparens i laboratorieforskning.' },
-      { property: 'og:title', content: 'Vår filosofi | Peptidesweden' },
-      { property: 'og:description', content: 'Precision, transparens och omtanke i varje detalj.' },
-      { property: 'og:type', content: 'website' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-    ],
-  }),
+  head: () => seoHead({ title: 'Om oss – vår filosofi', description: 'Lär känna Peptidesweden: ett svenskt fokus på precision, transparens och dokumentation för laboratorieforskning, med analysrapport per batch.', path: '/om-oss' }),
   component: About,
 });
 

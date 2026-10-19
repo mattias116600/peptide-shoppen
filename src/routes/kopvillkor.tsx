@@ -1,19 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { breadcrumbLd, seoHead } from '@/lib/seo';
 import { LegalPage, type LegalSection } from '@/components/store/legal-page';
 import { companyInfo, formatPrice, shippingInfo, supportInfo, vatNote } from '@/lib/products';
 
 export const Route = createFileRoute('/kopvillkor')({
-  head: () => ({
-    meta: [
-      { title: 'Köpvillkor | Peptidesweden' },
-      { name: 'description', content: 'Köpvillkor för Peptidesweden: beställning, priser inklusive moms, frakt, betalning, leverans, ångerrätt, reklamation och villkor för forskningsprodukter.' },
-      { property: 'og:title', content: 'Köpvillkor | Peptidesweden' },
-      { property: 'og:description', content: 'Villkor för köp hos Peptidesweden.' },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:url', content: '/kopvillkor' },
-    ],
-    links: [{ rel: 'canonical', href: '/kopvillkor' }],
-  }),
+  head: () => seoHead({ title: 'Köpvillkor', description: 'Köpvillkor för Peptidesweden: beställning, priser inklusive moms, frakt, betalning, leverans, ångerrätt, reklamation och villkor för forskningsprodukter.', path: '/kopvillkor', jsonLd: [breadcrumbLd([['Hem', '/'], ['Köpvillkor', '/kopvillkor']])] }),
   component: Terms,
 });
 
