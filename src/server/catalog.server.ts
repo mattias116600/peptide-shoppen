@@ -1,11 +1,11 @@
 // Server-only catalogue and blog storage.
 import { getDb, nowIso, transaction } from './db.server';
 import { OrderError } from './errors.server';
-import type { Product, ProductGroup } from '@/lib/products';
+import type { Product, ProductGroup, ProductKind } from '@/lib/products';
 import type { Article } from '@/lib/articles';
 import type { AdminArticle, AdminProductGroup, ArticleInput, ProductGroupInput } from '@/lib/catalog';
 
-type GroupRow = { slug: string; name: string; category: string; description: string; badge: string; image: string; featured: number; active: number; about: string; specs: string; sort_order: number; updated_at: string };
+type GroupRow = { slug: string; name: string; category: string; description: string; badge: string; image: string; featured: number; active: number; about: string; specs: string; kind: string; quantity_presets: string; sort_order: number; updated_at: string };
 type VariantRow = { slug: string; group_slug: string; amount: string; price: number; batch: string; coa_url: string; active: number; sort_order: number };
 type ArticleRow = { slug: string; title: string; meta_title: string; description: string; category: string; intro: string; date: string; read_time: number; image: string; image_alt: string; keywords: string; product_slug: string; sections: string; published: number; updated_at: string };
 
@@ -24,10 +24,14 @@ function toProduct(g: GroupRow, v: VariantRow): Product {
   };
 }
 
+const kindOf = (g: GroupRow): ProductKind => (g.kind === 'tillbehor' ? 'tillbehor' : 'peptid');
+const presetsOf = (g: GroupRow) => parseJson<number[]>(g.quantity_presets, []).filter(n => Number.isInteger(n) && n > 0);
+
 function toAdminGroup(g: GroupRow, variants: VariantRow[]): AdminProductGroup {
   return {
     slug: g.slug, name: g.name, category: g.category, description: g.description, badge: g.badge, image: g.image,
     featured: g.featured === 1, active: g.active === 1, about: parseJson<string[]>(g.about, []), specs: parseJson<[string, string][]>(g.specs, []),
+    kind: kindOf(g), quantityPresets: presetsOf(g),
     sortOrder: g.sort_order, updatedAt: g.updated_at,
     variants: variants.map(v => ({ slug: v.slug, amount: v.amount, price: v.price, batch: v.batch, coaUrl: v.coa_url, active: v.active === 1 })),
   };
@@ -53,6 +57,7 @@ export function getStorefrontCatalog(): { products: Product[]; groups: ProductGr
     groups.push({
       slug: g.slug, name: g.name, category: g.category, description: g.description, ...(g.badge ? { badge: g.badge } : {}),
       image: g.image, featured: g.featured === 1, about: parseJson<string[]>(g.about, []), specs: parseJson<[string, string][]>(g.specs, []),
+      kind: kindOf(g), quantityPresets: presetsOf(g),
       variants: [first, ...rest],
     });
   }
@@ -83,12 +88,12 @@ export function saveGroup(input: ProductGroupInput, isNew: boolean): string {
     const now = nowIso();
     if (isNew) {
       const { n } = db.prepare('SELECT COALESCE(MAX(sort_order), -1) + 1 AS n FROM product_groups').get() as { n: number };
-      db.prepare(`INSERT INTO product_groups (slug, name, category, description, badge, image, featured, active, about, specs, sort_order, updated_at)
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-        .run(slug, input.name, input.category, input.description, input.badge, input.image, input.featured ? 1 : 0, input.active ? 1 : 0, JSON.stringify(input.about), JSON.stringify(input.specs), n, now);
+      db.prepare(`INSERT INTO product_groups (slug, name, category, description, badge, image, featured, active, about, specs, kind, quantity_presets, sort_order, updated_at)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+        .run(slug, input.name, input.category, input.description, input.badge, input.image, input.featured ? 1 : 0, input.active ? 1 : 0, JSON.stringify(input.about), JSON.stringify(input.specs), input.kind, JSON.stringify(input.quantityPresets), n, now);
     } else {
-      db.prepare(`UPDATE product_groups SET name = ?, category = ?, description = ?, badge = ?, image = ?, featured = ?, active = ?, about = ?, specs = ?, updated_at = ? WHERE slug = ?`)
-        .run(input.name, input.category, input.description, input.badge, input.image, input.featured ? 1 : 0, input.active ? 1 : 0, JSON.stringify(input.about), JSON.stringify(input.specs), now, slug);
+      db.prepare(`UPDATE product_groups SET name = ?, category = ?, description = ?, badge = ?, image = ?, featured = ?, active = ?, about = ?, specs = ?, kind = ?, quantity_presets = ?, updated_at = ? WHERE slug = ?`)
+        .run(input.name, input.category, input.description, input.badge, input.image, input.featured ? 1 : 0, input.active ? 1 : 0, JSON.stringify(input.about), JSON.stringify(input.specs), input.kind, JSON.stringify(input.quantityPresets), now, slug);
     }
     const existing = db.prepare('SELECT slug FROM product_variants WHERE group_slug = ?').all(slug) as { slug: string }[];
     const kept = new Set<string>();

@@ -5,12 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { ImagePicker } from '@/components/admin/image-picker';
 import { DEFAULT_PRODUCT_IMAGE } from '@/lib/media';
-import { productCategories, type AdminVariant, type ProductGroupInput } from '@/lib/catalog';
+import { parsePresets, productCategories, type AdminVariant, type ProductGroupInput } from '@/lib/catalog';
+import { productKindLabel, type ProductKind } from '@/lib/products';
 import { deleteProductFn, getAdminProductFn, saveProductFn } from '@/lib/catalog-api';
 
 const blank: ProductGroupInput = {
   slug: '', name: '', category: 'Peptider', description: '', badge: '', image: DEFAULT_PRODUCT_IMAGE, featured: false, active: true,
-  about: [], specs: [], variants: [{ slug: '', amount: '', price: 0, batch: '', coaUrl: '', active: true }],
+  about: [], specs: [], kind: 'peptid', quantityPresets: [], variants: [{ slug: '', amount: '', price: 0, batch: '', coaUrl: '', active: true }],
 };
 
 export const Route = createFileRoute('/admin/produkter/$slug')({
@@ -48,6 +49,8 @@ function ProductEditor({ product, isNew }: { product: ProductGroupInput; isNew: 
   const [form, setForm] = useState(product);
   const [about, setAbout] = useState(aboutToText(product.about));
   const [specs, setSpecs] = useState(specsToText(product.specs));
+  const [presets, setPresets] = useState(product.quantityPresets.join(', '));
+  const accessory = form.kind === 'tillbehor';
   const [message, setMessage] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -61,7 +64,7 @@ function ProductEditor({ product, isNew }: { product: ProductGroupInput; isNew: 
     if (badPrice) { setMessage({ kind: 'error', text: `Ange ett pris i hela kronor för ${badPrice.amount || 'varje styrka'}.` }); return; }
     setBusy(true);
     try {
-      const result = await saveProductFn({ data: { product: { ...form, about: textToAbout(about), specs: textToSpecs(specs) }, isNew } });
+      const result = await saveProductFn({ data: { product: { ...form, about: textToAbout(about), specs: textToSpecs(specs), quantityPresets: parsePresets(presets) }, isNew } });
       if (!result.ok) { setMessage({ kind: 'error', text: result.error }); return; }
       await router.invalidate();
       if (isNew) await navigate({ to: '/admin/produkter/$slug', params: { slug: result.value } });
@@ -102,6 +105,18 @@ function ProductEditor({ product, isNew }: { product: ProductGroupInput; isNew: 
             </label>
             <label className="kassa-field"><span>Etikett (valfri)</span><input value={form.badge} onChange={e => set('badge', e.target.value.toUpperCase())} placeholder="t.ex. NYHET" maxLength={20} /></label>
           </div>
+          <div className="admin-form-grid">
+            <label className="kassa-field"><span>Typ av produkt</span>
+              <select value={form.kind} onChange={e => set('kind', e.target.value as ProductKind)}>
+                <option value="peptid">{productKindLabel.peptid} – forskningstexter, analysrapport och pris per mg</option>
+                <option value="tillbehor">{productKindLabel.tillbehor} – säljs styckvis, utan forskningstexter</option>
+              </select>
+            </label>
+            <label className="kassa-field"><span>Snabbval för antal (st)</span>
+              <input value={presets} onChange={e => setPresets(e.target.value)} placeholder="t.ex. 5, 10, 20" />
+              <small className="admin-muted">Visar knappar för antal plus ett eget antal på produktsidan. Tomt = vanliga +/–.</small>
+            </label>
+          </div>
           <label className="kassa-field"><span>Kort beskrivning</span><textarea rows={2} value={form.description} onChange={e => set('description', e.target.value)} maxLength={400} /></label>
           <div className="admin-switches">
             <label><Switch checked={form.active} onCheckedChange={v => set('active', v)} /> Synlig i butiken</label>
@@ -110,17 +125,19 @@ function ProductEditor({ product, isNew }: { product: ProductGroupInput; isNew: 
         </section>
 
         <section className="admin-card">
-          <h2>Styrkor och priser</h2>
+          <h2>{accessory ? 'Varianter och priser' : 'Styrkor och priser'}</h2>
           <div className="admin-table-wrap">
             <table className="admin-table admin-variant-table">
-              <thead><tr><th>Styrka</th><th>Pris (kr)</th><th>Batch</th><th>Länk till analysrapport (CoA)</th><th>Synlig</th><th /></tr></thead>
+              <thead><tr><th>{accessory ? 'Variant' : 'Styrka'}</th><th>{accessory ? 'Pris per st (kr)' : 'Pris (kr)'}</th>{!accessory && <><th>Batch</th><th>Länk till analysrapport (CoA)</th></>}<th>Synlig</th><th /></tr></thead>
               <tbody>
                 {form.variants.map((v, i) => (
                   <tr key={v.slug || `new-${i}`}>
-                    <td><input value={v.amount} onChange={e => setVariant(i, { amount: e.target.value })} placeholder="10 mg" required maxLength={30} aria-label="Styrka" /></td>
+                    <td><input value={v.amount} onChange={e => setVariant(i, { amount: e.target.value })} placeholder={accessory ? '1 ml · 29G' : '10 mg'} required maxLength={30} aria-label={accessory ? 'Variant' : 'Styrka'} /></td>
                     <td><input type="number" min={1} step={1} value={v.price || ''} onChange={e => setVariant(i, { price: Number(e.target.value) })} required aria-label="Pris" /></td>
-                    <td><input value={v.batch} onChange={e => setVariant(i, { batch: e.target.value })} maxLength={40} aria-label="Batch" /></td>
-                    <td><input type="url" value={v.coaUrl} onChange={e => setVariant(i, { coaUrl: e.target.value })} placeholder="https://" maxLength={300} aria-label="CoA-länk" /></td>
+                    {!accessory && <>
+                      <td><input value={v.batch} onChange={e => setVariant(i, { batch: e.target.value })} maxLength={40} aria-label="Batch" /></td>
+                      <td><input type="url" value={v.coaUrl} onChange={e => setVariant(i, { coaUrl: e.target.value })} placeholder="https://" maxLength={300} aria-label="CoA-länk" /></td>
+                    </>}
                     <td><Switch checked={v.active} onCheckedChange={a => setVariant(i, { active: a })} aria-label={`Visa ${v.amount}`} /></td>
                     <td><Button type="button" size="icon" variant="ghost" disabled={form.variants.length === 1} aria-label={`Ta bort ${v.amount}`} onClick={() => setForm(f => ({ ...f, variants: f.variants.filter((_, j) => j !== i) }))}><Trash2 /></Button></td>
                   </tr>
@@ -128,7 +145,7 @@ function ProductEditor({ product, isNew }: { product: ProductGroupInput; isNew: 
               </tbody>
             </table>
           </div>
-          <Button type="button" size="sm" variant="outline" className="admin-inline-button" onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { slug: '', amount: '', price: 0, batch: '', coaUrl: '', active: true }] }))}><Plus /> Lägg till styrka</Button>
+          <Button type="button" size="sm" variant="outline" className="admin-inline-button" onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { slug: '', amount: '', price: 0, batch: '', coaUrl: '', active: true }] }))}><Plus /> {accessory ? 'Lägg till variant' : 'Lägg till styrka'}</Button>
         </section>
 
         <section className="admin-card">

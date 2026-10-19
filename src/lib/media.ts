@@ -11,8 +11,10 @@ import motsc from '@/assets/blog/motsc.webp';
 import forvaring from '@/assets/blog/forvaring.webp';
 import hplc from '@/assets/blog/hplc.webp';
 import tb500 from '@/assets/blog/tb500.webp';
+import insulinspruta from '@/assets/insulinspruta.webp';
+import insulinsprutaDetalj from '@/assets/insulinspruta-detalj.webp';
 
-export const bundledImages: Record<string, string> = { vial, peptider, analysrapport, koncentration, retatrutide, bpc157, ghkcu, motsc, forvaring, hplc, tb500 };
+export const bundledImages: Record<string, string> = { vial, peptider, analysrapport, koncentration, retatrutide, bpc157, ghkcu, motsc, forvaring, hplc, tb500, insulinspruta, 'insulinspruta-detalj': insulinsprutaDetalj };
 export const DEFAULT_PRODUCT_IMAGE = 'bundled:vial';
 
 export function resolveImage(key: string | null | undefined): string {

@@ -1,7 +1,7 @@
 // Server functions for the catalogue and blog: public reads for the storefront, admin-only writes.
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
-import { productGroups, products } from './products';
+import { allSeedGroups, allSeedProducts } from './products';
 import { seedArticles, type Article } from './articles';
 import { isImageKey } from './media';
 import {
@@ -24,7 +24,7 @@ function withFallback<T>(read: () => T, fallback: () => T): T {
 // ---------- Storefront ----------
 
 export const getCatalogFn = createServerFn({ method: 'GET' }).handler(() =>
-  withFallback(getStorefrontCatalog, () => ({ products, groups: productGroups })),
+  withFallback(getStorefrontCatalog, () => ({ products: allSeedProducts, groups: allSeedGroups })),
 );
 
 export const listArticlesFn = createServerFn({ method: 'GET' }).handler((): Article[] =>
@@ -57,6 +57,8 @@ const productSchema = z.object({
   active: z.boolean(),
   about: z.array(z.string().trim().min(1).max(2000)).max(10),
   specs: z.array(z.tuple([z.string().trim().min(1).max(60), z.string().trim().min(1).max(200)])).max(20),
+  kind: z.enum(['peptid', 'tillbehor']),
+  quantityPresets: z.array(z.number().int().min(1).max(999)).max(6),
   variants: z.array(z.object({
     slug: z.string().max(80),
     amount: z.string().trim().min(1, 'Ange styrka').max(30),
@@ -160,7 +162,7 @@ export const deleteArticleFn = createServerFn({ method: 'POST' })
 export const getProductPageFn = createServerFn({ method: 'GET' })
   .validator(z.object({ slug: z.string().max(60) }))
   .handler(({ data }) => {
-    const catalog = withFallback(getStorefrontCatalog, () => ({ products, groups: productGroups }));
+    const catalog = withFallback(getStorefrontCatalog, () => ({ products: allSeedProducts, groups: allSeedGroups }));
     const group = catalog.groups.find(g => g.slug === data.slug) ?? null;
     const all = withFallback(() => listArticles().map(toPublicArticle), () => seedArticles);
     const related = [...all].sort((a, b) => Number(b.productSlug === data.slug) - Number(a.productSlug === data.slug)).slice(0, 3)

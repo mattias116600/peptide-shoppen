@@ -42,6 +42,9 @@ export function describeDiscount(rule: Pick<DiscountRule, 'kind' | 'value'>) {
   return rule.kind === 'percent' ? `${rule.value} %` : `${new Intl.NumberFormat('sv-SE').format(rule.value)} kr`;
 }
 
+/** Highest quantity of one item per order; accessories are bought by the piece. */
+export const MAX_LINE_QUANTITY = 999;
+
 export type PricedLine = { slug: string; name: string; amount: string; unitPrice: number; qty: number };
 
 /** Prices cart items from the catalogue so totals never depend on what the browser sends. */
@@ -51,7 +54,7 @@ export function priceLines(items: { slug: string; quantity: number }[], catalog:
   const lines: PricedLine[] = [];
   for (const [slug, qty] of merged) {
     const p = catalog.find(product => product.slug === slug);
-    if (!p || !Number.isInteger(qty) || qty < 1 || qty > 99) throw new Error('Ogiltig produkt eller antal i varukorgen.');
+    if (!p || !Number.isInteger(qty) || qty < 1 || qty > MAX_LINE_QUANTITY) throw new Error('Ogiltig produkt eller antal i varukorgen.');
     lines.push({ slug, name: p.name, amount: p.amount, unitPrice: p.price, qty });
   }
   return lines;

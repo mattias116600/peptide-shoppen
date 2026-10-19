@@ -1,7 +1,7 @@
 // Builds sitemap.xml from the live catalogue and blog, so products and articles added in /admin
 // are listed automatically. Hidden products and draft articles are left out.
 import { listAdminGroups, listArticles } from './catalog.server';
-import { productGroups } from '@/lib/products';
+import { allSeedGroups } from '@/lib/products';
 import { seedArticles } from '@/lib/articles';
 import { absoluteUrl } from '@/lib/seo';
 
@@ -30,7 +30,7 @@ function entries(): Entry[] {
     articles = listArticles().map(a => ({ path: `/blogg/${a.slug}`, lastmod: (a.updatedAt || a.date).slice(0, 10), priority: '0.6' }));
   } catch (error) {
     console.error('Sitemap: database unavailable, using starting content:', error);
-    products = productGroups.map(g => ({ path: `/produkter/${g.slug}`, changefreq: 'monthly', priority: '0.8' }));
+    products = allSeedGroups.map(g => ({ path: `/produkter/${g.slug}`, changefreq: 'monthly', priority: '0.8' }));
     articles = seedArticles.map(a => ({ path: `/blogg/${a.slug}`, lastmod: a.date, priority: '0.6' }));
   }
   return [...staticSitemapPages.map(([path, changefreq, priority]) => ({ path, changefreq, priority })), ...products, ...articles];

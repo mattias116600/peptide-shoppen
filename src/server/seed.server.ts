@@ -1,7 +1,7 @@
 // Copies the starting catalogue and blog into the database once. A settings flag records that it
 // ran, so deleting every product or article in the admin does not bring the old ones back.
 import type { DatabaseSync } from 'node:sqlite';
-import { productGroups } from '@/lib/products';
+import { productGroups, seedAccessoryGroups } from '@/lib/products';
 import { seedArticles } from '@/lib/articles';
 
 export function seedContent(db: DatabaseSync) {
@@ -20,6 +20,22 @@ export function seedContent(db: DatabaseSync) {
       g.variants.forEach((v, j) => variant.run(v.slug, g.slug, v.amount, v.price, v.batch ?? '', v.coaUrl ?? '', j));
     });
     mark('seeded_catalog');
+    db.exec('COMMIT');
+  }
+
+  // Accessories (2026-10): added to new and existing shops once; the admin can edit or remove them.
+  if (!done('seeded_accessories_2026_10')) {
+    db.exec('BEGIN');
+    const { n } = db.prepare('SELECT COALESCE(MAX(sort_order), -1) + 1 AS n FROM product_groups').get() as { n: number };
+    const group = db.prepare(`INSERT OR IGNORE INTO product_groups (slug, name, category, description, badge, image, featured, active, about, specs, kind, quantity_presets, sort_order, updated_at)
+                              VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?)`);
+    const variant = db.prepare(`INSERT OR IGNORE INTO product_variants (slug, group_slug, amount, price, batch, coa_url, active, sort_order)
+                                VALUES (?, ?, ?, ?, '', '', 1, ?)`);
+    seedAccessoryGroups.forEach((g, i) => {
+      group.run(g.slug, g.name, g.category, g.description, g.badge ?? '', g.image, g.featured ? 1 : 0, JSON.stringify(g.about), JSON.stringify(g.specs), g.kind, JSON.stringify(g.quantityPresets), n + i, now);
+      g.variants.forEach((v, j) => variant.run(v.slug, g.slug, v.amount, v.price, j));
+    });
+    mark('seeded_accessories_2026_10');
     db.exec('COMMIT');
   }
 

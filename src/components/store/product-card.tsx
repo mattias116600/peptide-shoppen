@@ -10,11 +10,13 @@ export function ProductCard({ product }: { product: ProductGroup }) {
   const { change, setCartOpen } = useStore();
   const [selected, setSelected] = useState(product.variants[0].slug);
   const variant = product.variants.find(v => v.slug === selected) ?? product.variants[0];
+  const accessory = product.kind === 'tillbehor';
+  const addQuantity = product.quantityPresets[0] ?? 1;
   const link = { to: '/produkter/$slug' as const, params: { slug: product.slug }, search: { styrka: variant.slug } };
   return (
     <article className="product-card">
       <Link {...link} className="product-photo" aria-label={`Visa ${product.name}`}>
-        <img src={resolveImage(product.image)} width={1024} height={1024} alt={`${product.name} forskningspeptid`} loading="lazy" />
+        <img src={resolveImage(product.image)} width={1024} height={1024} alt={accessory ? product.name : `${product.name} forskningspeptid`} loading="lazy" />
         {product.badge && <span className="product-badge">{product.badge}</span>}
         <span className="photo-arrow"><ArrowUpRight size={18} /></span>
         <span className="amount-tag">{variant.amount}</span>
@@ -28,8 +30,8 @@ export function ProductCard({ product }: { product: ProductGroup }) {
           ))}
         </div>
         <div className="product-bottom">
-          <span>{formatPrice(variant.price)}</span>
-          <Button variant="outline" size="sm" onClick={() => { change(variant.slug, 1); setCartOpen(true); }} aria-label={`Lägg ${product.name} ${variant.amount} i varukorg`}>Lägg i korg <Plus /></Button>
+          <span>{formatPrice(variant.price)}{accessory ? ' / st' : ''}</span>
+          <Button variant="outline" size="sm" onClick={() => { change(variant.slug, addQuantity); setCartOpen(true); }} aria-label={`Lägg ${addQuantity > 1 ? `${addQuantity} st ` : ''}${product.name} ${variant.amount} i varukorg`}>{addQuantity > 1 ? `Lägg ${addQuantity} st i korg` : 'Lägg i korg'} <Plus /></Button>
         </div>
       </div>
     </article>

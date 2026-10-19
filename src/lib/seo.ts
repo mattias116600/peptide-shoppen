@@ -90,8 +90,9 @@ export const breadcrumbLd = (items: [name: string, path: string][]) => ({
 // ---------- Page-specific helpers ----------
 
 /** A search snippet for a product that names its strengths and starting price, not just the one-line blurb. */
-export function productDescription(p: { name: string; description: string; variants: { amount: string; price: number }[] }, formatPrice: (n: number) => string) {
+export function productDescription(p: { name: string; description: string; kind?: string; variants: { amount: string; price: number }[] }, formatPrice: (n: number) => string) {
   const min = Math.min(...p.variants.map(v => v.price));
   const amounts = p.variants.map(v => v.amount).join(', ');
+  if (p.kind === 'tillbehor') return `${p.description.replace(/\.?$/, '.')} ${formatPrice(min)} per styck – välj antal själv. Leverans med PostNord 1–3 dagar.`;
   return `${p.description.replace(/\.?$/, '.')} ${p.name} finns i ${amounts} från ${formatPrice(min)}. Analysrapport per batch, leverans med PostNord 1–3 dagar. Endast för forskning.`;
 }

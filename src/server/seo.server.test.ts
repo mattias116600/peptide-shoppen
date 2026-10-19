@@ -7,7 +7,7 @@ import { getDb, resetDbForTests } from './db.server';
 import { getAdminGroup, saveArticle, saveGroup, setGroupActive } from './catalog.server';
 import { buildSitemap } from './sitemap.server';
 import { absoluteUrl, clip, pageTitle, productDescription, seoHead } from '@/lib/seo';
-import { formatPrice, productGroups } from '@/lib/products';
+import { formatPrice, productGroups, seedAccessoryGroups } from '@/lib/products';
 import { seedArticles } from '@/lib/articles';
 
 const metaOf = (head: ReturnType<typeof seoHead>, key: string) =>
@@ -52,6 +52,12 @@ describe('seoHead', () => {
       expect(d.length, g.slug).toBeGreaterThanOrEqual(110);
       expect(d.length, g.slug).toBeLessThanOrEqual(160);
     }
+  });
+
+  it('describes accessories without research or CoA wording', () => {
+    const d = productDescription(seedAccessoryGroups[0]!, formatPrice);
+    expect(d).toContain('5 kr per styck');
+    expect(d).not.toMatch(/Analysrapport|forskning/i);
   });
 
   it('keeps every seeded article title within the display limit', () => {

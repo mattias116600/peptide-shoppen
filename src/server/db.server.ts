@@ -35,10 +35,17 @@ const addedOrderColumns: [string, string][] = [
   ['shipping', 'INTEGER NOT NULL DEFAULT 0'],
 ];
 
+const addedProductGroupColumns: [string, string][] = [
+  ['kind', "TEXT NOT NULL DEFAULT 'peptid'"],
+  ['quantity_presets', "TEXT NOT NULL DEFAULT '[]'"],
+];
+
 function migrate(conn: DatabaseSync) {
-  const existing = new Set((conn.prepare('PRAGMA table_info(orders)').all() as { name: string }[]).map(c => c.name));
-  for (const [name, type] of addedOrderColumns) {
-    if (!existing.has(name)) conn.exec(`ALTER TABLE orders ADD COLUMN ${name} ${type}`);
+  for (const [table, columns] of [['orders', addedOrderColumns], ['product_groups', addedProductGroupColumns]] as const) {
+    const existing = new Set((conn.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[]).map(c => c.name));
+    for (const [name, type] of columns) {
+      if (!existing.has(name)) conn.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${type}`);
+    }
   }
 }
 
