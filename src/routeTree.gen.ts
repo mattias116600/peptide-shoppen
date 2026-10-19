@@ -12,9 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as IntegritetspolicyRouteImport } from './routes/integritetspolicy'
 import { Route as KalkylatorRouteImport } from './routes/kalkylator'
 import { Route as KassaRouteImport } from './routes/kassa'
 import { Route as KontaktRouteImport } from './routes/kontakt'
+import { Route as KopvillkorRouteImport } from './routes/kopvillkor'
 import { Route as OmOssRouteImport } from './routes/om-oss'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -48,6 +50,11 @@ const FaqRoute = FaqRouteImport.update({
   path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IntegritetspolicyRoute = IntegritetspolicyRouteImport.update({
+  id: '/integritetspolicy',
+  path: '/integritetspolicy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KalkylatorRoute = KalkylatorRouteImport.update({
   id: '/kalkylator',
   path: '/kalkylator',
@@ -61,6 +68,11 @@ const KassaRoute = KassaRouteImport.update({
 const KontaktRoute = KontaktRouteImport.update({
   id: '/kontakt',
   path: '/kontakt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KopvillkorRoute = KopvillkorRouteImport.update({
+  id: '/kopvillkor',
+  path: '/kopvillkor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OmOssRoute = OmOssRouteImport.update({
@@ -153,9 +165,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/faq': typeof FaqRoute
+  '/integritetspolicy': typeof IntegritetspolicyRoute
   '/kalkylator': typeof KalkylatorRoute
   '/kassa': typeof KassaRoute
   '/kontakt': typeof KontaktRoute
+  '/kopvillkor': typeof KopvillkorRoute
   '/om-oss': typeof OmOssRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/rabattkoder': typeof AdminRabattkoderRoute
@@ -177,9 +191,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/faq': typeof FaqRoute
+  '/integritetspolicy': typeof IntegritetspolicyRoute
   '/kalkylator': typeof KalkylatorRoute
   '/kassa': typeof KassaRoute
   '/kontakt': typeof KontaktRoute
+  '/kopvillkor': typeof KopvillkorRoute
   '/om-oss': typeof OmOssRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/rabattkoder': typeof AdminRabattkoderRoute
@@ -203,9 +219,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/faq': typeof FaqRoute
+  '/integritetspolicy': typeof IntegritetspolicyRoute
   '/kalkylator': typeof KalkylatorRoute
   '/kassa': typeof KassaRoute
   '/kontakt': typeof KontaktRoute
+  '/kopvillkor': typeof KopvillkorRoute
   '/om-oss': typeof OmOssRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/rabattkoder': typeof AdminRabattkoderRoute
@@ -230,9 +248,11 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/faq'
+    | '/integritetspolicy'
     | '/kalkylator'
     | '/kassa'
     | '/kontakt'
+    | '/kopvillkor'
     | '/om-oss'
     | '/admin/login'
     | '/admin/rabattkoder'
@@ -254,9 +274,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/faq'
+    | '/integritetspolicy'
     | '/kalkylator'
     | '/kassa'
     | '/kontakt'
+    | '/kopvillkor'
     | '/om-oss'
     | '/admin/login'
     | '/admin/rabattkoder'
@@ -279,9 +301,11 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/faq'
+    | '/integritetspolicy'
     | '/kalkylator'
     | '/kassa'
     | '/kontakt'
+    | '/kopvillkor'
     | '/om-oss'
     | '/admin/login'
     | '/admin/rabattkoder'
@@ -305,9 +329,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   FaqRoute: typeof FaqRoute
+  IntegritetspolicyRoute: typeof IntegritetspolicyRoute
   KalkylatorRoute: typeof KalkylatorRoute
   KassaRoute: typeof KassaRoute
   KontaktRoute: typeof KontaktRoute
+  KopvillkorRoute: typeof KopvillkorRoute
   OmOssRoute: typeof OmOssRoute
   BloggSlugRoute: typeof BloggSlugRoute
   KassaTackRoute: typeof KassaTackRoute
@@ -342,6 +368,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/integritetspolicy': {
+      id: '/integritetspolicy'
+      path: '/integritetspolicy'
+      fullPath: '/integritetspolicy'
+      preLoaderRoute: typeof IntegritetspolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/kalkylator': {
       id: '/kalkylator'
       path: '/kalkylator'
@@ -361,6 +394,13 @@ declare module '@tanstack/react-router' {
       path: '/kontakt'
       fullPath: '/kontakt'
       preLoaderRoute: typeof KontaktRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kopvillkor': {
+      id: '/kopvillkor'
+      path: '/kopvillkor'
+      fullPath: '/kopvillkor'
+      preLoaderRoute: typeof KopvillkorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/om-oss': {
@@ -513,9 +553,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   FaqRoute: FaqRoute,
+  IntegritetspolicyRoute: IntegritetspolicyRoute,
   KalkylatorRoute: KalkylatorRoute,
   KassaRoute: KassaRoute,
   KontaktRoute: KontaktRoute,
+  KopvillkorRoute: KopvillkorRoute,
   OmOssRoute: OmOssRoute,
   BloggSlugRoute: BloggSlugRoute,
   KassaTackRoute: KassaTackRoute,

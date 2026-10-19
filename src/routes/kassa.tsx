@@ -3,7 +3,7 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowLeft, ArrowRight, Bitcoin, Check, CheckCircle2, CreditCard, FlaskConical, Home, ListChecks, Mail, Minus, Package, Phone, Plus, ShoppingBag, TicketPercent, Truck, User, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/components/store/store-provider';
-import { formatPrice, cartTotal, shippingInfo, isValidPhone } from '@/lib/products';
+import { formatPrice, cartTotal, shippingFee, shippingInfo, isValidPhone, vatNote } from '@/lib/products';
 import { resolveImage } from '@/lib/media';
 import { TelegramSupportRow } from '@/components/store/support-telegram';
 import { checkDiscountFn, getCheckoutConfigFn, placeOrderFn } from '@/lib/shop-api';
@@ -60,6 +60,7 @@ function CheckoutPage() {
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', zip: '', city: '' });
   const [touched, setTouched] = useState(false);
+  const [accepted, setAccepted] = useState(false);
   const [order, setOrder] = useState<PlacedOrder | null>(null);
   const [codeInput, setCodeInput] = useState('');
   const [discount, setDiscount] = useState<{ code: string; amount: number } | null>(null);
@@ -67,7 +68,8 @@ function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const subtotal = cartTotal(items, products);
-  const total = subtotal - (discount?.amount ?? 0);
+  const shipping = shippingFee(subtotal - (discount?.amount ?? 0));
+  const total = subtotal - (discount?.amount ?? 0) + shipping;
 
   const applyCode = async (code: string) => {
     setDiscountError('');
@@ -126,7 +128,7 @@ function CheckoutPage() {
         <div className="confirm-main">
           <div className="confirm-card">
             <h2><Truck size={15} /> Leverans</h2>
-            <p className="confirm-carrier">Skickas med <strong>PostNord</strong> i neutral förpackning — leverans <strong>1–3 arbetsdagar</strong>.</p>
+            <p className="confirm-carrier">Skickas med <strong>{shippingInfo.carrier}</strong> i neutral förpackning — leverans <strong>{shippingInfo.leadTime}</strong>.</p>
             <p className="confirm-address">{order.name}<br />{order.address}<br />{order.zip} {order.city}<br /><Phone size={12} /> {order.phone}</p>
           </div>
           <div className="confirm-card">
@@ -134,7 +136,7 @@ function CheckoutPage() {
             <ol className="confirm-steps">
               <li><span>1</span>Orderbekräftelse skickas till {order.email}.</li>
               <li><span>2</span>Din beställning packas i neutral förpackning.</li>
-              <li><span>3</span>Skickas med PostNord — leverans 1–3 arbetsdagar.</li>
+              <li><span>3</span>Skickas med {shippingInfo.carrier} — leverans {shippingInfo.leadTime}.</li>
             </ol>
           </div>
           <div className="research-banner">
@@ -156,7 +158,8 @@ function CheckoutPage() {
             <div key={l.slug}><span>{l.name} {l.amount} × {l.qty}</span><span>{formatPrice(l.unitPrice * l.qty)}</span></div>
           ))}
           {order.discountCode && <div className="kassa-discount-line"><span>Rabatt ({order.discountCode})</span><span>−{formatPrice(order.discountAmount)}</span></div>}
-          <div className="kassa-summary-total"><span>Totalt</span><strong>{formatPrice(order.total)}</strong></div>
+          <div><span>Frakt</span><span>{order.shipping ? formatPrice(order.shipping) : 'Fri frakt'}</span></div>
+          <div className="kassa-summary-total"><span>Totalt <small>inkl. moms</small></span><strong>{formatPrice(order.total)}</strong></div>
           <p className="kassa-shipping"><Truck size={14} /> {shippingInfo.summary}</p>
           <TelegramSupportRow note="Frågor om din beställning? Skriv till oss på Telegram" />
         </aside>
@@ -245,14 +248,19 @@ function CheckoutPage() {
               {field('city', 'Ort', 'text', 'Stockholm')}
             </div>
             <p className="kassa-hint"><Phone size={12} /> Telefonnumret används om PostNord behöver nå dig inför leveransen.</p>
+            <label className="kassa-consent" data-invalid={touched && !accepted ? true : undefined}>
+              <input type="checkbox" checked={accepted} onChange={e => setAccepted(e.target.checked)} required aria-invalid={touched && !accepted ? true : undefined} />
+              <span>Jag har läst och godkänner <Link to="/kopvillkor" target="_blank">köpvillkoren</Link> och <Link to="/integritetspolicy" target="_blank">integritetspolicyn</Link>.</span>
+            </label>
             {touched && !formValid && <p className="kassa-error" role="alert">Fyll i alla fält med giltiga uppgifter för att gå vidare.</p>}
+            {touched && !accepted && <p className="kassa-error" role="alert">Du behöver godkänna köpvillkoren och integritetspolicyn för att gå vidare.</p>}
             {touched && !phoneValid && form.phone.trim() !== '' && (
               <p className="kassa-error" role="alert">Ange ett giltigt telefonnummer, till exempel 070 123 45 67 eller +46 70 123 45 67.</p>
             )}
           </div>
           <div className="kassa-actions">
             <Button variant="outline" onClick={() => setStep(0)}><ArrowLeft /> Tillbaka</Button>
-            <Button onClick={() => { setTouched(true); if (formValid) setStep(2); }}>Gå vidare till betalning <ArrowRight /></Button>
+            <Button onClick={() => { setTouched(true); if (formValid && accepted) setStep(2); }}>Gå vidare till betalning <ArrowRight /></Button>
           </div>
         </section>
       )}
@@ -309,8 +317,10 @@ function CheckoutPage() {
           </form>
         )}
         {discountError && <p className="kassa-error" role="alert">{discountError}</p>}
-        <div className="kassa-summary-total"><span>Totalt</span><strong>{formatPrice(total)}</strong></div>
-        <p className="kassa-shipping"><Truck size={14} /> {shippingInfo.summary}</p>
+        <div><span>Frakt</span><span>{shipping ? formatPrice(shipping) : 'Fri frakt'}</span></div>
+        <div className="kassa-summary-total"><span>Totalt <small>inkl. moms</small></span><strong>{formatPrice(total)}</strong></div>
+        <p className="kassa-shipping"><Truck size={14} /> {shippingInfo.summary} {shipping ? `Fri frakt från ${formatPrice(shippingInfo.freeFrom)}.` : ''}</p>
+        <p className="kassa-vat">{vatNote}</p>
         <TelegramSupportRow note="Frågor innan du beställer? Skriv till oss på Telegram" />
       </aside>
     </main>

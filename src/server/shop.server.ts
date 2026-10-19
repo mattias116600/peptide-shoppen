@@ -8,6 +8,7 @@ import {
   evaluateDiscount, linesSubtotal, normalizeCode, priceLines,
   PAID_PAYMENT_STATUSES, type CustomerInput, type DiscountKind, type DiscountRule, type OrderStatus, type PaymentInfo, type PlacedOrder,
 } from '@/lib/commerce';
+import { shippingFee } from '@/lib/products';
 
 type DiscountRow = { id: number; code: string; kind: DiscountKind; value: number; active: number; min_total: number; max_uses: number | null; uses: number; expires_at: string | null; created_at: string };
 export type DiscountCode = DiscountRule & { id: number; createdAt: string };
@@ -30,7 +31,8 @@ export function quoteDiscount(code: string, cart: CartInput) {
   if (!rule) throw new OrderError('Rabattkoden finns inte.');
   const check = evaluateDiscount(rule, subtotal);
   if (!check.ok) throw new OrderError(check.reason);
-  return { code: rule.code, amount: check.amount, subtotal, total: subtotal - check.amount };
+  const shipping = shippingFee(subtotal - check.amount);
+  return { code: rule.code, amount: check.amount, subtotal, shipping, total: subtotal - check.amount + shipping };
 }
 
 
@@ -56,21 +58,22 @@ export function placeOrder(customer: CustomerInput, cart: CartInput, discountCod
     let ref = '';
     do ref = `PSW-${randomInt(100000, 1000000)}`;
     while (db.prepare('SELECT 1 FROM orders WHERE ref = ?').get(ref));
-    const total = subtotal - discountAmount;
+    const shipping = shippingFee(subtotal - discountAmount);
+    const total = subtotal - discountAmount + shipping;
     // Lets the customer's browser look up its own order status without guessing order numbers.
     const publicToken = randomBytes(18).toString('base64url');
     const { lastInsertRowid } = db
-      .prepare(`INSERT INTO orders (ref, name, email, phone, address, zip, city, subtotal, discount_code, discount_amount, total, public_token, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-      .run(ref, customer.name, customer.email, customer.phone, customer.address, customer.zip, customer.city, subtotal, appliedCode, discountAmount, total, publicToken, createdAt, createdAt);
+      .prepare(`INSERT INTO orders (ref, name, email, phone, address, zip, city, subtotal, discount_code, discount_amount, shipping, total, public_token, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .run(ref, customer.name, customer.email, customer.phone, customer.address, customer.zip, customer.city, subtotal, appliedCode, discountAmount, shipping, total, publicToken, createdAt, createdAt);
     const insertLine = db.prepare('INSERT INTO order_lines (order_id, slug, name, amount, unit_price, qty) VALUES (?, ?, ?, ?, ?, ?)');
     for (const l of lines) insertLine.run(lastInsertRowid, l.slug, l.name, l.amount, l.unitPrice, l.qty);
     db.prepare('INSERT INTO order_events (order_id, at, actor, message) VALUES (?, ?, ?, ?)').run(lastInsertRowid, createdAt, 'kund', 'Beställning lagd i kassan');
-    return { ...customer, ref, createdAt, subtotal, discountCode: appliedCode, discountAmount, total, lines, publicToken };
+    return { ...customer, ref, createdAt, subtotal, discountCode: appliedCode, discountAmount, shipping, total, lines, publicToken };
   });
 }
 
-type OrderRow = { id: number; ref: string; status: OrderStatus; public_token: string; payment_provider: string | null; payment_ref: string | null; payment_url: string | null; payment_status: string | null; name: string; email: string; phone: string; address: string; zip: string; city: string; subtotal: number; discount_code: string | null; discount_amount: number; total: number; tracking: string; admin_note: string; created_at: string; updated_at: string };
+type OrderRow = { id: number; ref: string; status: OrderStatus; public_token: string; payment_provider: string | null; payment_ref: string | null; payment_url: string | null; payment_status: string | null; name: string; email: string; phone: string; address: string; zip: string; city: string; subtotal: number; discount_code: string | null; discount_amount: number; shipping: number; total: number; tracking: string; admin_note: string; created_at: string; updated_at: string };
 export type OrderSummary = { ref: string; status: OrderStatus; name: string; email: string; total: number; itemCount: number; discountCode: string | null; createdAt: string };
 export type OrderDetail = PlacedOrder & { payment: PaymentInfo; status: OrderStatus; tracking: string; adminNote: string; updatedAt: string; events: { at: string; actor: string; message: string }[] };
 
@@ -115,7 +118,7 @@ export function getOrder(ref: string): OrderDetail | null {
   const events = db.prepare('SELECT at, actor, message FROM order_events WHERE order_id = ? ORDER BY at DESC, rowid DESC').all(o.id) as { at: string; actor: string; message: string }[];
   return {
     ref: o.ref, status: o.status, name: o.name, email: o.email, phone: o.phone, address: o.address, zip: o.zip, city: o.city,
-    subtotal: o.subtotal, discountCode: o.discount_code, discountAmount: o.discount_amount, total: o.total,
+    subtotal: o.subtotal, discountCode: o.discount_code, discountAmount: o.discount_amount, shipping: o.shipping, total: o.total,
     tracking: o.tracking, adminNote: o.admin_note, createdAt: o.created_at, updatedAt: o.updated_at, lines, events,
     payment: { provider: o.payment_provider, ref: o.payment_ref, url: o.payment_url, status: o.payment_status },
   };

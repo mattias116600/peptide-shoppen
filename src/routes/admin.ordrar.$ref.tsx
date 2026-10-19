@@ -67,6 +67,7 @@ function OrderPage() {
           <dl className="admin-totals">
             <div><dt>Delsumma</dt><dd>{formatPrice(order.subtotal)}</dd></div>
             {order.discountCode && <div><dt>Rabatt ({order.discountCode})</dt><dd>−{formatPrice(order.discountAmount)}</dd></div>}
+            <div><dt>Frakt</dt><dd>{order.shipping ? formatPrice(order.shipping) : 'Fri frakt'}</dd></div>
             <div className="admin-totals-sum"><dt>Totalt</dt><dd>{formatPrice(order.total)}</dd></div>
           </dl>
         </section>
