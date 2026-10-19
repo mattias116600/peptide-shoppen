@@ -73,9 +73,9 @@ export function placeOrder(customer: CustomerInput, cart: CartInput, discountCod
   });
 }
 
-type OrderRow = { id: number; ref: string; status: OrderStatus; public_token: string; payment_provider: string | null; payment_ref: string | null; payment_url: string | null; payment_status: string | null; name: string; email: string; phone: string; address: string; zip: string; city: string; subtotal: number; discount_code: string | null; discount_amount: number; shipping: number; total: number; tracking: string; admin_note: string; created_at: string; updated_at: string };
+type OrderRow = { id: number; ref: string; status: OrderStatus; public_token: string; payment_provider: string | null; payment_ref: string | null; payment_url: string | null; payment_status: string | null; confirmation_email_at: string | null; shipping_email_at: string | null; name: string; email: string; phone: string; address: string; zip: string; city: string; subtotal: number; shipping: number; discount_code: string | null; discount_amount: number; total: number; tracking: string; admin_note: string; created_at: string; updated_at: string };
 export type OrderSummary = { ref: string; status: OrderStatus; name: string; email: string; total: number; itemCount: number; discountCode: string | null; createdAt: string };
-export type OrderDetail = PlacedOrder & { payment: PaymentInfo; status: OrderStatus; tracking: string; adminNote: string; updatedAt: string; events: { at: string; actor: string; message: string }[] };
+export type OrderDetail = PlacedOrder & { payment: PaymentInfo; emails: { confirmationAt: string | null; shippingAt: string | null }; status: OrderStatus; tracking: string; adminNote: string; updatedAt: string; events: { at: string; actor: string; message: string }[] };
 
 export function listOrders(opts: { status?: OrderStatus | undefined; q?: string | undefined; limit?: number; offset?: number }) {
   const where: string[] = [];
@@ -121,6 +121,7 @@ export function getOrder(ref: string): OrderDetail | null {
     subtotal: o.subtotal, discountCode: o.discount_code, discountAmount: o.discount_amount, shipping: o.shipping, total: o.total,
     tracking: o.tracking, adminNote: o.admin_note, createdAt: o.created_at, updatedAt: o.updated_at, lines, events,
     payment: { provider: o.payment_provider, ref: o.payment_ref, url: o.payment_url, status: o.payment_status },
+    emails: { confirmationAt: o.confirmation_email_at, shippingAt: o.shipping_email_at },
   };
 }
 

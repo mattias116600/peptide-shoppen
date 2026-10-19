@@ -322,3 +322,4 @@
 .kassa-consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.6;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);cursor:pointer}.kassa-consent[data-invalid]{border-color:var(--destructive)}.kassa-consent input{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--primary)}.kassa-consent a{color:var(--primary);text-decoration:underline;text-underline-offset:2px}
 .kassa-summary-total small{font-size:11px;font-weight:400;color:var(--muted-foreground)}.kassa-vat{font-size:11px;color:var(--muted-foreground);margin-top:6px}
 @media(max-width:640px){.legal-toc{padding:16px 18px}.legal-toc ol{grid-template-columns:1fr}.legal-section h2{font-size:20px}.legal-updated{margin-top:-12px}}
+.admin-card>h2{display:flex;align-items:center;gap:7px}

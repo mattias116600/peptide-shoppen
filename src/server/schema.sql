@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS orders (
   payment_ref TEXT,
   payment_url TEXT,
   payment_status TEXT,
+  confirmation_email_at TEXT,
+  shipping_email_at TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );

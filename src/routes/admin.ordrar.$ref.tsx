@@ -4,7 +4,7 @@ import { ArrowLeft, Mail, Phone, Save, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatPrice } from '@/lib/products';
 import { describePaymentStatus, orderStatuses, orderStatusLabel, type OrderStatus } from '@/lib/commerce';
-import { getOrderFn, updateOrderFn } from '@/lib/shop-api';
+import { getOrderFn, resendOrderEmailFn, updateOrderFn } from '@/lib/shop-api';
 import { StatusPill, formatDateTime } from '@/components/admin/admin-ui';
 
 export const Route = createFileRoute('/admin/ordrar/$ref')({
@@ -29,6 +29,22 @@ function OrderPage() {
   const [busy, setBusy] = useState(false);
   const dirty = status !== order.status || tracking !== order.tracking || note !== order.adminNote;
 
+  const [emailMessage, setEmailMessage] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
+  const resend = async (kind: 'confirmation' | 'shipping') => {
+    if (dirty && !window.confirm('Du har osparade ändringar. Mejlet skickas med de sparade uppgifterna. Fortsätta?')) return;
+    setBusy(true);
+    setEmailMessage(null);
+    try {
+      const result = await resendOrderEmailFn({ data: { ref: order.ref, kind } });
+      setEmailMessage({ kind: result.sent ? 'ok' : 'error', text: result.message });
+      await router.invalidate();
+    } catch {
+      setEmailMessage({ kind: 'error', text: 'Kunde inte skicka mejlet. Försök igen.' });
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const save = async () => {
     setBusy(true);
     setMessage(null);
@@ -36,7 +52,8 @@ function OrderPage() {
       const result = await updateOrderFn({ data: { ref: order.ref, status, tracking, adminNote: note } });
       if (!result.ok) { setMessage({ kind: 'error', text: result.error }); return; }
       await router.invalidate();
-      setMessage({ kind: 'ok', text: 'Ändringarna är sparade.' });
+      const email = result.value.email;
+      setMessage(email ? { kind: email.sent ? 'ok' : 'error', text: `Ändringarna är sparade. ${email.message}.` } : { kind: 'ok', text: 'Ändringarna är sparade.' });
     } catch {
       setMessage({ kind: 'error', text: 'Kunde inte spara. Försök igen.' });
     } finally {
@@ -99,11 +116,25 @@ function OrderPage() {
           <label className="kassa-field"><span>PostNord spårningsnummer</span>
             <input value={tracking} maxLength={60} onChange={e => setTracking(e.target.value)} placeholder="t.ex. 00370712345678901234" />
           </label>
+          {!order.emails.shippingAt && <p className="admin-muted">Leveransmejlet skickas automatiskt till kunden när ordern sparas som Skickad med ett spårningsnummer.</p>}
           <label className="kassa-field"><span>Intern anteckning</span>
             <textarea value={note} maxLength={2000} rows={4} onChange={e => setNote(e.target.value)} placeholder="Syns bara för admin" />
           </label>
           {message && <p className={message.kind === 'ok' ? 'admin-success' : 'kassa-error'} role="status">{message.text}</p>}
           <Button onClick={save} disabled={!dirty || busy}><Save /> {busy ? 'Sparar…' : 'Spara ändringar'}</Button>
+        </section>
+
+        <section className="admin-card">
+          <h2><Mail size={15} /> E-post till kunden</h2>
+          <dl className="admin-totals">
+            <div><dt>Orderbekräftelse</dt><dd>{order.emails.confirmationAt ? `Skickad ${formatDateTime(order.emails.confirmationAt)}` : 'Inte skickad'}</dd></div>
+            <div><dt>Leveransmejl</dt><dd>{order.emails.shippingAt ? `Skickad ${formatDateTime(order.emails.shippingAt)}` : 'Inte skickad'}</dd></div>
+          </dl>
+          <div className="admin-editor-actions">
+            <Button size="sm" variant="outline" disabled={busy} onClick={() => resend('confirmation')}>{order.emails.confirmationAt ? 'Skicka bekräftelsen igen' : 'Skicka orderbekräftelse'}</Button>
+            <Button size="sm" variant="outline" disabled={busy || order.status !== 'skickad'} onClick={() => resend('shipping')} title={order.status !== 'skickad' ? 'Sätt status till Skickad först' : undefined}>{order.emails.shippingAt ? 'Skicka leveransmejlet igen' : 'Skicka leveransmejl'}</Button>
+          </div>
+          {emailMessage && <p className={emailMessage.kind === 'ok' ? 'admin-success' : 'kassa-error'} role="status">{emailMessage.text}</p>}
         </section>
 
         <section className="admin-card">
