@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { seoHead } from '@/lib/seo';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { FlaskConical, RotateCcw, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TelegramSupportRow } from '@/components/store/support-telegram';
 import { calculateConcentration, parseDecimal } from '@/lib/concentration';
-export const Route = createFileRoute('/kalkylator')({head:()=>({meta:[{title:'Peptidkalkylator | Peptidesweden'},{name:'description',content:'Beräkna masskoncentration i mg/ml för laboratorieforskning. Massa dividerad med slutlig lösningsvolym.'},{property:'og:title',content:'Peptidkalkylator | Peptidesweden'},{property:'og:description',content:'En enkel beräkning av masskoncentration för laboratoriet.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:Calculator});
+export const Route = createFileRoute('/kalkylator')({head:()=>seoHead({title:'Peptidkalkylator – mg/ml',description:'Räkna ut masskoncentration i mg/ml för laboratoriearbete: ange massa och slutlig volym, så visas koncentrationen och mängd per 0,1 ml direkt.',path:'/kalkylator'}),component:Calculator});
 const MASS_PRESETS=['5','10','15','20','30','50','60','100'];
 const VOLUME_PRESETS=['1','2','3','5','10'];
 function Presets({values,current,unit,onPick,label}:{values:string[];current:string;unit:string;onPick:(v:string)=>void;label:string}){

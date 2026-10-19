@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { organizationLd, seoHead, websiteLd } from '@/lib/seo';
 import { ArrowRight, FlaskConical, FileText, Layers, ShieldCheck, Calculator, BookOpen, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/store/product-card';
@@ -7,14 +8,7 @@ import { useCatalog } from '@/components/store/store-provider';
 import hero from '@/assets/nordic-lab-hero.webp';
 
 export const Route = createFileRoute('/')({
-  head: () => ({ meta: [
-    { title: 'Peptidesweden | Peptider för laboratorieforskning' },
-    { name: 'description', content: 'Utforska Peptideswedens forskningspeptider. Välj styrka och läs produktinformation och tillgängliga batchrapporter.' },
-    { property: 'og:title', content: 'Peptidesweden | Peptider för laboratorieforskning' },
-    { property: 'og:description', content: 'Ett fokuserat sortiment av forskningspeptider, produktinformation och laboratorieverktyg.' },
-    { property: 'og:type', content: 'website' },
-    { name: 'twitter:card', content: 'summary_large_image' },
-  ] }),
+  head: () => seoHead({ title: 'Peptider för laboratorieforskning', description: 'Peptidesweden säljer peptider för laboratorieforskning: Retatrutide, BPC-157, GHK-Cu, MOTS-C och blends. Analysrapport per batch, leverans med PostNord 1–3 dagar.', path: '/', jsonLd: [organizationLd(), websiteLd()] }),
   component: Home,
 });
 

@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /kassa
+Disallow: /admin
+Disallow: /api/
 
 Sitemap: https://peptidesweden.com/sitemap.xml

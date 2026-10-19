@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { seoHead } from '@/lib/seo';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowLeft, ArrowRight, Bitcoin, Check, CheckCircle2, CreditCard, FlaskConical, Home, ListChecks, Mail, Minus, Package, Phone, Plus, ShoppingBag, TicketPercent, Truck, User, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,16 +11,7 @@ import { checkDiscountFn, getCheckoutConfigFn, placeOrderFn } from '@/lib/shop-a
 import type { PlacedOrder } from '@/lib/commerce';
 
 export const Route = createFileRoute('/kassa')({
-  head: () => ({
-    meta: [
-      { title: 'Kassa — Peptidesweden' },
-      { name: 'description', content: 'Slutför din beställning hos Peptidesweden i tre enkla steg: varukorg, uppgifter och betalning.' },
-      { property: 'og:title', content: 'Kassa — Peptidesweden' },
-      { property: 'og:description', content: 'Slutför din beställning i tre enkla steg.' },
-      { property: 'og:type', content: 'website' },
-      { name: 'twitter:card', content: 'summary' },
-    ],
-  }),
+  head: () => seoHead({ title: 'Kassa', description: 'Slutför din beställning hos Peptidesweden i tre steg: varukorg, uppgifter och betalning.', path: '/kassa', noindex: true }),
   loader: () => getCheckoutConfigFn(),
   component: CheckoutPage,
 });

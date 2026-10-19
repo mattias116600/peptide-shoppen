@@ -1,20 +1,11 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { breadcrumbLd, seoHead } from '@/lib/seo';
 import { ArrowUpRight, Clock } from 'lucide-react';
 import { listArticlesFn } from '@/lib/catalog-api';
 import { resolveImage } from '@/lib/media';
 
 export const Route = createFileRoute('/blogg/')({
-  head: () => ({
-    meta: [
-      { title: 'Blogg om peptider & forskning | Peptidesweden' },
-      { name: 'description', content: 'Guider om peptider, Retatrutide, BPC-157, GHK-Cu, MOTS-C, analysrapporter, HPLC, förvaring och koncentration — Peptideswedens kunskapsblogg.' },
-      { property: 'og:title', content: 'Blogg om peptider & forskning | Peptidesweden' },
-      { property: 'og:description', content: 'Tio guider om peptider, analys och laboratoriekunskap.' },
-      { property: 'og:type', content: 'website' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-    ],
-    links: [{ rel: 'canonical', href: '/blogg' }],
-  }),
+  head: () => seoHead({ title: 'Blogg om peptider och forskning', description: 'Guider om peptider, analysrapporter, HPLC, förvaring och koncentration i laboratoriet, plus genomgångar av Retatrutide, BPC-157, GHK-Cu och MOTS-C.', path: '/blogg', jsonLd: [breadcrumbLd([['Hem', '/'], ['Blogg', '/blogg']])] }),
   loader: () => listArticlesFn(),
   component: Blog,
 });

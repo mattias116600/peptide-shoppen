@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DEFAULT_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl, breadcrumbLd, productDescription, seoHead } from '@/lib/seo';
 import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { ArrowRight, Plus, Minus, FlaskConical, ShieldAlert, Truck, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,34 +15,43 @@ import { ProductCard } from '@/components/store/product-card';
 export const Route = createFileRoute('/produkter/$slug')({
   validateSearch: (search: Record<string, unknown>): { styrka?: string | undefined } => ({ styrka: typeof search['styrka'] === 'string' ? search['styrka'] : undefined }),
   loader: async ({ params }) => { const { group, related } = await getProductPageFn({ data: { slug: params.slug } }); if (!group) throw notFound(); return { ...group, related }; },
-  head: ({ loaderData, params }) => ({
-    meta: [
-      { title: `${loaderData?.name ?? 'Produkt'} för forskning | Peptidesweden` },
-      { name: 'description', content: loaderData?.description ?? 'Forskningspeptider från Peptidesweden.' },
-      { property: 'og:title', content: `${loaderData?.name ?? 'Produkt'} | Peptidesweden` },
-      { property: 'og:description', content: 'Produktinformation för laboratorieforskning.' },
-      { property: 'og:type', content: 'product' },
-      { property: 'og:url', content: `/produkter/${params.slug}` },
-      { name: 'twitter:card', content: 'summary_large_image' },
-    ],
-    links: [{ rel: 'canonical', href: `/produkter/${params.slug}` }],
-    scripts: loaderData ? [{ type: 'application/ld+json', children: JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Product',
-      name: loaderData.name,
-      description: loaderData.description,
-      category: loaderData.category,
-      brand: { '@type': 'Brand', name: 'Peptidesweden' },
-      offers: loaderData.variants.map(v => ({
-        '@type': 'Offer',
-        name: `${loaderData.name} ${v.amount}`,
-        price: v.price,
-        priceCurrency: 'SEK',
-        availability: 'https://schema.org/InStock',
-        url: `/produkter/${params.slug}?styrka=${v.slug}`,
-      })),
-    }) }] : [],
-  }),
+  head: ({ loaderData: p, params }) => {
+    const path = `/produkter/${params.slug}`;
+    if (!p) return seoHead({ title: 'Produkt', description: DEFAULT_DESCRIPTION, path });
+    const imageUrl = resolveImage(p.image);
+    const image = { url: imageUrl, alt: `${p.name} – forskningspeptid från Peptidesweden`, ...(p.image.startsWith('bundled:') ? { width: 1024, height: 1024 } : {}) };
+    return seoHead({
+      title: `${p.name} för forskning`,
+      description: productDescription(p, formatPrice),
+      path,
+      type: 'product',
+      image,
+      jsonLd: [
+        {
+          '@type': 'Product',
+          name: p.name,
+          description: p.description,
+          image: [absoluteUrl(imageUrl)],
+          sku: `PS-${p.slug.toUpperCase()}`,
+          category: p.category,
+          url: absoluteUrl(path),
+          brand: { '@type': 'Brand', name: SITE_NAME },
+          offers: p.variants.map(v => ({
+            '@type': 'Offer',
+            name: `${p.name} ${v.amount}`,
+            sku: v.slug,
+            price: v.price,
+            priceCurrency: 'SEK',
+            availability: 'https://schema.org/InStock',
+            itemCondition: 'https://schema.org/NewCondition',
+            url: absoluteUrl(`${path}?styrka=${v.slug}`),
+            seller: { '@type': 'Organization', name: SITE_NAME, url: `${SITE_URL}/` },
+          })),
+        },
+        breadcrumbLd([['Hem', '/'], ['Produkter', '/produkter'], [p.name, path]]),
+      ],
+    });
+  },
   component: Detail,
 });
 

@@ -1,20 +1,12 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { seoHead } from '@/lib/seo';
 import { ArrowRight, BookOpen, Calculator, FileCheck2, Mail, MessageCircleQuestion, Send } from 'lucide-react';
 import { TelegramSupportCard } from '@/components/store/support-telegram';
 import { supportInfo } from '@/lib/products';
 import vialImg from '@/assets/peptides-hero.webp';
 
 export const Route = createFileRoute('/kontakt')({
-  head: () => ({
-    meta: [
-      { title: 'Kontakt | Peptidesweden' },
-      { name: 'description', content: 'Kom i kontakt med Peptidesweden — svar om sortiment, analysdokumentation och leverans. Vanliga frågor besvaras i FAQ och kunskapsbanken.' },
-      { property: 'og:title', content: 'Kontakt | Peptidesweden' },
-      { property: 'og:description', content: 'Snabba vägar till svar om sortiment, analysrapporter och leverans.' },
-      { property: 'og:type', content: 'website' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-    ],
-  }),
+  head: () => seoHead({ title: 'Kontakt', description: 'Kontakta Peptidesweden om sortiment, analysrapporter eller en beställning. Snabbast svar får du på Telegram, på svenska. Vanliga frågor besvaras i FAQ.', path: '/kontakt' }),
   component: Contact,
 });
 
