@@ -14,6 +14,8 @@ import {
 } from '@/server/shop.server';
 import { createInvoice, nowPaymentsConfig } from '@/server/nowpayments.server';
 import { ADMIN_COOKIE, attempt, clientIp, requireAdmin } from '@/server/request.server';
+import { mailConfig } from '@/server/mail.server';
+import { sendInBackground, sendOrderEmail, sendShippingEmailIfReady } from '@/server/order-emails.server';
 
 const COOKIE = ADMIN_COOKIE;
 
@@ -43,7 +45,7 @@ export const checkDiscountFn = createServerFn({ method: 'POST' })
   .validator(z.object({ code: codeSchema, cart: cartSchema }))
   .handler(({ data }) => attempt(() => quoteDiscount(data.code, data.cart)));
 
-export const getCheckoutConfigFn = createServerFn({ method: 'GET' }).handler(() => ({ cryptoPayments: nowPaymentsConfig() !== null }));
+export const getCheckoutConfigFn = createServerFn({ method: 'GET' }).handler(() => ({ cryptoPayments: nowPaymentsConfig() !== null, emails: mailConfig() !== null }));
 
 export const placeOrderFn = createServerFn({ method: 'POST' })
   .validator(z.object({ customer: customerSchema, cart: cartSchema, discountCode: codeSchema.optional() }))
@@ -54,10 +56,15 @@ export const placeOrderFn = createServerFn({ method: 'POST' })
     const { publicToken, ...order } = placed.value;
     const config = nowPaymentsConfig();
     // Without NOWPayments keys (e.g. in the Lovable editor) orders are stored and marked paid by hand in /admin.
-    if (!config) return { ok: true as const, value: { order, paymentUrl: null } };
+    if (!config) {
+      sendInBackground(order.ref, 'confirmation', 'system');
+      return { ok: true as const, value: { order, paymentUrl: null } };
+    }
     try {
       const invoice = await createInvoice(config, { ref: order.ref, total: order.total, publicToken });
       attachPayment(order.ref, { provider: 'NOWPayments', ref: invoice.id, url: invoice.url });
+      // Sent after the invoice exists so the email can include the payment link.
+      sendInBackground(order.ref, 'confirmation', 'system');
       return { ok: true as const, value: { order, paymentUrl: invoice.url } };
     } catch (error) {
       console.error(error);
@@ -116,9 +123,19 @@ export const getOrderFn = createServerFn({ method: 'GET' })
 
 export const updateOrderFn = createServerFn({ method: 'POST' })
   .validator(z.object({ ref: z.string().max(20), status: z.enum(orderStatuses).optional(), tracking: z.string().max(60).optional(), adminNote: z.string().max(2000).optional() }))
-  .handler(({ data }) => {
+  .handler(async ({ data }) => {
     const admin = requireAdmin();
-    return attempt(() => updateOrder(data.ref, admin.username, data));
+    const updated = attempt(() => updateOrder(data.ref, admin.username, data));
+    if (!updated.ok) return updated;
+    const email = await sendShippingEmailIfReady(data.ref, admin.username);
+    return { ok: true as const, value: { email } };
+  });
+
+export const resendOrderEmailFn = createServerFn({ method: 'POST' })
+  .validator(z.object({ ref: z.string().max(20), kind: z.enum(['confirmation', 'shipping']) }))
+  .handler(async ({ data }) => {
+    const admin = requireAdmin();
+    return sendOrderEmail(data.ref, data.kind, admin.username, { force: true });
   });
 
 // ---------- Discount codes ----------
