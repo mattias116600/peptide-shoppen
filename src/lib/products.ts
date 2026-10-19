@@ -35,7 +35,12 @@ export function updateCart(items: CartItem[], slug: string, delta: number, catal
   return items.map(item => item.slug === slug ? {...item,quantity:item.quantity + delta} : item).filter(item => item.quantity > 0);
 }
 export function cartTotal(items: CartItem[], catalog: Product[] = products) { return items.reduce((total,item) => total + (catalog.find(p => p.slug === item.slug)?.price ?? 0) * item.quantity,0); }
-export const shippingInfo = { carrier: 'PostNord', leadTime: '1–3 arbetsdagar', summary: 'Skickas med PostNord. Leverans 1–3 arbetsdagar.' } as const;
+export const shippingInfo = { carrier: 'PostNord', leadTime: '1–3 arbetsdagar', summary: 'Skickas med PostNord. Leverans 1–3 arbetsdagar.', fee: 62, freeFrom: 2000 } as const;
+/** Shipping in kronor for an order total after discount; the server uses the same rule. */
+export const shippingFee = (totalAfterDiscount: number) => (totalAfterDiscount >= shippingInfo.freeFrom ? 0 : shippingInfo.fee);
+export const vatNote = 'Alla priser är i svenska kronor inklusive moms.';
+// Legal seller identity (e-handelslagen 8 §). orgNr and address are left empty until supplied; render them only when set.
+export const companyInfo: { name: string; email: string; orgNr: string; address: string } = { name: 'Peptidesweden', email: 'support@peptidesweden.com', orgNr: '', address: '' };
 export const supportInfo = { handle: '@peptideswedenn', url: 'https://t.me/peptideswedenn', label: 'Support på Telegram', blurb: 'Ställ en fråga direkt — vi svarar på svenska.' } as const;
 export function normalizePhone(value: string) { return value.trim().replace(/[\s()\-.]/g, ''); }
 export function isValidPhone(value: string) { return /^(\+46|0)[1-9]\d{5,12}$/.test(normalizePhone(value)); }

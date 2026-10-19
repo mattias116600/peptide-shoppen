@@ -310,4 +310,17 @@
 .admin-section-editor .kassa-field input,.admin-section-editor .kassa-field textarea{background:var(--card)}
 .admin-section-head{display:flex;align-items:center;justify-content:space-between;font-size:13px}
 @media(max-width:900px){.admin-heading-action{margin-left:0}.admin-danger{margin-left:0}}
+/* Seller details, legal pages and checkout consent */
+.company-details{display:grid;gap:4px;font-style:normal;font-size:13px;line-height:1.7;color:var(--muted-foreground)}.company-details strong{color:var(--foreground);font-weight:600}.company-details a{color:var(--primary);text-decoration:underline;text-underline-offset:2px}
+.contact-direct .company-details{margin-top:12px}
+.site-footer .footer-company{margin-top:16px;font-size:12px;color:color-mix(in oklab,var(--primary-foreground) 75%,transparent)}.site-footer .footer-company strong{color:var(--primary-foreground)}.site-footer .footer-company a{color:inherit}.site-footer .footer-company a:hover{color:var(--sun)}
+.legal-updated{font-size:12px;color:var(--muted-foreground);margin-top:-20px;margin-bottom:28px}
+.legal-toc{padding:20px 24px;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--sun);border-radius:6px;margin-bottom:12px}.legal-toc ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;list-style:decimal;padding-left:20px;font-size:14px}.legal-toc a{color:var(--primary)}.legal-toc a:hover{text-decoration:underline}
+.legal-section{scroll-margin-top:96px}.legal-section h2{display:flex;align-items:baseline;gap:12px;font-size:24px}.legal-section h2 span{font-size:13px;color:var(--primary);font-variant-numeric:tabular-nums}
+.legal-section p,.legal-section li{line-height:1.85;color:var(--muted-foreground)}.legal-section p+p{margin-top:12px}.legal-section strong{color:var(--foreground)}.legal-section ul{list-style:disc;padding-left:22px;display:grid;gap:6px;margin-block:10px}.legal-section a{color:var(--primary);text-decoration:underline;text-underline-offset:2px}
+.legal-company{margin-top:44px;padding-top:8px;border-top:1px solid var(--border)}
+.kassa-consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.6;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);cursor:pointer}.kassa-consent[data-invalid]{border-color:var(--destructive)}.kassa-consent input{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--primary)}.kassa-consent a{color:var(--primary);text-decoration:underline;text-underline-offset:2px}
+.kassa-summary-total small{font-size:11px;font-weight:400;color:var(--muted-foreground)}.kassa-vat{font-size:11px;color:var(--muted-foreground);margin-top:6px}
+@media(max-width:640px){.legal-toc{padding:16px 18px}.legal-toc ol{grid-template-columns:1fr}.legal-section h2{font-size:20px}.legal-updated{margin-top:-12px}}
+.admin-card>h2{display:flex;align-items:center;gap:7px}
 .admin-char-count{font-size:11px;font-weight:400;color:var(--muted-foreground)}.admin-char-count[data-ok=false]{color:oklch(.55 .14 60)}

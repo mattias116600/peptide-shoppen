@@ -3,6 +3,7 @@ import { seoHead } from '@/lib/seo';
 import { ArrowRight, BookOpen, Calculator, FileCheck2, Mail, MessageCircleQuestion, Send } from 'lucide-react';
 import { TelegramSupportCard } from '@/components/store/support-telegram';
 import { supportInfo } from '@/lib/products';
+import { CompanyDetails } from '@/components/store/company-details';
 import vialImg from '@/assets/peptides-hero.webp';
 
 export const Route = createFileRoute('/kontakt')({
@@ -28,7 +29,7 @@ const shortcuts = [
   {
     icon: BookOpen,
     title: 'Kunskapsbanken',
-    body: 'Tio artiklar om peptider, analysrapporter och laboratoriemetoder — skrivna för forskare.',
+    body: 'Artiklar om peptider, analysrapporter och laboratoriemetoder — skrivna för forskare.',
     to: '/blogg',
     label: 'Läs artiklarna',
   },
@@ -109,11 +110,9 @@ function Contact() {
           <div className="contact-direct">
             <span className="about-value-icon"><Mail /></span>
             <div>
-              <strong>Direkt e-postkontakt</strong>
-              <p>
-                En verifierad e-postadress för kundfrågor läggs upp här inom kort.
-                Tills dess är Telegram kanalen ovan det snabbaste sättet att få svar.
-              </p>
+              <strong>Kundservice och företagsuppgifter</strong>
+              <p>Frågor om en beställning, ångerrätt eller reklamation besvaras via e-post eller Telegram.</p>
+              <CompanyDetails />
             </div>
           </div>
         </div>
@@ -146,7 +145,7 @@ function Contact() {
       <section className="about-cta">
         <div className="content-width about-cta-inner">
           <h2>Hittade du inte svaret?</h2>
-          <p>Kunskapsbanken täcker peptider, analysrapporter och laboratoriemetoder i tio artiklar.</p>
+          <p>Kunskapsbanken täcker peptider, analysrapporter och laboratoriemetoder.</p>
           <div className="about-hero-actions">
             <Link to="/blogg" className="about-btn-primary">
               Läs i kunskapsbanken <ArrowRight />

@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS orders (
   subtotal INTEGER NOT NULL,
   discount_code TEXT,
   discount_amount INTEGER NOT NULL DEFAULT 0,
+  shipping INTEGER NOT NULL DEFAULT 0,
   total INTEGER NOT NULL,
   tracking TEXT NOT NULL DEFAULT '',
   admin_note TEXT NOT NULL DEFAULT '',
@@ -50,6 +51,8 @@ CREATE TABLE IF NOT EXISTS orders (
   payment_ref TEXT,
   payment_url TEXT,
   payment_status TEXT,
+  confirmation_email_at TEXT,
+  shipping_email_at TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );

@@ -64,7 +64,7 @@ describe('IPN signature', () => {
 describe('payment updates', () => {
   beforeEach(() => resetDbForTests());
   const update = (ref: string, status: string, extra: Partial<Parameters<typeof recordPaymentUpdate>[0]> = {}) =>
-    recordPaymentUpdate({ provider: 'NOWPayments', orderRef: ref, invoiceId: 'inv-1', paymentId: 'p1', status, priceAmount: 399, priceCurrency: 'sek', paidText: '0.0004 BTC', ...extra });
+    recordPaymentUpdate({ provider: 'NOWPayments', orderRef: ref, invoiceId: 'inv-1', paymentId: 'p1', status, priceAmount: 399 + 62, priceCurrency: 'sek', paidText: '0.0004 BTC', ...extra });
 
   it('marks the order paid once the payment is confirmed', () => {
     const { ref } = placeOrder(customer, [{ slug: 'bpc-157-10', quantity: 1 }]);
@@ -91,7 +91,7 @@ describe('payment updates', () => {
 
   it('only shows the order to someone with its token', () => {
     const { ref, publicToken } = placeOrder(customer, [{ slug: 'bpc-157-10', quantity: 1 }]);
-    expect(getPublicOrder(ref, publicToken)).toMatchObject({ ref, total: 399, status: 'ny' });
+    expect(getPublicOrder(ref, publicToken)).toMatchObject({ ref, total: 399 + 62, status: 'ny' });
     expect(getPublicOrder(ref, 'x'.repeat(publicToken.length))).toBeNull();
   });
 

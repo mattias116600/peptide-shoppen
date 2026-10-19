@@ -66,7 +66,7 @@ describe('sitemap', () => {
   it('lists static pages, visible products and published articles from the database', () => {
     expect(buildSitemap()).toMatch(/^<\?xml version="1.0"/);
     const all = locs();
-    expect(all).toEqual(expect.arrayContaining(['/', '/produkter', '/blogg', '/produkter/bpc-157', '/blogg/vad-ar-peptider']));
+    expect(all).toEqual(expect.arrayContaining(['/', '/produkter', '/blogg', '/kopvillkor', '/integritetspolicy', '/produkter/bpc-157', '/blogg/vad-ar-peptider']));
     expect(all.some(l => l.startsWith('/kassa') || l.startsWith('/admin'))).toBe(false);
   });
 

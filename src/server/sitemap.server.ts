@@ -14,6 +14,8 @@ export const staticSitemapPages: [path: string, changefreq: string, priority: st
   ['/faq', 'monthly', '0.5'],
   ['/om-oss', 'monthly', '0.5'],
   ['/kontakt', 'monthly', '0.4'],
+  ['/kopvillkor', 'yearly', '0.3'],
+  ['/integritetspolicy', 'yearly', '0.3'],
 ];
 
 type Entry = { path: string; lastmod?: string | undefined; changefreq?: string; priority?: string };
