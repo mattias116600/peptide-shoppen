@@ -92,6 +92,8 @@ CREATE TABLE IF NOT EXISTS product_groups (
   active INTEGER NOT NULL DEFAULT 1,
   about TEXT NOT NULL DEFAULT '[]',
   specs TEXT NOT NULL DEFAULT '[]',
+  kind TEXT NOT NULL DEFAULT 'peptid',
+  quantity_presets TEXT NOT NULL DEFAULT '[]',
   sort_order INTEGER NOT NULL DEFAULT 0,
   updated_at TEXT NOT NULL
 );

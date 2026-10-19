@@ -19,8 +19,8 @@ beforeEach(() => resetDbForTests());
 describe('seeding', () => {
   it('copies the starting catalogue and blog once', () => {
     const { groups, products } = getStorefrontCatalog();
-    expect(groups.map(g => g.slug)).toEqual(productGroups.map(g => g.slug));
-    expect(products).toHaveLength(11);
+    expect(groups.map(g => g.slug)).toEqual([...productGroups.map(g => g.slug), 'insulinspruta-u100']);
+    expect(products).toHaveLength(12);
     expect(groups.find(g => g.slug === 'bpc-157')?.specs).toContainEqual(['CAS-nummer', '137525-51-0']);
     expect(groups.filter(g => g.featured).map(g => g.slug)).toEqual(['retatrutide', 'ghk-cu', 'mots-c', 'bpc-157-tb-500']);
     expect(listArticles()).toHaveLength(seedArticles.length);
@@ -41,10 +41,48 @@ describe('seeding', () => {
   });
 });
 
+describe('accessories', () => {
+  it('adds the insulin syringe as an accessory with quick-pick quantities', () => {
+    const g = getStorefrontCatalog().groups.find(x => x.slug === 'insulinspruta-u100')!;
+    expect(g).toMatchObject({ kind: 'tillbehor', category: 'Tillbehör', quantityPresets: [5, 10, 20], image: 'bundled:insulinspruta' });
+    expect(g.variants.map(v => [v.slug, v.price])).toEqual([['insulinspruta-u100-1ml-29g', 5]]);
+    expect(getStorefrontCatalog().groups.filter(x => x.kind === 'peptid')).toHaveLength(5);
+  });
+
+  it('prices any quantity up to 999 per line', () => {
+    expect(placeOrder(customer, [{ slug: 'insulinspruta-u100-1ml-29g', quantity: 20 }]).subtotal).toBe(100);
+    expect(placeOrder(customer, [{ slug: 'insulinspruta-u100-1ml-29g', quantity: 999 }]).subtotal).toBe(4995);
+    expect(() => placeOrder(customer, [{ slug: 'insulinspruta-u100-1ml-29g', quantity: 1000 }])).toThrow(/Ogiltig/);
+  });
+
+  it('lets the admin change type and quick-picks', () => {
+    const g = getAdminGroup('insulinspruta-u100')!;
+    saveGroup({ ...g, quantityPresets: [10, 50, 100] }, false);
+    expect(getAdminGroup('insulinspruta-u100')!.quantityPresets).toEqual([10, 50, 100]);
+    const bpc = getAdminGroup('bpc-157')!;
+    expect(bpc).toMatchObject({ kind: 'peptid', quantityPresets: [] });
+  });
+
+  it('is added once to shops seeded before accessories existed', () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'psw-acc-'));
+    const file = path.join(dir, 'db.sqlite');
+    resetDbForTests(file);
+    deleteGroup('insulinspruta-u100');
+    getDb().prepare("DELETE FROM settings WHERE key = 'seeded_accessories_2026_10'").run();
+    resetDbForTests(file);
+    expect(getAdminGroup('insulinspruta-u100')?.kind).toBe('tillbehor');
+    deleteGroup('insulinspruta-u100');
+    resetDbForTests(file);
+    expect(getAdminGroup('insulinspruta-u100')).toBeNull();
+    resetDbForTests();
+    rmSync(dir, { recursive: true, force: true });
+  });
+});
+
 describe('products', () => {
   const product = (over: Partial<ProductGroupInput> = {}): ProductGroupInput => ({
     slug: '', name: 'TB-500', category: 'Peptider', description: 'Test', badge: 'NYHET', image: 'bundled:vial', featured: false, active: true,
-    about: ['Stycke'], specs: [['CAS-nummer', '77591-33-4']],
+    about: ['Stycke'], specs: [['CAS-nummer', '77591-33-4']], kind: 'peptid', quantityPresets: [],
     variants: [{ slug: '', amount: '5 mg', price: 499, batch: '', coaUrl: '', active: true }, { slug: '', amount: '10 mg', price: 799, batch: 'B1', coaUrl: 'https://example.com/coa', active: true }],
     ...over,
   });

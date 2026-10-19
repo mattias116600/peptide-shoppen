@@ -22,6 +22,8 @@ const features = (groups: number, strengths: number) => [
 function Home() {
   const { groups, products } = useCatalog();
   const featured = groups.filter(g => g.featured);
+  const peptides = groups.filter(g => g.kind === 'peptid');
+  const peptideStrengths = products.filter(p => peptides.some(g => g.slug === p.group)).length;
   return <main>
     <section className="nordic-hero">
       <img className="nordic-hero-image" src={hero} alt="Tre illustrativa forskningsvialer med blå och gula lock" width={1920} height={1024} fetchPriority="high" />
@@ -41,7 +43,7 @@ function Home() {
     </section>
     <section className="nordic-strip">
       <div className="content-width nordic-strip-inner">
-        {features(groups.length, products.length).map(f => <div className="nordic-strip-item" key={f.title}><f.icon /><div><strong>{f.title}</strong><p>{f.sub}</p></div></div>)}
+        {features(peptides.length, peptideStrengths).map(f => <div className="nordic-strip-item" key={f.title}><f.icon /><div><strong>{f.title}</strong><p>{f.sub}</p></div></div>)}
       </div>
     </section>
     <section className="content-width home-products">

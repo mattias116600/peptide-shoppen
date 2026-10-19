@@ -3,7 +3,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { deleteCookie, getCookie, setCookie } from '@tanstack/react-start/server';
 import { z } from 'zod';
-import { orderStatuses } from './commerce';
+import { MAX_LINE_QUANTITY, orderStatuses } from './commerce';
 import { isValidPhone, normalizePhone } from './products';
 import {
   checkCredentials, clearLoginFailures, createSession, destroySession, loginLockMinutes, recordLoginFailure, sessionAdmin,
@@ -19,7 +19,7 @@ import { sendInBackground, sendOrderEmail, sendShippingEmailIfReady } from '@/se
 
 const COOKIE = ADMIN_COOKIE;
 
-const cartSchema = z.array(z.object({ slug: z.string().max(80), quantity: z.number().int().min(1).max(99) })).min(1).max(40);
+const cartSchema = z.array(z.object({ slug: z.string().max(80), quantity: z.number().int().min(1).max(MAX_LINE_QUANTITY) })).min(1).max(40);
 const customerSchema = z.object({
   name: z.string().trim().min(1).max(120),
   email: z.string().trim().email().max(160),

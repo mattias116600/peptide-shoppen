@@ -14,16 +14,20 @@ export const products: Product[] = [
   {slug:'bpc-157-20',group:'bpc-157',name:'BPC-157',amount:'20 mg',price:649,category:'Peptider',description:'Pentadekapeptid för laboratoriestudier.',batch:'626665',coaUrl:'https://polypeptide.io/tests/626665-BPC-157_20mg'},
   {slug:'bpc-157-tb-500-20',group:'bpc-157-tb-500',name:'BPC-157 + TB-500',amount:'20 mg',price:799,category:'Blends',description:'En kombination av två forskningspeptider.',badge:'BLEND',batch:'949595',coaUrl:'https://polypeptide.io/tests/949595-BPC-157+TB-500_20mg'},
 ];
+/** Peptides get research-use texts, CoA and per-mg prices; accessories are sold per piece. */
+export type ProductKind = 'peptid' | 'tillbehor';
+export const productKindLabel: Record<ProductKind, string> = { peptid: 'Peptid', tillbehor: 'Tillbehör' };
 export type ProductGroup = {
   slug: string; name: string; category: string; description: string; badge?: string | undefined;
   image: string; featured: boolean; about: string[]; specs: [string, string][];
+  kind: ProductKind; quantityPresets: number[];
   variants: [Product, ...Product[]];
 };
 const seedFeatured = ['retatrutide', 'ghk-cu', 'mots-c', 'bpc-157-tb-500'];
 export const productGroups: ProductGroup[] = products.reduce<ProductGroup[]>((groups, p) => {
   const g = groups.find(x => x.slug === p.group);
   if (g) { g.variants.push(p); if (p.badge && !g.badge) g.badge = p.badge; }
-  else groups.push({ slug: p.group, name: p.name, category: p.category, description: p.description, badge: p.badge, image: 'bundled:vial', featured: seedFeatured.includes(p.group), about: [], specs: [], variants: [p] });
+  else groups.push({ slug: p.group, name: p.name, category: p.category, description: p.description, badge: p.badge, image: 'bundled:vial', featured: seedFeatured.includes(p.group), about: [], specs: [], kind: 'peptid', quantityPresets: [], variants: [p] });
   return groups;
 }, []);
 export const findGroup = (slug: string, groups: ProductGroup[] = productGroups) => groups.find(g => g.slug === slug);
@@ -58,3 +62,22 @@ export const peptideInfo: Record<string, PeptideInfo> = {
     specs: [['Innehåll','BPC-157 + TB-500'],['BPC-157 molmassa','ca 1 419 g/mol (CAS 137525-51-0)'],['TB-500 molmassa','ca 4 963 g/mol (CAS 77591-33-4)']] },
 };
 for (const g of productGroups) { const info = peptideInfo[g.slug]; if (info) { g.about = info.about; g.specs = info.specs; } }
+
+// Accessories (not peptides), sold per piece with quick-pick quantities. Added to existing shops once.
+const syringe: Product = { slug: 'insulinspruta-u100-1ml-29g', group: 'insulinspruta-u100', name: 'Insulinspruta U-100', amount: '1 ml · 29G', price: 5, category: 'Tillbehör', description: 'Steril engångsspruta 1 ml (U-100) med integrerad 29G-kanyl, individuellt blisterförpackad.' };
+export const seedAccessoryGroups: ProductGroup[] = [{
+  slug: syringe.group, name: syringe.name, category: syringe.category, description: syringe.description, image: 'bundled:insulinspruta', featured: false,
+  kind: 'tillbehor', quantityPresets: [5, 10, 20], variants: [syringe],
+  about: [
+    'Insulinsprutor U-100 från Romed med integrerad kanyl, utvecklade för hög precision och tillförlitlig kvalitet. Varje spruta är individuellt blisterförpackad för att säkerställa god hygien och enkel hantering. Sprutorna är CE-märkta och tillverkade enligt europeiska kvalitetsstandarder.',
+    '• Insulinspruta med integrerad 29G-kanyl (0,33 × 12,7 mm)\n• 1 ml cylinder med tydlig och lättavläst gradering\n• Individuellt sterilt blisterförpackade engångssprutor\n• Tunnväggig kanyl med trefacettsslipad spets och silikonbeläggning\n• Tillverkad för hög precision och jämn dosering',
+    'Viktig information: Endast för engångsbruk. Återanvänd ej. Kassera enligt lokala föreskrifter.',
+  ],
+  specs: [
+    ['Volym', '1 ml (U-100)'], ['Nålstorlek', '29G (0,33 × 12,7 mm)'], ['Varumärke', 'Romed'], ['Försäljning', 'Styckvis, individuellt sterilt blisterförpackade'],
+    ['Standard', 'EN ISO 9626'], ['Certifiering', 'CE-märkt medicinteknisk produkt'], ['Material', 'Medicinsk polypropylen, rostfritt stål och silikonbeläggning'], ['Användning', 'Endast för engångsbruk'],
+  ],
+}];
+/** Everything shipped as starting content, used when the database cannot be opened. */
+export const allSeedGroups: ProductGroup[] = [...productGroups, ...seedAccessoryGroups];
+export const allSeedProducts: Product[] = allSeedGroups.flatMap(g => g.variants);

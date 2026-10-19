@@ -334,3 +334,10 @@
 @media(max-width:640px){.legal-toc{padding:16px 18px}.legal-toc ol{grid-template-columns:1fr}.legal-section h2{font-size:20px}.legal-updated{margin-top:-12px}}
 .admin-card>h2{display:flex;align-items:center;gap:7px}
 .admin-char-count{font-size:11px;font-weight:400;color:var(--muted-foreground)}.admin-char-count[data-ok=false]{color:oklch(.55 .14 60)}
+/* Quick-pick quantities (accessories sold per piece) */
+.quantity-presets{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.quantity-preset{min-width:72px;height:42px;border-radius:8px;font-weight:600}.quantity-preset[data-active=true]{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary);color:var(--primary);background:var(--card)}
+.quantity-custom{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 12px;border:1px solid var(--border);border-radius:8px;background:var(--card);font-size:13px;color:var(--muted-foreground)}
+.quantity-custom[data-active=true]{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
+.quantity-custom input{width:64px;border:0;background:none;font:inherit;font-weight:600;color:var(--foreground);text-align:right;outline:none}
+.pdp-about{white-space:pre-line}

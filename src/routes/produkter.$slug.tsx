@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DEFAULT_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl, breadcrumbLd, productDescription, seoHead } from '@/lib/seo';
 import { createFileRoute, Link, notFound } from '@tanstack/react-router';
-import { ArrowRight, Plus, Minus, FlaskConical, ShieldAlert, Truck, FileText } from 'lucide-react';
+import { ArrowRight, FlaskConical, Package, ShieldAlert, Truck, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -11,6 +11,7 @@ import { getProductPageFn } from '@/lib/catalog-api';
 import { resolveImage } from '@/lib/media';
 import { TelegramSupportCard, TelegramSupportRow } from '@/components/store/support-telegram';
 import { ProductCard } from '@/components/store/product-card';
+import { QuantityPicker } from '@/components/store/quantity-picker';
 
 export const Route = createFileRoute('/produkter/$slug')({
   validateSearch: (search: Record<string, unknown>): { styrka?: string | undefined } => ({ styrka: typeof search['styrka'] === 'string' ? search['styrka'] : undefined }),
@@ -19,9 +20,9 @@ export const Route = createFileRoute('/produkter/$slug')({
     const path = `/produkter/${params.slug}`;
     if (!p) return seoHead({ title: 'Produkt', description: DEFAULT_DESCRIPTION, path });
     const imageUrl = resolveImage(p.image);
-    const image = { url: imageUrl, alt: `${p.name} – forskningspeptid från Peptidesweden`, ...(p.image.startsWith('bundled:') ? { width: 1024, height: 1024 } : {}) };
+    const image = { url: imageUrl, alt: p.kind === 'tillbehor' ? `${p.name} från Peptidesweden` : `${p.name} – forskningspeptid från Peptidesweden`, ...(p.image.startsWith('bundled:') ? { width: 1024, height: 1024 } : {}) };
     return seoHead({
-      title: `${p.name} för forskning`,
+      title: p.kind === 'tillbehor' ? `${p.name} – ${p.category.toLowerCase()}` : `${p.name} för forskning`,
       description: productDescription(p, formatPrice),
       path,
       type: 'product',
@@ -63,43 +64,45 @@ function Detail() {
   const { styrka } = Route.useSearch();
   const navigate = Route.useNavigate();
   const variant = product.variants.find(v => v.slug === styrka) ?? product.variants[0];
-  const [quantity, setQuantity] = useState(1);
+  const accessory = product.kind === 'tillbehor';
+  const firstQuantity = product.quantityPresets[0] ?? 1;
+  const [quantity, setQuantity] = useState(firstQuantity);
+  // The page component is reused between products; start each product at its first quick-pick.
+  useEffect(() => setQuantity(firstQuantity), [product.slug, firstQuantity]);
   const { change, setCartOpen } = useStore();
   const total = variant.price * quantity;
   return (
     <main className="content-width">
-      <div className="research-banner"><ShieldAlert size={18} /><p><strong>Forskningssubstans.</strong> Endast för laboratoriebruk. Ej avsedd för människor eller djur, förtäring eller injektion. Inga medicinska påståenden görs.</p></div>
+      {!accessory && <div className="research-banner"><ShieldAlert size={18} /><p><strong>Forskningssubstans.</strong> Endast för laboratoriebruk. Ej avsedd för människor eller djur, förtäring eller injektion. Inga medicinska påståenden görs.</p></div>}
       <nav className="breadcrumb"><Link to="/">Hem</Link><span>/</span><Link to="/produkter">Produkter</Link><span>/</span><span>{product.name}</span></nav>
       <div className="detail-grid pdp">
         <div className="pdp-media">
-          <img className="detail-photo" src={resolveImage(product.image)} alt={`${product.name} forskningsvial`} width={1024} height={1024} />
+          <img className="detail-photo" src={resolveImage(product.image)} alt={accessory ? product.name : `${product.name} forskningsvial`} width={1024} height={1024} />
           <span className="pdp-media-tag">{variant.amount}</span>
         </div>
         <div className="detail-copy">
-          <div className="eyebrow"><FlaskConical size={15} /> {product.category.toUpperCase()} · ENDAST FÖR FORSKNING</div>
+          <div className="eyebrow">{accessory ? <><Package size={15} /> {product.category.toUpperCase()}</> : <><FlaskConical size={15} /> {product.category.toUpperCase()} · ENDAST FÖR FORSKNING</>}</div>
           <h1>{product.name}</h1>
           <div className="pdp-sku">Art.nr: PS-{product.slug.toUpperCase()}</div>
           <p className="detail-description">{product.description}</p>
 
-          <div className="pdp-label">Storlek <span>{variant.amount}</span></div>
+          <div className="pdp-label">{accessory ? 'Variant' : 'Storlek'} <span>{variant.amount}</span></div>
           <div className="size-grid" role="radiogroup" aria-label="Välj storlek">
             {product.variants.map(v => (
               <Button variant="outline" key={v.slug} type="button" role="radio" aria-checked={v.slug === variant.slug} data-active={v.slug === variant.slug} className="size-tile" onClick={() => navigate({ search: { styrka: v.slug }, replace: true, resetScroll: false })}>
                 <strong>{v.amount}</strong>
-                <span>{formatPrice(v.price)}</span>
-                <small>{formatPrice(Math.round(v.price / mgOf(v.amount)))}/mg</small>
+                <span>{formatPrice(v.price)}{accessory ? ' / st' : ''}</span>
+                {!accessory && <small>{formatPrice(Math.round(v.price / mgOf(v.amount)))}/mg</small>}
               </Button>
             ))}
           </div>
 
           <div className="pdp-buy">
-            <div className="pdp-total"><span>Totalt</span><strong>{formatPrice(total)}</strong></div>
+            {product.quantityPresets.length > 0 && <div className="pdp-label">Antal <span>{quantity} st</span></div>}
+            {product.quantityPresets.length > 0 && <QuantityPicker value={quantity} onChange={setQuantity} presets={product.quantityPresets} />}
+            <div className="pdp-total"><span>Totalt{product.quantityPresets.length > 0 ? ` (${quantity} st × ${formatPrice(variant.price)})` : ''}</span><strong>{formatPrice(total)}</strong></div>
             <div className="detail-action">
-              <div className="quantity-controls">
-                <Button size="icon" variant="ghost" disabled={quantity === 1} aria-label="Minska antal" onClick={() => setQuantity(q => Math.max(1, q - 1))}><Minus /></Button>
-                <span>{quantity}</span>
-                <Button size="icon" variant="ghost" aria-label="Öka antal" onClick={() => setQuantity(q => q + 1)}><Plus /></Button>
-              </div>
+              {product.quantityPresets.length === 0 && <QuantityPicker value={quantity} onChange={setQuantity} presets={[]} />}
               <Button onClick={() => { change(variant.slug, quantity); setCartOpen(true); }}>Lägg i varukorg — {formatPrice(total)} <ArrowRight /></Button>
             </div>
             <p className="detail-delivery"><Truck size={14} /> {shippingInfo.summary}</p>
@@ -107,12 +110,12 @@ function Detail() {
           </div>
 
           <div className="pdp-info-cards">
-            <div><FileText size={18} /><div><strong>Analysrapport</strong>{variant.coaUrl ? <p>Batch {variant.batch} — <a href={variant.coaUrl} target="_blank" rel="noopener noreferrer" className="coa-link">Visa analysrapport (CoA)</a></p> : <p>Batchspecifika rapporter publiceras när de finns tillgängliga.</p>}</div></div>
+            {!accessory && <div><FileText size={18} /><div><strong>Analysrapport</strong>{variant.coaUrl ? <p>Batch {variant.batch} — <a href={variant.coaUrl} target="_blank" rel="noopener noreferrer" className="coa-link">Visa analysrapport (CoA)</a></p> : <p>Batchspecifika rapporter publiceras när de finns tillgängliga.</p>}</div></div>}
             <div><Truck size={18} /><div><strong>Leverans</strong><p>{shippingInfo.summary}</p></div></div>
           </div>
 
           <Accordion type="single" collapsible defaultValue="information">
-            <AccordionItem value="information"><AccordionTrigger>Produktbeskrivning</AccordionTrigger><AccordionContent>Innehåll: {product.name}, {variant.amount}. {product.description} Endast för forskningsändamål. Bilden är en varumärkesillustration, inte en bild av en verifierad produktbatch.</AccordionContent></AccordionItem>
+            <AccordionItem value="information"><AccordionTrigger>Produktbeskrivning</AccordionTrigger><AccordionContent>Innehåll: {product.name}, {variant.amount}. {product.description}{accessory ? '' : ' Endast för forskningsändamål. Bilden är en varumärkesillustration, inte en bild av en verifierad produktbatch.'}</AccordionContent></AccordionItem>
           </Accordion>
         </div>
       </div>
@@ -122,42 +125,46 @@ function Detail() {
           <TabsList className="pdp-tabs">
             <TabsTrigger value="om">Beskrivning</TabsTrigger>
             <TabsTrigger value="spec">Specifikationer</TabsTrigger>
-            <TabsTrigger value="forvaring">Förvaring</TabsTrigger>
-            <TabsTrigger value="kvalitet">Kvalitet</TabsTrigger>
+            {!accessory && <TabsTrigger value="forvaring">Förvaring</TabsTrigger>}
+            {!accessory && <TabsTrigger value="kvalitet">Kvalitet</TabsTrigger>}
           </TabsList>
-          <TabsContent value="om" className="pdp-tab-body"><h2>Om {product.name}</h2><p>{product.description}</p>{product.about.map(t => <p key={t}>{t}</p>)}<p>Produkten säljs uteslutande för laboratorie- och forskningsändamål. Inga medicinska påståenden görs.</p></TabsContent>
+          <TabsContent value="om" className="pdp-tab-body"><h2>Om {product.name}</h2><p>{product.description}</p>{product.about.map(t => <p key={t} className="pdp-about">{t}</p>)}{!accessory && <p>Produkten säljs uteslutande för laboratorie- och forskningsändamål. Inga medicinska påståenden görs.</p>}</TabsContent>
           <TabsContent value="spec" className="pdp-tab-body"><h2>Specifikationer</h2><table className="pdp-spec"><tbody>
             <tr><th>Produkt</th><td>{product.name}</td></tr>
-            <tr><th>Styrka</th><td>{variant.amount}</td></tr>
-            <tr><th>Tillgängliga styrkor</th><td>{product.variants.map(v => v.amount).join(', ')}</td></tr>
+            <tr><th>{accessory ? 'Variant' : 'Styrka'}</th><td>{variant.amount}</td></tr>
+            {product.variants.length > 1 && <tr><th>{accessory ? 'Tillgängliga varianter' : 'Tillgängliga styrkor'}</th><td>{product.variants.map(v => v.amount).join(', ')}</td></tr>}
             {product.specs.map(([k, v]) => <tr key={k}><th>{k}</th><td>{v}</td></tr>)}
-            <tr><th>Renhet</th><td>Se batchens analysrapport</td></tr>
-            <tr><th>Förvaring</th><td>Torrt, mörkt, −20 °C för långtidsförvaring</td></tr>
+            {!accessory && <>
+              <tr><th>Renhet</th><td>Se batchens analysrapport</td></tr>
+              <tr><th>Förvaring</th><td>Torrt, mörkt, −20 °C för långtidsförvaring</td></tr>
+            </>}
             <tr><th>Kategori</th><td>{product.category}</td></tr>
-            <tr><th>Form</th><td>Lyofiliserat pulver</td></tr>
-            <tr><th>Batch</th><td>{variant.batch ?? 'Publiceras senare'}</td></tr>
+            {!accessory && <>
+              <tr><th>Form</th><td>Lyofiliserat pulver</td></tr>
+              <tr><th>Batch</th><td>{variant.batch ?? 'Publiceras senare'}</td></tr>
+            </>}
           </tbody></table></TabsContent>
           <TabsContent value="forvaring" className="pdp-tab-body"><h2>Förvaring</h2><p>Förvaras torrt, mörkt och kallt enligt laboratoriets rutiner. Undvik upprepad frysning och upptining.</p></TabsContent>
           <TabsContent value="kvalitet" className="pdp-tab-body"><h2>Kvalitet & dokumentation</h2><p>{variant.coaUrl ? <>Analysrapport för batch {variant.batch}: <a href={variant.coaUrl} target="_blank" rel="noopener noreferrer" className="coa-link">Visa CoA</a>.</> : 'Batchspecifik analysrapport publiceras när den finns tillgänglig.'}</p></TabsContent>
         </Tabs>
       </section>
 
-      <section className="pdp-section">
+      {!accessory && <section className="pdp-section">
         <div className="eyebrow">VARFÖR PEPTIDESWEDEN</div>
         <h2 className="pdp-h2">Därför väljer forskare oss</h2>
         <div className="pdp-why">
           {[['Tydlig dokumentation','Analysrapporter länkas per batch när de finns.'],['Svensk kundtjänst','Frågor besvaras på svenska.'],['Diskret förpackning','Neutral förpackning skickad med PostNord.'],['Endast forskning','Vi säljer enbart för laboratoriebruk.']].map(([t,d]) => <div key={t}><strong>{t}</strong><p>{d}</p></div>)}
         </div>
-      </section>
+      </section>}
 
-      <section className="pdp-section">
+      {!accessory && <section className="pdp-section">
         <h2 className="pdp-h2">Vanliga frågor</h2>
         <Accordion type="single" collapsible>
           <AccordionItem value="a"><AccordionTrigger>Är produkten avsedd för människor?</AccordionTrigger><AccordionContent>Nej. Produkten är endast för laboratorieforskning.</AccordionContent></AccordionItem>
           <AccordionItem value="b"><AccordionTrigger>Var hittar jag analysrapporten?</AccordionTrigger><AccordionContent>Under fliken Kvalitet ovan, när en rapport finns för vald styrka.</AccordionContent></AccordionItem>
           <AccordionItem value="c"><AccordionTrigger>Hur räknar jag koncentration?</AccordionTrigger><AccordionContent>Använd vår <Link to="/kalkylator" className="coa-link">kalkylator</Link> för mg/ml.</AccordionContent></AccordionItem>
         </Accordion>
-      </section>
+      </section>}
 
       <section className="pdp-section">
         <TelegramSupportCard title={`Frågor om ${product.name}?`} body="Skicka oss ett meddelande på Telegram — frågor om styrkor, analysdokumentation, förvaring och leverans besvaras på svenska." cta="Ställ en fråga" />
@@ -176,7 +183,7 @@ function Detail() {
       </section>
 
       <div className="pdp-sticky">
-        <div><strong>{product.name} {variant.amount}</strong><span>{formatPrice(total)}</span></div>
+        <div><strong>{product.name} {variant.amount}</strong><span>{quantity > 1 ? `${quantity} st · ` : ''}{formatPrice(total)}</span></div>
         <Button onClick={() => { change(variant.slug, quantity); setCartOpen(true); }}>Lägg i varukorg</Button>
       </div>
     </main>
